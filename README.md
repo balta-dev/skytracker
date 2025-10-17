@@ -28,7 +28,7 @@ Basado en la idea de Görkem Bozkurt:
 ## Clonar el repositorio
 
 ```bash
-git clone https://github.com/tu_usuario/SkyTracker.git
+git clone https://github.com/balta-dev/skytracker.git
 cd SkyTracker
 ```
 
