@@ -29,7 +29,7 @@ Basado en la idea de Görkem Bozkurt:
 
 ```bash
 git clone https://github.com/balta-dev/skytracker.git
-cd SkyTracker
+cd skytracker
 ```
 
 ---
