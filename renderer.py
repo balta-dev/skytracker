@@ -223,45 +223,59 @@ def draw_text_2d(window, lines, start_y):
     glMatrixMode(GL_MODELVIEW)
 
 class CachedTextRenderer:
-    """Renderizador de texto con caché para mejor performance"""
-    
+    """Renderizador de texto 2D optimizado con caché y batch."""
+
     def __init__(self):
         self.labels = []
-        self.last_lines = []
-    
+        self.batch = pyglet.graphics.Batch()
+        self.num_lines = 0
+
     def draw(self, window, lines, start_y):
-        """Dibuja texto 2D en pantalla con caché"""
-        # Si el texto cambió, recrear labels
-        if lines != self.last_lines:
-            self.labels.clear()
-            y = start_y
-            for line in lines:
-                label = pyglet.text.Label(
-                    line, 
-                    x=10, 
-                    y=y, 
-                    color=(255, 255, 255, 255), 
-                    font_size=12
+        """Dibuja texto 2D en pantalla con mejor performance."""
+
+        # Ajustar cantidad de labels si cambió el número de líneas
+        while len(self.labels) < len(lines):
+            self.labels.append(
+                pyglet.text.Label(
+                    "",
+                    x=10,
+                    y=0,
+                    color=(255, 255, 255, 255),
+                    font_size=12,
+                    batch=self.batch
                 )
-                self.labels.append(label)
-                y -= 20
-            self.last_lines = lines.copy()
-        
-        # Dibujar labels cacheados
+            )
+        while len(self.labels) > len(lines):
+            lbl = self.labels.pop()
+            lbl.delete()
+
+        # Actualizar texto y posición sin recrear labels
+        y = start_y
+        for i, line in enumerate(lines):
+            self.labels[i].text = line
+            self.labels[i].y = y
+            y -= 20
+
+        self.num_lines = len(lines)
+
+        # Configurar proyección ortográfica solo una vez
         glMatrixMode(GL_PROJECTION)
         glPushMatrix()
         glLoadIdentity()
         glOrtho(0, window.width, 0, window.height, -1, 1)
+
         glMatrixMode(GL_MODELVIEW)
         glPushMatrix()
         glLoadIdentity()
         glDisable(GL_DEPTH_TEST)
-        
-        for label in self.labels:
-            label.draw()
-        
+
+        # Dibujar todas las líneas de texto en una sola draw call
+        if self.num_lines > 0:
+            self.batch.draw()
+
+        # Restaurar estado
         glEnable(GL_DEPTH_TEST)
         glPopMatrix()
         glMatrixMode(GL_PROJECTION)
         glPopMatrix()
-        glMatrixMode(GL_MODELVIEW)    
+        glMatrixMode(GL_MODELVIEW)  
