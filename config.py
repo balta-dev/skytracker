@@ -3,6 +3,15 @@
 Configuración global de la aplicación SkyTracker
 """
 
+# Puerto Arduino/ESP32. 
+# Configura el puerto antes de utilizarlo.
+#
+# Linux: /dev/ttyUSB0
+# Windows: COM0
+#
+# Reemplaza el 0 por el valor real.
+PORT = "/dev/pts/3"
+
 # Configuración del domo | ROTO
 DOME_RADIUS = 30.0
 DOME_SEGMENTS = 32

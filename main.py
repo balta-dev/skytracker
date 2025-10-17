@@ -26,6 +26,7 @@ from object_detection import (
 )
 from tracker import ObjectTracker
 from input_handler import InputHandler
+from serial_comm import SerialComm
 
 
 class SkyTrackerApp:
@@ -40,7 +41,15 @@ class SkyTrackerApp:
         )
         self.window.set_minimum_size(400, 300)
         self.window.set_exclusive_mouse(True)
-        
+        self.window.on_close = self.on_close
+
+        # Para usar la placa real:
+        # NOTA: Revisa 'config.py' y configura el puerto primero antes de descomentar esta línea  
+#        self.serial_device = SerialComm(port=PORT, baudrate=115200, simulate=False)
+
+        # Simular sin hardware. Cuando configures el puerto, comentá esta línea.
+        self.serial_device = SerialComm(simulate=True)
+
         # FPS display
         self.fps_display = pyglet.window.FPSDisplay(window=self.window)
 
@@ -142,7 +151,7 @@ class SkyTrackerApp:
         """Maneja el movimiento del mouse"""
         if not self.search_box.active:
             self.camera.rotate(dx, dy)
-    
+
     def update(self, dt):
         """Actualiza el estado de la aplicación"""
         # Ajustar velocidad según CTRL
@@ -168,6 +177,9 @@ class SkyTrackerApp:
             0.1, 100.0
         )
         glMatrixMode(GL_MODELVIEW)
+
+        yaw, pitch = self.vector.yaw, self.vector.pitch
+        self.serial_device.send_angles(yaw, pitch)
     
     def on_draw(self):
         """Dibuja la escena"""
@@ -189,7 +201,7 @@ class SkyTrackerApp:
         else:
             from astronomy import ra_dec_to_xyz as projection_func
             projection_kwargs = {}
-            
+
         # Proyectar objetos celestes
         stars_coords = [
             (name, *projection_func(ra, dec, lst_h, **projection_kwargs))
@@ -253,6 +265,12 @@ class SkyTrackerApp:
     def run(self):
         """Inicia la aplicación"""
         pyglet.app.run()
+
+    def on_close(self):
+        """Se ejecuta al cerrar la ventana"""
+        self.serial_device.close()
+        # Cerramos Pyglet
+        self.window.close()
 
 
 if __name__ == "__main__":
