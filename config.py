@@ -10,7 +10,7 @@ Configuración global de la aplicación SkyTracker
 # Windows: COM0
 #
 # Reemplaza el 0 por el valor real.
-PORT = "/dev/pts/3"
+PORT = "/dev/pts/4"
 SIMULATE = True
 
 # Configuración del domo | ROTO

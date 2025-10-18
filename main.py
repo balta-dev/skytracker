@@ -27,6 +27,7 @@ from object_detection import (
 from tracker import ObjectTracker
 from input_handler import InputHandler
 from serial_comm import SerialComm
+import time
 
 
 class SkyTrackerApp:
@@ -50,6 +51,10 @@ class SkyTrackerApp:
         else:
             # Simular sin hardware.
             self.serial_device = SerialComm(simulate=True)
+
+        # Buffer de simulación de retardo
+        self.simulated_delay_buffer = []
+        self.simulated_delay_seconds = 0.6
 
         # FPS display
         self.fps_display = pyglet.window.FPSDisplay(window=self.window)
@@ -186,8 +191,9 @@ class SkyTrackerApp:
         # Enviar al ESP32
         self.serial_device.send_angles(yaw, pitch)
     
-        # Leer del ESP32
+        # Leer del ESP32 o simular lectura con delay
         if not SIMULATE:
+            # Modo real: lectura directa
             line = self.serial_device.read_data()
             if line:
                 msg = self.serial_device.parse_message(line)
@@ -195,6 +201,32 @@ class SkyTrackerApp:
                     yaw = msg["yaw"]
                     pitch = msg["pitch"]
                     self.sensor_vector.set_angles(yaw, pitch)
+
+        else:
+            # ============================
+            # Modo simulado: "seguir" al vector rojo
+            # ============================
+            # Ángulos actuales
+            current_yaw = self.sensor_vector.yaw
+            current_pitch = self.sensor_vector.pitch
+
+            # Objetivo: vector rojo
+            target_yaw = self.vector.yaw
+            target_pitch = self.vector.pitch
+
+            # Factor de seguimiento
+            follow_speed = 0.0025  # ajustá para más o menos suavidad
+
+            # Diferencia mínima para tomar el camino más corto (evitar saltos de 359° → 0°)
+            delta_yaw = (target_yaw - current_yaw + 540) % 360 - 180
+            new_yaw = (current_yaw + delta_yaw * follow_speed) % 360
+
+            # Para pitch no hace falta wrap
+            delta_pitch = target_pitch - current_pitch
+            new_pitch = current_pitch + delta_pitch * follow_speed
+
+            # Aplicar al vector verde
+            self.sensor_vector.set_angles(new_yaw, new_pitch)
 
     def on_draw(self):
         """Dibuja la escena"""
