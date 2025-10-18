@@ -8,17 +8,18 @@ El usuario puede buscar un objeto celeste mediante el buscador, y el vector en p
 
 El 3D en pantalla sirve como visualización interactiva y control, permitiendo verificar y ajustar el seguimiento sin necesidad de mirar el Sky Tracker físico.
 
-Simulador:
-<img width="1271" height="746" alt="image" src="https://github.com/user-attachments/assets/105007b6-24dd-4811-962b-97b8512919e4" />
-ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ
+---
 
+<img width="1271" height="746" alt="image" src="https://github.com/user-attachments/assets/105007b6-24dd-4811-962b-97b8512919e4" />
+
+---
 Simulación con Potenciómetros en Tinkercad:
 <img width="1657" height="909" alt="image" src="https://github.com/user-attachments/assets/558280fc-9322-458c-a0b2-35c1ace515cb" />
 
 Vista Esquemática:
 <img width="1078" height="839" alt="image" src="https://github.com/user-attachments/assets/a4cf48fa-da64-44cc-9320-9ed436780206" />
-ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ
 
+---
 Basado en la idea de Görkem Bozkurt:
 [![1](https://content.instructables.com/F7M/RLBH/IR40FE1K/F7MRLBHIR40FE1K.jpg)](https://vimeo.com/176745067)
 [![2](https://github.com/user-attachments/assets/5283ce86-9bf0-4b3a-b41c-35084c5242c9)](https://vimeo.com/176745067)
