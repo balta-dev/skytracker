@@ -15,14 +15,20 @@ from config import (
 class PointerVector:
     """Clase para gestionar el vector de apuntado"""
     
-    def __init__(self):
+    def __init__(self, color=COLOR_VECTOR, yaw=VEC_YAW, pitch=VEC_PITCH):
         self.base_x = VEC_BASE_X
         self.base_y = VEC_BASE_Y
         self.base_z = VEC_BASE_Z
-        self.yaw = VEC_YAW
-        self.pitch = VEC_PITCH
+        self.yaw = yaw
+        self.pitch = pitch
         self.length = VECTOR_LENGTH
+        self.color = color
     
+    def set_angles(self, yaw, pitch):
+        """Setea directamente los ángulos (por ejemplo desde el sensor)"""
+        self.yaw = yaw % 360
+        self.pitch = max(min(pitch, 89), -89)
+
     def rotate(self, dyaw, dpitch):
         """Rota el vector"""
         self.yaw += dyaw
@@ -94,7 +100,7 @@ class PointerVector:
         end_x, end_y, end_z = self.get_end_point()
         
         # Dibujar línea del vector
-        glColor3f(*COLOR_VECTOR)
+        glColor3f(*self.color)
         glLineWidth(4)
         glBegin(GL_LINES)
         glVertex3f(self.base_x, self.base_y, self.base_z)

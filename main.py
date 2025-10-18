@@ -44,11 +44,12 @@ class SkyTrackerApp:
         self.window.on_close = self.on_close
 
         # Para usar la placa real:
-        # NOTA: Revisa 'config.py' y configura el puerto primero antes de descomentar esta línea  
-#        self.serial_device = SerialComm(port=PORT, baudrate=115200, simulate=False)
-
-        # Simular sin hardware. Cuando configures el puerto, comentá esta línea.
-        self.serial_device = SerialComm(simulate=True)
+        # NOTA: Revisa 'config.py'.
+        if not SIMULATE:
+            self.serial_device = SerialComm(port=PORT, baudrate=115200, simulate=False)
+        else:
+            # Simular sin hardware.
+            self.serial_device = SerialComm(simulate=True)
 
         # FPS display
         self.fps_display = pyglet.window.FPSDisplay(window=self.window)
@@ -56,9 +57,11 @@ class SkyTrackerApp:
          # Renderer de texto cacheado
         self.text_renderer = CachedTextRenderer()
         
+
         # Componentes
         self.camera = Camera()
-        self.vector = PointerVector()
+        self.vector = PointerVector(color=COLOR_VECTOR) # Rojo
+        self.sensor_vector = PointerVector(color=(0.0, 1.0, 0.0), yaw=90.0, pitch=90.0)  # Verde
         self.search_box = SearchBox()
         self.tracker = ObjectTracker()
         self.input_handler = InputHandler()
@@ -179,8 +182,20 @@ class SkyTrackerApp:
         glMatrixMode(GL_MODELVIEW)
 
         yaw, pitch = self.vector.yaw, self.vector.pitch
+        
+        # Enviar al ESP32
         self.serial_device.send_angles(yaw, pitch)
     
+        # Leer del ESP32
+        if not SIMULATE:
+            line = self.serial_device.read_data()
+            if line:
+                msg = self.serial_device.parse_message(line)
+                if msg and msg["type"] == "SENS":
+                    yaw = msg["yaw"]
+                    pitch = msg["pitch"]
+                    self.sensor_vector.set_angles(yaw, pitch)
+
     def on_draw(self):
         """Dibuja la escena"""
         self.window.clear()
@@ -232,6 +247,7 @@ class SkyTrackerApp:
         
         # Dibujar vector y obtener punto de impacto
         end_x, end_y, end_z, hit_x, hit_y, hit_z = self.vector.draw()
+        self.sensor_vector.draw()
         
         # Dibujar UI
         draw_crosshair(self.window)

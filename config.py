@@ -11,6 +11,7 @@ Configuración global de la aplicación SkyTracker
 #
 # Reemplaza el 0 por el valor real.
 PORT = "/dev/pts/3"
+SIMULATE = True
 
 # Configuración del domo | ROTO
 DOME_RADIUS = 30.0
