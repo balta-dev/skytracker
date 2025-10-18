@@ -14,10 +14,10 @@ El 3D en pantalla sirve como visualización interactiva y control, permitiendo v
 
 ---
 Simulación con Potenciómetros en Tinkercad:
-<img width="1657" height="909" alt="image" src="https://github.com/user-attachments/assets/558280fc-9322-458c-a0b2-35c1ace515cb" />
+[<img width="1657" height="909" alt="image" src="https://github.com/user-attachments/assets/558280fc-9322-458c-a0b2-35c1ace515cb" />](https://www.tinkercad.com/things/3lo1FGcupPU-skytracker-grupo-7-simulacion)
 
 Vista Esquemática:
-<img width="1078" height="839" alt="image" src="https://github.com/user-attachments/assets/a4cf48fa-da64-44cc-9320-9ed436780206" />
+[<img width="1078" height="839" alt="image" src="https://github.com/user-attachments/assets/a4cf48fa-da64-44cc-9320-9ed436780206" />](https://www.tinkercad.com/things/3lo1FGcupPU-skytracker-grupo-7-simulacion)
 
 ```c++
 #include <Servo.h>
