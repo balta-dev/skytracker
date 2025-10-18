@@ -19,6 +19,83 @@ Simulación con Potenciómetros en Tinkercad:
 Vista Esquemática:
 <img width="1078" height="839" alt="image" src="https://github.com/user-attachments/assets/a4cf48fa-da64-44cc-9320-9ed436780206" />
 
+```c++
+#include <Servo.h>
+
+Servo servoYaw;
+Servo servoPitch;
+
+// Pines
+const int potTargetYawPin   = A0;
+const int potTargetPitchPin = A1;
+const int potFeedbackYawPin   = A2; // simula MPU
+const int potFeedbackPitchPin = A3; // simula MPU
+const int potRollPin          = A4; // roll simulado
+
+// Parámetros de control
+const float Kp = 0.5;        // Factor proporcional
+const float rollFactorYaw = 0.3;
+const float rollFactorPitch = 0.2;
+
+void setup() {
+  servoYaw.attach(9);
+  servoPitch.attach(10);
+  Serial.begin(9600);
+}
+
+void loop() {
+  // --- Leer targets ---
+  int targetYawRaw   = analogRead(potTargetYawPin);
+  int targetPitchRaw = analogRead(potTargetPitchPin);
+
+  float targetYaw   = map(targetYawRaw,   0, 1023, 0, 180);
+  float targetPitch = map(targetPitchRaw, 0, 1023, 0, 180);
+
+  // --- Leer feedback ---
+  int feedbackYawRaw   = analogRead(potFeedbackYawPin);
+  int feedbackPitchRaw = analogRead(potFeedbackPitchPin);
+  int feedbackRollRaw  = analogRead(potRollPin);
+
+  float feedbackYaw   = map(feedbackYawRaw,   0, 1023, 0, 180);
+  float feedbackPitch = map(feedbackPitchRaw, 0, 1023, 0, 180);
+  float feedbackRoll  = map(feedbackRollRaw,  0, 1023, 0, 180);
+
+  // --- Calcular errores ---
+  float errorYaw   = targetYaw - feedbackYaw;
+  float errorPitch = targetPitch - feedbackPitch;
+
+  // --- Calcular offsets por roll ---
+  float rollOffsetYaw   = (feedbackRoll - 90) * rollFactorYaw;
+  float rollOffsetPitch = (feedbackRoll - 90) * rollFactorPitch;
+
+  // --- Calcular posiciones finales para el servo ---
+  float servoYawPos   = feedbackYaw + errorYaw * Kp + rollOffsetYaw;
+  float servoPitchPos = feedbackPitch + errorPitch * Kp + rollOffsetPitch;
+
+  // --- Limitar rangos ---
+  servoYawPos   = constrain(servoYawPos,   0, 180);
+  servoPitchPos = constrain(servoPitchPos, 0, 180);
+
+  // --- Mover servos ---
+  servoYaw.write(servoYawPos);
+  servoPitch.write(servoPitchPos);
+
+  // --- Debug ---
+  Serial.print("Target Yaw: "); Serial.print(targetYaw);
+  Serial.print(" | Feedback Yaw: "); Serial.print(feedbackYaw);
+  Serial.print(" | Servo Yaw: "); Serial.println(servoYawPos);
+
+  Serial.print("Target Pitch: "); Serial.print(targetPitch);
+  Serial.print(" | Feedback Pitch: "); Serial.print(feedbackPitch);
+  Serial.print(" | Servo Pitch: "); Serial.println(servoPitchPos);
+
+  Serial.print("Feedback Roll: "); Serial.println(feedbackRoll);
+  Serial.println("----------------------");
+
+  delay(50);
+}
+```
+
 ---
 Basado en la idea de Görkem Bozkurt:
 [![1](https://content.instructables.com/F7M/RLBH/IR40FE1K/F7MRLBHIR40FE1K.jpg)](https://vimeo.com/176745067)
