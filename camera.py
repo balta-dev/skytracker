@@ -24,6 +24,13 @@ class Camera:
         self.sensitivity_base = MOUSE_SENSITIVITY_BASE
         self.sensitivity = MOUSE_SENSITIVITY_BASE
         self.fov = FOV
+
+        # Deadzone para eliminar drift en movimientos pequeños
+        self.mouse_deadzone = 0.5
+
+        # Compensación de bias sistemático (ajusta estos valores)
+        self.drift_compensation_x = 0.45  # Compensa drift hacia izquierda
+        self.drift_compensation_y = -0.45  # Compensa drift hacia arriba
     
     def apply_view(self):
         """Aplica la transformación de la cámara"""
@@ -44,6 +51,21 @@ class Camera:
     
     def rotate(self, dx, dy):
         """Rota la cámara según el movimiento del mouse"""
+        
+        # Aplicar compensación de bias sistemático ANTES del deadzone
+        dx += self.drift_compensation_x
+        dy += self.drift_compensation_y
+
+        # Aplicar deadzone para eliminar micro-drift
+        if abs(dx) < self.mouse_deadzone:
+            dx = 0
+        if abs(dy) < self.mouse_deadzone:
+            dy = 0
+        
+        # Si no hay movimiento significativo, salir
+        if dx == 0 and dy == 0:
+            return
+        
         self.yaw -= dx * self.sensitivity
         self.pitch += dy * self.sensitivity
         self.pitch = max(min(self.pitch, 89), -89)

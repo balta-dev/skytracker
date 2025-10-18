@@ -25,7 +25,7 @@ CAM_X = 3.0
 CAM_Y = 3.0
 CAM_Z = 3.0
 CAM_SPEED_BASE = 0.1
-MOUSE_SENSITIVITY_BASE = 0.2
+MOUSE_SENSITIVITY_BASE = 0.1
 
 # Configuración del vector
 VEC_BASE_X = 0.0
