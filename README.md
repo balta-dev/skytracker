@@ -160,6 +160,8 @@ Con el entorno virtual activado:
 python3 main.py
 ```
 
+> **⚠️ Nota**: Es recomendable ejecutar ```ephemeris_calculator.py``` periódicamente para mantener actualizados los objetos celestiales en el cielo, sobre todo la Luna y los planetas.
+
 ---
 
 ## Controles por defecto
@@ -176,14 +178,3 @@ python3 main.py
 - `C` — cancelar seguimiento
 
 ---
-
-## Notas
-
-- Si tenés problemas con dependencias, probá actualizar pip:
-
-```bash
-pip install --upgrade pip
-```
-
-> **⚠️**: Falta importar ```serial``` para que el simulador pueda enviar los datos a tiempo real a Arduino/ESP32.
-> El chip recibiría "yaw" y "pitch" y tendría que mapear ángulos de servo y mover los motores.
