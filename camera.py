@@ -46,7 +46,7 @@ class Camera:
         """Retorna el vector de dirección de la cámara"""
         dx = math.cos(math.radians(self.pitch)) * math.sin(math.radians(self.yaw))
         dy = math.sin(math.radians(self.pitch))
-        dz = math.cos(math.radians(self.pitch)) * math.cos(math.radians(self.yaw))
+        dz = -math.cos(math.radians(self.pitch)) * math.cos(math.radians(self.yaw))
         return dx, dy, dz
     
     def rotate(self, dx, dy):
@@ -66,7 +66,7 @@ class Camera:
         if dx == 0 and dy == 0:
             return
         
-        self.yaw -= dx * self.sensitivity
+        self.yaw += dx * self.sensitivity
         self.pitch += dy * self.sensitivity
         self.pitch = max(min(self.pitch, 89), -89)
         self.yaw %= 360
@@ -74,7 +74,7 @@ class Camera:
     def move_forward(self, amount):
         """Mueve la cámara hacia adelante"""
         fx = math.sin(math.radians(self.yaw))
-        fz = math.cos(math.radians(self.yaw))
+        fz = -math.cos(math.radians(self.yaw))
         self.x += fx * amount
         self.z += fz * amount
     
@@ -85,9 +85,9 @@ class Camera:
     def move_left(self, amount):
         """Mueve la cámara hacia la izquierda"""
         lx = math.sin(math.radians(self.yaw - 90))
-        lz = math.cos(math.radians(self.yaw - 90))
-        self.x -= lx * amount
-        self.z -= lz * amount
+        lz = -math.cos(math.radians(self.yaw - 90))
+        self.x += lx * amount
+        self.z += lz * amount
     
     def move_right(self, amount):
         """Mueve la cámara hacia la derecha"""

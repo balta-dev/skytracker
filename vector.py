@@ -32,7 +32,7 @@ class PointerVector:
 
     def rotate(self, dyaw, dpitch):
         """Rota el vector"""
-        self.yaw += dyaw
+        self.yaw -= dyaw
         self.pitch += dpitch
         self.pitch = max(min(self.pitch, 89), -89)
         self.yaw %= 360
@@ -41,7 +41,7 @@ class PointerVector:
         """Retorna el vector de dirección normalizado"""
         dx = math.cos(math.radians(self.pitch)) * math.sin(math.radians(self.yaw))
         dy = math.sin(math.radians(self.pitch))
-        dz = math.cos(math.radians(self.pitch)) * math.cos(math.radians(self.yaw))
+        dz = -math.cos(math.radians(self.pitch)) * math.cos(math.radians(self.yaw))
         return dx, dy, dz
     
     def get_end_point(self):

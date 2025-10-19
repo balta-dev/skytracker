@@ -43,7 +43,8 @@ WINDOW_HEIGHT = 720
 WINDOW_TITLE = "SkyTracker - GRUPO 7"
 
 # Ubicación del observador (longitud en grados)
-LOCATION_LONGITUDE = -58.229561
+LOCATION_LONGITUDE = -58.229712
+LOCATION_LATITUDE = -32.495417
 
 # Estrellas de fondo
 NUM_BACKGROUND_STARS = 150

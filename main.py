@@ -286,7 +286,7 @@ class SkyTrackerApp:
             for name, ra, dec, size in PLANETS
         ]
         
-        moon_coords = projection_func(*MOON_RA_DEC, lst_h, **projection_kwargs)
+        moon_coords = projection_func(MOON_RA_DEC[0], MOON_RA_DEC[1], lst_h, **projection_kwargs)
         
         # Variables para almacenar los datos de los vectores
         vector_data = [None]

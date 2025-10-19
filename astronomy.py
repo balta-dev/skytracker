@@ -4,7 +4,7 @@ Funciones astronómicas para cálculos de coordenadas
 """
 import math
 from datetime import datetime, timezone
-from config import LOCATION_LONGITUDE, WORLD_SCALE
+from config import LOCATION_LONGITUDE, WORLD_SCALE, LOCATION_LATITUDE
 
 
 def calculate_lst(now_utc, longitude_deg):
@@ -44,7 +44,7 @@ def calculate_lst(now_utc, longitude_deg):
     return LST_deg, LST_h
 
 
-def ra_dec_to_xyz(ra_h, dec_deg, lst_h, lat_deg=LOCATION_LONGITUDE):
+def ra_dec_to_xyz(ra_h, dec_deg, lst_h, lat_deg=LOCATION_LATITUDE):
     """
     Convierte coordenadas RA/DEC a coordenadas 3D cartesianas
     
@@ -85,7 +85,7 @@ def ra_dec_to_xyz(ra_h, dec_deg, lst_h, lat_deg=LOCATION_LONGITUDE):
     return x*factor, y*factor, z*factor
 
 
-def ra_dec_to_dome(ra_h, dec_deg, lst_h, lat_deg=LOCATION_LONGITUDE, dome_radius=30.0):
+def ra_dec_to_dome(ra_h, dec_deg, lst_h, lat_deg=LOCATION_LATITUDE, dome_radius=30.0):
     """
     Convierte coordenadas RA/DEC a coordenadas 3D sobre la superficie de un domo
     
@@ -150,6 +150,6 @@ def calculate_vector_angles(target_x, target_y, target_z, base_x, base_y, base_z
     pitch = math.degrees(math.atan2(dy, horizontal_dist))
     
     # Calcular yaw (azimut)
-    yaw = math.degrees(math.atan2(dx, dz))
+    yaw = math.degrees(math.atan2(dx, -dz)) % 360
     
     return yaw, pitch
