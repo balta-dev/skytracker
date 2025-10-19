@@ -29,8 +29,8 @@ def draw_dome():
             z2 = DOME_RADIUS * math.sin(phi2) * math.sin(theta)
             y2 = DOME_RADIUS * math.cos(phi2)
             
-            glVertex3f(x1, y1 - 1, z1)
-            glVertex3f(x2, y2 - 1, z2)
+            glVertex3f(x1, y1, z1)
+            glVertex3f(x2, y2, z2)
         glEnd()
 
 
@@ -41,12 +41,12 @@ def draw_dome_ground():
     # Suelo
     glColor3f(*COLOR_GROUND)
     glBegin(GL_TRIANGLE_FAN)
-    glVertex3f(0, -1, 0)  # Centro
+    glVertex3f(0, 0, 0)  # Centro
     for i in range(DOME_SEGMENTS + 1):
         angle = (i / DOME_SEGMENTS) * 2 * math.pi
         x = DOME_RADIUS * math.cos(angle)
         z = DOME_RADIUS * math.sin(angle)
-        glVertex3f(x, -1, z)
+        glVertex3f(x, 0, z)
     glEnd()
     
     # Rejilla circular
@@ -59,8 +59,8 @@ def draw_dome_ground():
         angle = (i / DOME_SEGMENTS) * 2 * math.pi
         x = DOME_RADIUS * math.cos(angle)
         z = DOME_RADIUS * math.sin(angle)
-        glVertex3f(0, -0.99, 0)
-        glVertex3f(x, -0.99, z)
+        glVertex3f(0, 0.01, 0)
+        glVertex3f(x, 0.01, z)
     glEnd()
     
     # Círculos concéntricos
@@ -72,5 +72,5 @@ def draw_dome_ground():
             angle = (i / DOME_SEGMENTS) * 2 * math.pi
             x = radius * math.cos(angle)
             z = radius * math.sin(angle)
-            glVertex3f(x, -0.99, z)
+            glVertex3f(x, 0.01, z)
         glEnd()

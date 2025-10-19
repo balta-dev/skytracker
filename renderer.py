@@ -12,7 +12,7 @@ from config import (
     COLOR_CROSSHAIR, COLOR_CARDINALS,
     POINT_SIZE_STAR, POINT_SIZE_GALAXY,
     SPHERE_RADIUS_PLANET, SPHERE_RADIUS_MOON,
-    CROSSHAIR_SIZE
+    CROSSHAIR_SIZE, USE_DOME, DOME_RADIUS
 )
 
 
@@ -55,10 +55,10 @@ def draw_environment(background_stars, use_dome=False):
         # Suelo
         glColor3f(*COLOR_GROUND)
         glBegin(GL_QUADS)
-        glVertex3f(WORLD_MIN, -1, WORLD_MIN)
-        glVertex3f(WORLD_MAX, -1, WORLD_MIN)
-        glVertex3f(WORLD_MAX, -1, WORLD_MAX)
-        glVertex3f(WORLD_MIN, -1, WORLD_MAX)
+        glVertex3f(WORLD_MIN, 0, WORLD_MIN)
+        glVertex3f(WORLD_MAX, 0, WORLD_MIN)
+        glVertex3f(WORLD_MAX, 0, WORLD_MAX)
+        glVertex3f(WORLD_MIN, 0, WORLD_MAX)
         glEnd()
         
         # Rejilla del suelo
@@ -66,26 +66,26 @@ def draw_environment(background_stars, use_dome=False):
         glLineWidth(1)
         glBegin(GL_LINES)
         for i in range(WORLD_MIN, WORLD_MAX + 1, 2):
-            glVertex3f(i, -0.99, WORLD_MIN)
-            glVertex3f(i, -0.99, WORLD_MAX)
-            glVertex3f(WORLD_MIN, -0.99, i)
-            glVertex3f(WORLD_MAX, -0.99, i)
+            glVertex3f(i, 0.01, WORLD_MIN)  # era -0.99
+            glVertex3f(i, 0.01, WORLD_MAX)
+            glVertex3f(WORLD_MIN, 0.01, i)
+            glVertex3f(WORLD_MAX, 0.01, i)
         glEnd()
         
         # Paredes
         glColor3f(*COLOR_WALLS)
         for x in [WORLD_MIN, WORLD_MAX]:
             glBegin(GL_QUADS)
-            glVertex3f(x, -1, WORLD_MIN)
+            glVertex3f(x, 0, WORLD_MIN)
             glVertex3f(x, WORLD_MAX, WORLD_MIN)
             glVertex3f(x, WORLD_MAX, WORLD_MAX)
-            glVertex3f(x, -1, WORLD_MAX)
+            glVertex3f(x, 0, WORLD_MAX)
             glEnd()
         
         for z in [WORLD_MIN, WORLD_MAX]:
             glBegin(GL_QUADS)
-            glVertex3f(WORLD_MIN, -1, z)
-            glVertex3f(WORLD_MAX, -1, z)
+            glVertex3f(WORLD_MIN, 0, z)
+            glVertex3f(WORLD_MAX, 0, z)
             glVertex3f(WORLD_MAX, WORLD_MAX, z)
             glVertex3f(WORLD_MIN, WORLD_MAX, z)
             glEnd()
@@ -188,10 +188,30 @@ def draw_cardinals():
         glPopMatrix()
 
     glColor3f(*COLOR_CARDINALS)
-    draw_3d_letter('N', 0, 2, -19.5, 0.6)
-    draw_3d_letter('S', 0, 2, 19.5, 0.6)
-    draw_3d_letter('E', 19.5, 2, 0, 0.6)
-    draw_3d_letter('O', -19.5, 2, 0, 0.6)
+    
+    if USE_DOME:
+        # Posicionar en el horizonte del domo (phi = 90°, diferentes azimuts)
+        # Norte: azimut = 0° (theta = 0)
+        # Sur: azimut = 180° (theta = π)
+        # Este: azimut = 90° (theta = π/2)
+        # Oeste: azimut = 270° (theta = 3π/2)
+        
+        y_horizon = -1  # En el horizonte
+        
+        # Norte (z negativo)
+        draw_3d_letter('N', 0, y_horizon + 2, -DOME_RADIUS * 0.95, 0.8)
+        # Sur (z positivo)
+        draw_3d_letter('S', 0, y_horizon + 2, DOME_RADIUS * 0.95, 0.8)
+        # Este (x positivo)
+        draw_3d_letter('E', DOME_RADIUS * 0.95, y_horizon + 2, 0, 0.8)
+        # Oeste (x negativo)
+        draw_3d_letter('O', -DOME_RADIUS * 0.95, y_horizon + 2, 0, 0.8)
+    else:
+        # Posiciones para el cubo
+        draw_3d_letter('N', 0, 2, -19.5, 0.6)
+        draw_3d_letter('S', 0, 2, 19.5, 0.6)
+        draw_3d_letter('E', 19.5, 2, 0, 0.6)
+        draw_3d_letter('O', -19.5, 2, 0, 0.6)
 
 
 def draw_text_2d(window, lines, start_y):

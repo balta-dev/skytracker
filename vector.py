@@ -8,7 +8,7 @@ from config import (
     VEC_BASE_X, VEC_BASE_Y, VEC_BASE_Z,
     VEC_YAW, VEC_PITCH, VECTOR_LENGTH,
     COLOR_VECTOR, COLOR_VECTOR_TIP, COLOR_HIT_POINT,
-    WORLD_MIN, WORLD_MAX
+    WORLD_MIN, WORLD_MAX, USE_DOME, DOME_RADIUS
 )
 
 
@@ -94,13 +94,58 @@ class PointerVector:
                     t_hit = t
         
         return hit_x, hit_y, hit_z
+
+    def calculate_dome_hit(self):
+        """
+        Calcula el punto de impacto del vector en el domo hemisférico
+        Returns: (hit_x, hit_y, hit_z) o (None, None, None) si no hay impacto
+        """
+        dx, dy, dz = self.get_direction()
+        
+        # Resolver: |P + t*D|² = R²
+        # Donde P = (base_x, base_y+1, base_z), D = (dx, dy, dz)
+        # +1 porque el centro del domo está en y=0 pero la base está en y=-1
+        py = self.base_y + 1
+        
+        a = dx*dx + dy*dy + dz*dz
+        b = 2*(self.base_x*dx + py*dy + self.base_z*dz)
+        c = self.base_x**2 + py**2 + self.base_z**2 - DOME_RADIUS**2
+        
+        discriminant = b*b - 4*a*c
+        if discriminant < 0:
+            return None, None, None
+        
+        t1 = (-b + math.sqrt(discriminant)) / (2*a)
+        t2 = (-b - math.sqrt(discriminant)) / (2*a)
+        
+        # Tomar la intersección positiva más cercana
+        t = None
+        if t1 > 0 and t2 > 0:
+            t = min(t1, t2)
+        elif t1 > 0:
+            t = t1
+        elif t2 > 0:
+            t = t2
+        
+        if t is None or t <= 0:
+            return None, None, None
+        
+        hit_x = self.base_x + t * dx
+        hit_y = self.base_y + t * dy
+        hit_z = self.base_z + t * dz
+        
+        # Solo aceptar si está en el hemisferio superior (y >= -1)
+        if hit_y < -1:
+            return None, None, None
+        
+        return hit_x, hit_y, hit_z
     
     def draw(self):
         """Dibuja el vector y su punto de impacto"""
         end_x, end_y, end_z = self.get_end_point()
         
         # Dibujar línea del vector
-        glColor3f(*self.color)
+        glColor3f(*COLOR_VECTOR)
         glLineWidth(4)
         glBegin(GL_LINES)
         glVertex3f(self.base_x, self.base_y, self.base_z)
@@ -114,8 +159,12 @@ class PointerVector:
         glVertex3f(end_x, end_y, end_z)
         glEnd()
         
-        # Calcular y dibujar punto de impacto
-        hit_x, hit_y, hit_z = self.calculate_wall_hit()
+        # Calcular y dibujar punto de impacto según el modo
+        if USE_DOME:
+            hit_x, hit_y, hit_z = self.calculate_dome_hit()
+        else:
+            hit_x, hit_y, hit_z = self.calculate_wall_hit()
+        
         if hit_x is not None:
             glColor3f(*COLOR_HIT_POINT)
             glPointSize(12)

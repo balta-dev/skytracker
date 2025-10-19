@@ -1,0 +1,129 @@
+{
+  "stars": [
+    {
+      "name": "Sirius",
+      "ra_hours": 6.7715556,
+      "dec_degrees": -16.7474167,
+      "description": "Estrella mas brillante del cielo"
+    },
+    {
+      "name": "Betelgeuse",
+      "ra_hours": 5.9429722,
+      "dec_degrees": 7.4137222,
+      "description": "Supergigante roja en Orion"
+    },
+    {
+      "name": "Rigel",
+      "ra_hours": 5.26325,
+      "dec_degrees": -8.1685,
+      "description": "Supergigante azul en Orion"
+    },
+    {
+      "name": "Vega",
+      "ra_hours": 18.630056,
+      "dec_degrees": 38.811306,
+      "description": "Estrella principal de Lyra"
+    },
+    {
+      "name": "Antares",
+      "ra_hours": 16.51625,
+      "dec_degrees": -26.489222,
+      "description": "Supergigante roja en Scorpius"
+    },
+    {
+      "name": "Polaris",
+      "ra_hours": 3.116,
+      "dec_degrees": 89.371111,
+      "description": "Estrella polar del norte"
+    },
+    {
+      "name": "Altair",
+      "ra_hours": 19.867389,
+      "dec_degrees": 8.938889,
+      "description": "Estrella principal de Aquila"
+    },
+    {
+      "name": "Deneb",
+      "ra_hours": 20.705222,
+      "dec_degrees": 45.376972,
+      "description": "Supergigante en Cygnus"
+    },
+    {
+      "name": "Spica",
+      "ra_hours": 13.44225,
+      "dec_degrees": -11.294333,
+      "description": "Estrella principal de Virgo"
+    },
+    {
+      "name": "Arcturus",
+      "ra_hours": 14.280361,
+      "dec_degrees": 19.049444,
+      "description": "Gigante naranja en Bootes"
+    }
+  ],
+  "galaxies": [
+    {
+      "name": "M31",
+      "ra_hours": 0.736306,
+      "dec_degrees": 41.413194,
+      "description": "Galaxia de Andromeda"
+    },
+    {
+      "name": "M81",
+      "ra_hours": 9.960667,
+      "dec_degrees": 68.939444,
+      "description": "Galaxia de Bode"
+    },
+    {
+      "name": "M51",
+      "ra_hours": 13.515722,
+      "dec_degrees": 47.062389,
+      "description": "Galaxia del Remolino"
+    }
+  ],
+  "planets": [
+    {
+      "name": "Mercurio",
+      "ra_hours": 14.942223724676966,
+      "dec_degrees": -19.02863642586824,
+      "last_update": "2025-10-19T01:44:02.481891+00:00"
+    },
+    {
+      "name": "Venus",
+      "ra_hours": 12.412842139831394,
+      "dec_degrees": -1.0070671385375274,
+      "last_update": "2025-10-19T01:44:02.481891+00:00"
+    },
+    {
+      "name": "Marte",
+      "ra_hours": 15.029456597921683,
+      "dec_degrees": -17.4402140800537,
+      "last_update": "2025-10-19T01:44:02.481891+00:00"
+    },
+    {
+      "name": "Jupiter",
+      "ra_hours": 7.718854752308265,
+      "dec_degrees": 21.380378243438262,
+      "last_update": "2025-10-19T01:44:02.481891+00:00"
+    },
+    {
+      "name": "Saturno",
+      "ra_hours": 23.82931821906857,
+      "dec_degrees": -3.8259680003757612,
+      "last_update": "2025-10-19T01:44:02.481891+00:00"
+    }
+  ],
+  "moon": {
+    "ra_hours": 11.877731719062984,
+    "dec_degrees": 0.20038705769365878,
+    "last_update": "2025-10-19T01:44:02.481891+00:00"
+  },
+  "metadata": {
+    "location": {
+      "name": "Concepcion del Uruguay, Entre Rios, Argentina",
+      "latitude": -32.4833,
+      "longitude": -58.229561
+    },
+    "last_full_update": "2025-10-19T01:44:02.481891+00:00"
+  }
+}

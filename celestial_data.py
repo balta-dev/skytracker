@@ -1,69 +1,156 @@
 # celestial_data.py
 """
-Datos de objetos celestes (estrellas, planetas, galaxias)
-RA en horas, DEC en grados
+Cargador de datos de objetos celestes desde JSON
 """
+import json
+import os
 
-# Estrellas principales con coordenadas RA/DEC
-REAL_STARS = [
-    ("Sirius", 6.752, -16.72),
-    ("Betelgeuse", 5.919, 7.407),
-    ("Rigel", 5.243, -8.201),
-    ("Vega", 18.615, 38.78),
-    ("Antares", 16.490, -26.43),
-    ("Polaris", 2.530, 89.264),
-    ("Altair", 19.846, 8.868),
-    ("Deneb", 20.690, 45.280),
-    ("Spica", 13.420, -11.161),
-    ("Arcturus", 14.261, 19.182),
-]
 
-# Galaxias con coordenadas RA/DEC
-GALAXIES = [
-    ("M31", 0.712, 41.27),      # Galaxia de Andrómeda
-    ("M81", 9.927, 69.07),       # Galaxia de Bode
-    ("M51", 13.497, 47.20),      # Galaxia del Remolino
-]
+class CelestialDataLoader:
+    """Carga y gestiona datos de objetos celestes desde JSON"""
+    
+    def __init__(self, json_file='celestial_data.json'):
+        self.json_file = json_file
+        self.data = self._load_json()
+    
+    def _load_json(self):
+        """Carga el archivo JSON"""
+        try:
+            if not os.path.exists(self.json_file):
+                print(f"WARNING: {self.json_file} no encontrado, usando valores por defecto")
+                return self._get_default_data()
+            
+            with open(self.json_file, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        except Exception as e:
+            print(f"ERROR cargando {self.json_file}: {e}")
+            return self._get_default_data()
+    
+    def _get_default_data(self):
+        """Retorna datos por defecto si falla la carga"""
+        return {
+            "stars": [],
+            "galaxies": [],
+            "planets": [],
+            "moon": {"ra_hours": 0, "dec_degrees": 0},
+            "metadata": {}
+        }
+    
+    def get_stars(self):
+        """Retorna lista de tuplas (nombre, ra_h, dec_deg)"""
+        return [(s['name'], s['ra_hours'], s['dec_degrees']) 
+                for s in self.data.get('stars', [])]
+    
+    def get_galaxies(self):
+        """Retorna lista de tuplas (nombre, ra_h, dec_deg)"""
+        return [(g['name'], g['ra_hours'], g['dec_degrees']) 
+                for g in self.data.get('galaxies', [])]
+    
+    def get_planets(self):
+        """Retorna lista de tuplas (nombre, ra_h, dec_deg)"""
+        return [(p['name'], p['ra_hours'], p['dec_degrees']) 
+                for p in self.data.get('planets', [])]
+    
+    def get_moon(self):
+        """Retorna tupla (ra_h, dec_deg)"""
+        moon = self.data.get('moon', {})
+        return (moon.get('ra_hours', 0), moon.get('dec_degrees', 0))
+    
+    def update_planets(self, planets_dict):
+        """
+        Actualiza las coordenadas de los planetas
+        
+        Args:
+            planets_dict: dict con formato {'Mercurio': (ra_h, dec_deg), ...}
+        """
+        from datetime import datetime, timezone
+        
+        for planet in self.data.get('planets', []):
+            name = planet['name']
+            if name in planets_dict:
+                ra, dec = planets_dict[name]
+                planet['ra_hours'] = ra
+                planet['dec_degrees'] = dec
+                planet['last_update'] = datetime.now(timezone.utc).isoformat()
+        
+        self._save_json()
+    
+    def update_moon(self, ra_hours, dec_degrees):
+        """Actualiza las coordenadas de la Luna"""
+        from datetime import datetime, timezone
+        
+        self.data['moon']['ra_hours'] = ra_hours
+        self.data['moon']['dec_degrees'] = dec_degrees
+        self.data['moon']['last_update'] = datetime.now(timezone.utc).isoformat()
+        
+        self._save_json()
+    
+    def _save_json(self):
+        """Guarda los datos al archivo JSON"""
+        try:
+            with open(self.json_file, 'w', encoding='utf-8') as f:
+                json.dump(self.data, f, indent=2, ensure_ascii=False)
+            return True
+        except Exception as e:
+            print(f"ERROR guardando {self.json_file}: {e}")
+            return False
+    
+    def get_all_objects_dict(self):
+        """
+        Retorna diccionario con todos los objetos para busqueda
+        Las claves son nombres en minusculas
+        """
+        objects = {}
+        
+        for name, ra, dec in self.get_stars():
+            objects[name.lower()] = (ra, dec)
+        
+        for name, ra, dec in self.get_galaxies():
+            objects[name.lower()] = (ra, dec)
+        
+        for name, ra, dec in self.get_planets():
+            objects[name.lower()] = (ra, dec)
+        
+        moon_coords = self.get_moon()
+        objects['luna'] = moon_coords
+        objects['moon'] = moon_coords
+        
+        return objects
+    
+    def get_object_list_text(self):
+        """Retorna texto con la lista de objetos disponibles"""
+        stars = ", ".join([name for name, _, _ in self.get_stars()])
+        galaxies = ", ".join([name for name, _, _ in self.get_galaxies()])
+        planets = ", ".join([name for name, _, _ in self.get_planets()])
+        
+        return f"{stars}, Luna, {galaxies}, {planets}"
 
-# Planetas con coordenadas aproximadas
-PLANETS = [
-    ("Mercurio", 14.7047, -17.6831),   
-    ("Venus", 12.2089, 0.2944),        
-    ("Marte", 14.886, -16.800),      
-    ("Jupiter", 3.2841, 16.7892),      
-    ("Saturno", 23.1562, -8.9473)
-]
 
-# Coordenadas de la Luna (simplificado)
-MOON_RA_DEC = (10.684, 13.0)
+# Instancia global para compatibilidad con codigo existente
+_loader = CelestialDataLoader()
+
+# Variables globales para retrocompatibilidad
+REAL_STARS = _loader.get_stars()
+GALAXIES = _loader.get_galaxies()
+PLANETS = _loader.get_planets()
+MOON_RA_DEC = _loader.get_moon()
+
 
 def get_all_celestial_objects():
-    """
-    Retorna un diccionario con todos los objetos celestes
-    Las claves son nombres en minúsculas para búsqueda
-    """
-    celestial_objects = {}
-    
-    for name, ra, dec in REAL_STARS:
-        celestial_objects[name.lower()] = (ra, dec)
-    
-    for name, ra, dec in GALAXIES:
-        celestial_objects[name.lower()] = (ra, dec)
-    
-    for name, ra, dec in PLANETS:
-        celestial_objects[name.lower()] = (ra, dec)
-    
-    celestial_objects["luna"] = MOON_RA_DEC
-    celestial_objects["moon"] = MOON_RA_DEC
-    
-    return celestial_objects
+    """Retorna diccionario con todos los objetos celestes"""
+    return _loader.get_all_objects_dict()
+
 
 def get_object_list_text():
-    """
-    Retorna el texto con la lista de objetos disponibles
-    """
-    stars = ", ".join([name for name, _, _ in REAL_STARS])
-    galaxies = ", ".join([name for name, _, _ in GALAXIES])
-    planets = ", ".join([name for name, _, _ in PLANETS])
-    
-    return f"{stars}, Luna, {galaxies}, {planets}"
+    """Retorna el texto con la lista de objetos disponibles"""
+    return _loader.get_object_list_text()
+
+
+def reload_data():
+    """Recarga los datos desde el JSON"""
+    global _loader, REAL_STARS, GALAXIES, PLANETS, MOON_RA_DEC
+    _loader = CelestialDataLoader()
+    REAL_STARS = _loader.get_stars()
+    GALAXIES = _loader.get_galaxies()
+    PLANETS = _loader.get_planets()
+    MOON_RA_DEC = _loader.get_moon()

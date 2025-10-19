@@ -71,13 +71,16 @@ class SkyTrackerApp:
         self.tracker = ObjectTracker()
         self.input_handler = InputHandler()
         
-        # Generar estrellas de fondo
-        self.background_stars = [
-            (random.uniform(WORLD_MIN*2, WORLD_MAX*2), 
-             random.uniform(0, 15), 
-             random.uniform(WORLD_MIN*2, WORLD_MAX*2))
-            for _ in range(NUM_BACKGROUND_STARS)
-        ]
+        # Generar estrellas de fondo según el modo
+        if USE_DOME:
+            self.background_stars = self._generate_dome_stars()
+        else:
+            self.background_stars = [
+                (random.uniform(WORLD_MIN*2, WORLD_MAX*2), 
+                 random.uniform(0, 15), 
+                 random.uniform(WORLD_MIN*2, WORLD_MAX*2))
+                for _ in range(NUM_BACKGROUND_STARS)
+            ]
         
         # Registrar eventos
         self._register_events()
@@ -87,6 +90,25 @@ class SkyTrackerApp:
         
         # Iniciar bucle de actualización
         pyglet.clock.schedule(self.update)
+
+    def _generate_dome_stars(self):
+        """Genera estrellas distribuidas en la superficie del domo"""
+        import math
+        stars = []
+        for _ in range(NUM_BACKGROUND_STARS):
+            # Ángulo azimutal aleatorio (0 a 2π)
+            theta = random.uniform(0, 2 * math.pi)
+            # Ángulo polar aleatorio (0 a π/2 para hemisferio)
+            phi = random.uniform(0, math.pi / 2)
+            
+            # Convertir a cartesianas
+            r = DOME_RADIUS * 0.98  # Ligeramente dentro del domo
+            x = r * math.sin(phi) * math.cos(theta)
+            z = r * math.sin(phi) * math.sin(theta)
+            y = r * math.cos(phi) - 1  # -1 para ajustar al suelo
+            
+            stars.append((x, y, z))
+        return stars
     
     def _register_events(self):
         """Registra los manejadores de eventos"""

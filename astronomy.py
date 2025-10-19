@@ -116,21 +116,16 @@ def ra_dec_to_dome(ra_h, dec_deg, lst_h, lat_deg=LOCATION_LONGITUDE, dome_radius
     # Ajuste de azimut
     if math.sin(ha_rad) > 0:
         az_rad = 2*math.pi - az_rad
-
-    # Si el objeto está debajo del horizonte, no lo mostramos (o lo ponemos en el horizonte)
-    if alt_rad < 0:
-        alt_rad = 0
     
     # Convertir a coordenadas esféricas del domo
-    # alt_rad = 0 -> horizonte, alt_rad = pi/2 -> cenit
-    # Mapear altitud [0, pi/2] a ángulo polar [pi/2, 0]
     phi = math.pi/2 - alt_rad  # ángulo desde el polo (cenit)
     theta = az_rad  # azimut
     
     # Coordenadas cartesianas en el domo
-    x = dome_radius * math.sin(phi) * math.cos(theta)
-    z = dome_radius * math.sin(phi) * math.sin(theta)
-    y = dome_radius * math.cos(phi) - 1  # -1 para que el suelo esté en y=-1
+    # CORRECCIÓN: Z apunta al norte (negativo), X al este (positivo)
+    x = dome_radius * math.sin(phi) * math.sin(theta)  # Este
+    z = -dome_radius * math.sin(phi) * math.cos(theta)  # Norte (negativo)
+    y = dome_radius * math.cos(phi)  # Altura
     
     return x, y, z
 

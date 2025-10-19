@@ -10,14 +10,14 @@ Configuración global de la aplicación SkyTracker
 # Windows: COM0
 #
 # Reemplaza el 0 por el valor real.
-PORT = "/dev/pts/4"
+PORT = "/dev/pts/5"
 SIMULATE = True
 
 # Configuración del domo | ROTO
 DOME_RADIUS = 30.0
-DOME_SEGMENTS = 32
-DOME_RINGS = 16
-USE_DOME = False
+DOME_SEGMENTS = 64
+DOME_RINGS = 8
+USE_DOME = True
 
 # Configuración de cámara
 CAM_YAW = 45.0
@@ -30,7 +30,7 @@ MOUSE_SENSITIVITY_BASE = 0.1
 
 # Configuración del vector
 VEC_BASE_X = 0.0
-VEC_BASE_Y = -1.0
+VEC_BASE_Y = 0.0
 VEC_BASE_Z = 0.0
 VEC_YAW = 45.0
 VEC_PITCH = 45.0
