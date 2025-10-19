@@ -4,119 +4,426 @@
       "name": "Sirius",
       "ra_hours": 6.7715556,
       "dec_degrees": -16.7474167,
-      "description": "Estrella mas brillante del cielo"
+      "description": "Estrella mas brillante del cielo",
+      "size": 9,
+      "color": [
+        0.6,
+        0.8,
+        1.0
+      ]
     },
     {
       "name": "Betelgeuse",
       "ra_hours": 5.9429722,
       "dec_degrees": 7.4137222,
-      "description": "Supergigante roja en Orion"
+      "description": "Supergigante roja en Orion",
+      "size": 7,
+      "color": [
+        1.1,
+        0.4,
+        0.4
+      ]
     },
     {
       "name": "Rigel",
       "ra_hours": 5.26325,
       "dec_degrees": -8.1685,
-      "description": "Supergigante azul en Orion"
+      "description": "Supergigante azul en Orion",
+      "size": 7,
+      "color": [
+        0.5,
+        0.8,
+        1.0
+      ]
     },
     {
       "name": "Vega",
       "ra_hours": 18.630056,
       "dec_degrees": 38.811306,
-      "description": "Estrella principal de Lyra"
+      "description": "Estrella principal de Lyra",
+      "size": 8,
+      "color": [
+        0.7,
+        0.9,
+        1.0
+      ]
     },
     {
       "name": "Antares",
       "ra_hours": 16.51625,
       "dec_degrees": -26.489222,
-      "description": "Supergigante roja en Scorpius"
+      "description": "Supergigante roja en Scorpius",
+      "size": 7,
+      "color": [
+        1.0,
+        0.5,
+        0.5
+      ]
     },
     {
       "name": "Polaris",
       "ra_hours": 3.116,
       "dec_degrees": 89.371111,
-      "description": "Estrella polar del norte"
+      "description": "Estrella polar del norte",
+      "size": 6,
+      "color": [
+        1.0,
+        1.0,
+        0.8
+      ]
     },
     {
       "name": "Altair",
       "ra_hours": 19.867389,
       "dec_degrees": 8.938889,
-      "description": "Estrella principal de Aquila"
+      "description": "Estrella principal de Aquila",
+      "size": 6,
+      "color": [
+        0.9,
+        0.9,
+        0.6
+      ]
     },
     {
       "name": "Deneb",
       "ra_hours": 20.705222,
       "dec_degrees": 45.376972,
-      "description": "Supergigante en Cygnus"
+      "description": "Supergigante en Cygnus",
+      "size": 6,
+      "color": [
+        0.7,
+        0.9,
+        1.0
+      ]
     },
     {
       "name": "Spica",
       "ra_hours": 13.44225,
       "dec_degrees": -11.294333,
-      "description": "Estrella principal de Virgo"
+      "description": "Estrella principal de Virgo",
+      "size": 6,
+      "color": [
+        1.0,
+        0.8,
+        0.6
+      ]
     },
     {
       "name": "Arcturus",
       "ra_hours": 14.280361,
       "dec_degrees": 19.049444,
-      "description": "Gigante naranja en Bootes"
+      "description": "Gigante naranja en Bootes",
+      "size": 6,
+      "color": [
+        1.0,
+        0.6,
+        0.2
+      ]
+    },
+    {
+      "name": "Canopus",
+      "ra_hours": 6.409528,
+      "dec_degrees": -52.702861,
+      "description": "Segunda estrella más brillante",
+      "size": 8,
+      "color": [
+        1.0,
+        1.0,
+        0.8
+      ]
+    },
+    {
+      "name": "Achernar",
+      "ra_hours": 1.645444,
+      "dec_degrees": -57.104222,
+      "description": "Brilla en Eridanus",
+      "size": 6,
+      "color": [
+        0.5,
+        0.8,
+        1.0
+      ]
+    },
+    {
+      "name": "Alpha Centauri",
+      "ra_hours": 14.68875,
+      "dec_degrees": -60.942194,
+      "description": "Sistema estelar más cercano",
+      "size": 6,
+      "color": [
+        1.0,
+        0.9,
+        0.7
+      ]
+    },
+    {
+      "name": "Fomalhaut",
+      "ra_hours": 22.984944,
+      "dec_degrees": -29.485417,
+      "description": "Principal en Piscis Austrinus",
+      "size": 6,
+      "color": [
+        0.6,
+        0.8,
+        1.0
+      ]
+    },
+    {
+      "name": "Diphda",
+      "ra_hours": 0.748528,
+      "dec_degrees": -17.843167,
+      "description": "Brilla en Cetus",
+      "size": 6,
+      "color": [
+        1.0,
+        0.8,
+        0.6
+      ]
+    },
+    {
+      "name": "Sol",
+      "ra_hours": 13.593196423639565,
+      "dec_degrees": -9.957653177913244,
+      "description": "Sol",
+      "size": 1.2,
+      "color": [
+        1.0,
+        1.0,
+        0.0
+      ],
+      "last_update": "2025-10-19T06:30:34.109017+00:00"
+    },
+    {
+      "name": "Mintaka",
+      "ra_hours": 5.555694,
+      "dec_degrees": -0.277361,
+      "description": "Estrella en el cinturón de Orion",
+      "size": 4,
+      "color": [
+        0.7,
+        0.9,
+        1.0
+      ]
+    },
+    {
+      "name": "Alnilam",
+      "ra_hours": 5.625639,
+      "dec_degrees": -1.182722,
+      "description": "Estrella central de Orion",
+      "size": 4,
+      "color": [
+        0.5,
+        0.8,
+        1.0
+      ]
+    },
+    {
+      "name": "Alnitak",
+      "ra_hours": 5.701278,
+      "dec_degrees": -1.926139,
+      "description": "Estrella en el cinturón de Orion",
+      "size": 4,
+      "color": [
+        1.0,
+        0.5,
+        0.5
+      ]
+    },
+    {
+      "name": "Electra",
+      "ra_hours": 3.773917,
+      "dec_degrees": 24.195583,
+      "description": "Estrella en las Pléyades",
+      "size": 3,
+      "color": [
+        0.7,
+        0.9,
+        1.0
+      ]
+    },
+    {
+      "name": "Merope",
+      "ra_hours": 3.798083,
+      "dec_degrees": 24.029861,
+      "description": "Estrella en las Pléyades",
+      "size": 3,
+      "color": [
+        0.5,
+        0.8,
+        1.0
+      ]
+    },
+    {
+      "name": "Alcyone",
+      "ra_hours": 3.817417,
+      "dec_degrees": 24.186028,
+      "description": "Principal de las Pléyades",
+      "size": 3,
+      "color": [
+        1.0,
+        0.8,
+        0.6
+      ]
+    },
+    {
+      "name": "Atlas",
+      "ra_hours": 3.845389,
+      "dec_degrees": 24.133444,
+      "description": "Estrella en las Pléyades",
+      "size": 3,
+      "color": [
+        0.9,
+        0.9,
+        0.6
+      ]
+    },
+    {
+      "name": "Pleione",
+      "ra_hours": 3.845806,
+      "dec_degrees": 24.216694,
+      "description": "Estrella variable en Pléyades",
+      "size": 3,
+      "color": [
+        1.0,
+        0.5,
+        0.5
+      ]
+    },
+    {
+      "name": "Taygeta",
+      "ra_hours": 3.779528,
+      "dec_degrees": 24.549417,
+      "description": "Estrella en las Pléyades",
+      "size": 3,
+      "color": [
+        0.6,
+        0.8,
+        1.0
+      ]
+    },
+    {
+      "name": "Maia",
+      "ra_hours": 3.789806,
+      "dec_degrees": 24.4495,
+      "description": "Estrella en las Pléyades",
+      "size": 3,
+      "color": [
+        0.7,
+        0.9,
+        1.0
+      ]
     }
   ],
   "galaxies": [
     {
       "name": "M31",
       "ra_hours": 0.736306,
-      "dec_degrees": 41.413194,
-      "description": "Galaxia de Andromeda"
+      "dec_degrees": 41.413222,
+      "description": "Galaxia de Andromeda",
+      "size": 8,
+      "color": [
+        0.5,
+        1.0,
+        0.5
+      ]
     },
     {
       "name": "M81",
       "ra_hours": 9.960667,
       "dec_degrees": 68.939444,
-      "description": "Galaxia de Bode"
+      "description": "Galaxia de Bode",
+      "size": 8,
+      "color": [
+        0.6,
+        0.8,
+        0.6
+      ]
     },
     {
       "name": "M51",
       "ra_hours": 13.515722,
       "dec_degrees": 47.062389,
-      "description": "Galaxia del Remolino"
+      "description": "Galaxia del Remolino",
+      "size": 8,
+      "color": [
+        0.5,
+        0.9,
+        0.7
+      ]
     }
   ],
   "planets": [
     {
       "name": "Mercurio",
-      "ra_hours": 14.942223724676966,
-      "dec_degrees": -19.02863642586824,
-      "last_update": "2025-10-19T01:44:02.481891+00:00"
+      "ra_hours": 14.959810416278085,
+      "dec_degrees": -19.121578905582183,
+      "last_update": "2025-10-19T06:30:34.109017+00:00",
+      "size": 0.4,
+      "color": [
+        0.8,
+        0.8,
+        0.8
+      ]
     },
     {
       "name": "Venus",
-      "ra_hours": 12.412842139831394,
-      "dec_degrees": -1.0070671385375274,
-      "last_update": "2025-10-19T01:44:02.481891+00:00"
+      "ra_hours": 12.428145286314836,
+      "dec_degrees": -1.1046941543148239,
+      "last_update": "2025-10-19T06:30:34.109017+00:00",
+      "size": 0.5,
+      "color": [
+        1.0,
+        0.9,
+        0.6
+      ]
     },
     {
       "name": "Marte",
-      "ra_hours": 15.029456597921683,
-      "dec_degrees": -17.4402140800537,
-      "last_update": "2025-10-19T01:44:02.481891+00:00"
+      "ra_hours": 15.038856873851271,
+      "dec_degrees": -17.480985323025628,
+      "last_update": "2025-10-19T06:30:34.109017+00:00",
+      "size": 0.4,
+      "color": [
+        1.0,
+        0.4,
+        0.4
+      ]
     },
     {
       "name": "Jupiter",
-      "ra_hours": 7.718854752308265,
-      "dec_degrees": 21.380378243438262,
-      "last_update": "2025-10-19T01:44:02.481891+00:00"
+      "ra_hours": 7.7198988328626,
+      "dec_degrees": 21.37841105982047,
+      "last_update": "2025-10-19T06:30:34.109017+00:00",
+      "size": 0.5,
+      "color": [
+        0.9,
+        0.7,
+        0.5
+      ]
     },
     {
       "name": "Saturno",
-      "ra_hours": 23.82931821906857,
-      "dec_degrees": -3.8259680003757612,
-      "last_update": "2025-10-19T01:44:02.481891+00:00"
+      "ra_hours": 23.828536846363015,
+      "dec_degrees": -3.83054244178928,
+      "last_update": "2025-10-19T06:30:34.109017+00:00",
+      "size": 0.4,
+      "color": [
+        0.8,
+        0.7,
+        0.6
+      ]
     }
   ],
   "moon": {
-    "ra_hours": 11.877731719062984,
-    "dec_degrees": 0.20038705769365878,
-    "last_update": "2025-10-19T01:44:02.481891+00:00"
+    "ra_hours": 12.070954127251214,
+    "dec_degrees": -0.960738533103353,
+    "last_update": "2025-10-19T06:30:34.109017+00:00",
+    "size": 1.2,
+    "color": [
+      0.9,
+      0.9,
+      1.0
+    ]
   },
   "metadata": {
     "location": {
@@ -124,6 +431,6 @@
       "latitude": -32.4833,
       "longitude": -58.229561
     },
-    "last_full_update": "2025-10-19T01:44:02.481891+00:00"
+    "last_full_update": "2025-10-19T06:30:34.109017+00:00"
   }
 }

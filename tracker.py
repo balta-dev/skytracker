@@ -53,7 +53,11 @@ class ObjectTracker:
             return False
         
         # Obtener coordenadas RA/DEC del objeto
-        ra_h, dec_deg = self.celestial_objects[obj_lower]
+        obj_data = self.celestial_objects[obj_lower]
+        ra_h = obj_data['ra_hours']
+        dec_deg = obj_data['dec_degrees']
+        size = obj_data.get('size', 1.0)
+        color = obj_data.get('color', [1.0, 1.0, 1.0])
         
         # Calcular LST actual
         now_utc = datetime.now(timezone.utc)

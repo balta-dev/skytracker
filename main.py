@@ -27,6 +27,7 @@ from object_detection import (
 from tracker import ObjectTracker
 from input_handler import InputHandler
 from serial_comm import SerialComm
+from bloom_renderer import BloomRenderer
 import time
 
 
@@ -62,6 +63,8 @@ class SkyTrackerApp:
          # Renderer de texto cacheado
         self.text_renderer = CachedTextRenderer()
         
+        # Renderizar Bloom
+        self.bloom = BloomRenderer(self.window.width, self.window.height)
 
         # Componentes
         self.camera = Camera()
@@ -255,13 +258,9 @@ class SkyTrackerApp:
         self.window.clear()
         glEnable(GL_DEPTH_TEST)
         
-        # Aplicar vista de cámara
-        self.camera.apply_view()
-        
         # Calcular LST actual
         now_utc = datetime.now(timezone.utc)
         lst_deg, lst_h = calculate_lst(now_utc, LOCATION_LONGITUDE)
-        
         
         # Importar la función correcta según el modo
         if USE_DOME:
@@ -274,38 +273,72 @@ class SkyTrackerApp:
         # Proyectar objetos celestes
         stars_coords = [
             (name, *projection_func(ra, dec, lst_h, **projection_kwargs))
-            for name, ra, dec in REAL_STARS
+            for name, ra, dec, size in REAL_STARS
         ]
         
         galaxies_coords = [
             (name, *projection_func(ra, dec, lst_h, **projection_kwargs))
-            for name, ra, dec in GALAXIES
+            for name, ra, dec, size in GALAXIES
         ]
         
         planets_coords = [
             (name, *projection_func(ra, dec, lst_h, **projection_kwargs))
-            for name, ra, dec in PLANETS
+            for name, ra, dec, size in PLANETS
         ]
         
         moon_coords = projection_func(*MOON_RA_DEC, lst_h, **projection_kwargs)
         
-        moon_coords = ra_dec_to_xyz(*MOON_RA_DEC, lst_h)
+        # Variables para almacenar los datos de los vectores
+        vector_data = [None]
         
-        # Dibujar escena
-        draw_environment(self.background_stars, use_dome=USE_DOME)
-        draw_celestial_objects(
-            stars_coords, galaxies_coords, 
-            planets_coords, moon_coords, self.sphere_quad
-        )
-        draw_cardinals()
+        # ============================================================
+        # FUNCIÓN QUE DIBUJA LA ESCENA COMPLETA (PARA BLOOM)
+        # ============================================================
+        def render_scene_for_bloom():
+            self.camera.apply_view()
+            
+            # Dibujar entorno (con colores oscuros/apagados que no active el bloom)
+            draw_environment(self.background_stars, use_dome=USE_DOME)
+            draw_cardinals()
+            
+            # Dibujar objetos celestes (con colores brillantes que SÍ activan bloom)
+            draw_celestial_objects(
+                stars_coords, galaxies_coords, 
+                planets_coords, moon_coords, self.sphere_quad
+            )
         
-        # Dibujar vector y obtener punto de impacto
-        end_x, end_y, end_z, hit_x, hit_y, hit_z = self.vector.draw()
-        self.sensor_vector.draw()
+        # ============================================================
+        # RENDERIZAR TODO CON BLOOM (solo afecta lo brillante)
+        # ============================================================
+        self.bloom.render_with_bloom(render_scene_for_bloom, self.window.width, self.window.height)
         
-        # Dibujar UI
+        # ============================================================
+        # RENDERIZAR VECTORES (SIN BLOOM) - ENCIMA
+        # ============================================================
+        glDisable(GL_BLEND)
+        glEnable(GL_DEPTH_TEST)
+        self.camera.apply_view()
+        
+        vector_data[0] = self.vector.draw()
+        self.sensor_vector.draw(color=(0, 1, 0), crosshair=(0,1,0))
+        
+        # ============================================================
+        # RESTAURAR ESTADO DE OPENGL PARA UI
+        # ============================================================
+        glDisable(GL_DEPTH_TEST)
+        glMatrixMode(GL_PROJECTION)
+        glLoadIdentity()
+        glMatrixMode(GL_MODELVIEW)
+        glLoadIdentity()
+        
+        # ============================================================
+        # DIBUJAR UI ENCIMA (después del bloom, sin efecto)
+        # ============================================================
         draw_crosshair(self.window)
         self.search_box.draw(self.window)
+        
+        # Obtener los datos del vector que se dibujó dentro de render_scene()
+        end_x, end_y, end_z, hit_x, hit_y, hit_z = vector_data[0]
         
         # Detectar objetos apuntados
         pointed_obj = detect_pointed_object_by_vector(

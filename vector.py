@@ -10,6 +10,7 @@ from config import (
     COLOR_VECTOR, COLOR_VECTOR_TIP, COLOR_HIT_POINT,
     WORLD_MIN, WORLD_MAX, USE_DOME, DOME_RADIUS
 )
+from renderer import push_inside_dome
 
 
 class PointerVector:
@@ -103,9 +104,8 @@ class PointerVector:
         dx, dy, dz = self.get_direction()
         
         # Resolver: |P + t*D|² = R²
-        # Donde P = (base_x, base_y+1, base_z), D = (dx, dy, dz)
-        # +1 porque el centro del domo está en y=0 pero la base está en y=-1
-        py = self.base_y + 1
+        # Donde P = (base_x, base_y, base_z), D = (dx, dy, dz)
+        py = self.base_y
         
         a = dx*dx + dy*dy + dz*dz
         b = 2*(self.base_x*dx + py*dy + self.base_z*dz)
@@ -134,42 +134,74 @@ class PointerVector:
         hit_y = self.base_y + t * dy
         hit_z = self.base_z + t * dz
         
-        # Solo aceptar si está en el hemisferio superior (y >= -1)
-        if hit_y < -1:
+        # Solo aceptar si está en el hemisferio superior (y >= 0)
+        if hit_y < 0:
             return None, None, None
         
+        hit_x, hit_y, hit_z = push_inside_dome(hit_x, hit_y, hit_z)
         return hit_x, hit_y, hit_z
     
-    def draw(self):
-        """Dibuja el vector y su punto de impacto"""
+    def draw(self, color=COLOR_VECTOR, crosshair=COLOR_HIT_POINT):
         end_x, end_y, end_z = self.get_end_point()
         
-        # Dibujar línea del vector
-        glColor3f(*COLOR_VECTOR)
+        # Línea vector (IGUAL)
+        glColor3f(*color)
         glLineWidth(4)
         glBegin(GL_LINES)
         glVertex3f(self.base_x, self.base_y, self.base_z)
         glVertex3f(end_x, end_y, end_z)
         glEnd()
         
-        # Dibujar punta del vector
+        # Punta (IGUAL)
         glColor3f(*COLOR_VECTOR_TIP)
         glPointSize(6)
         glBegin(GL_POINTS)
         glVertex3f(end_x, end_y, end_z)
         glEnd()
         
-        # Calcular y dibujar punto de impacto según el modo
+        # Impacto
         if USE_DOME:
             hit_x, hit_y, hit_z = self.calculate_dome_hit()
         else:
             hit_x, hit_y, hit_z = self.calculate_wall_hit()
         
         if hit_x is not None:
-            glColor3f(*COLOR_HIT_POINT)
-            glPointSize(12)
-            glBegin(GL_POINTS)
-            glVertex3f(hit_x, hit_y, hit_z)
-            glEnd()
+            self._draw_circle_perpendicular(hit_x, hit_y, hit_z, end_x, end_y, end_z, crosshair)
         
         return end_x, end_y, end_z, hit_x, hit_y, hit_z
+
+
+    def _draw_circle_perpendicular(self, x, y, z, from_x, from_y, from_z, crosshair):
+        """CÍRCULO PERPENDICULAR AL VECTOR"""
+        glPushMatrix()
+        glTranslatef(x, y, z)
+        
+        # Vector dirección
+        dx, dy, dz = x - from_x, y - from_y, z - from_z
+        length = math.sqrt(dx*dx + dy*dy + dz*dz)
+        if length > 0:
+            dx, dy, dz = dx/length, dy/length, dz/length
+        
+        # Rotar círculo para que esté PERPENDICULAR
+        yaw = math.degrees(math.atan2(dx, dz))
+        pitch = math.degrees(math.asin(dy))
+        
+        glRotatef(yaw, 0, 1, 0)
+        glRotatef(-pitch, 1, 0, 0)
+        
+        glDisable(GL_DEPTH_TEST)
+        glEnable(GL_BLEND)
+        
+        # CÍRCULO HUECO
+        glColor4f(*crosshair, 0.6)
+        glLineWidth(2.0)
+        segments = 16
+        glBegin(GL_LINE_LOOP)
+        for i in range(segments):
+            angle = (i / segments) * 2 * math.pi
+            glVertex3f(math.cos(angle) * 0.4, math.sin(angle) * 0.4, 0)
+        glEnd()
+        
+        glDisable(GL_BLEND)
+        glEnable(GL_DEPTH_TEST)
+        glPopMatrix()

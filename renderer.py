@@ -1,17 +1,16 @@
-# renderer.py
 """
 Funciones de renderizado de objetos 3D
 """
 import math
 import pyglet
 from pyglet.gl import *
+from celestial_data import get_all_celestial_objects  # Importamos para acceder al JSON
 from config import (
     WORLD_MIN, WORLD_MAX,
     COLOR_GROUND, COLOR_GRID, COLOR_WALLS,
-    COLOR_STAR, COLOR_GALAXY, COLOR_PLANET, COLOR_MOON,
+    COLOR_STAR, COLOR_STAR_BLUE, COLOR_STAR_RED, COLOR_GALAXY, COLOR_PLANET, COLOR_SUN, COLOR_MOON,
+    COLOR_VECTOR, COLOR_VECTOR_TIP, COLOR_HIT_POINT,
     COLOR_CROSSHAIR, COLOR_CARDINALS,
-    POINT_SIZE_STAR, POINT_SIZE_GALAXY,
-    SPHERE_RADIUS_PLANET, SPHERE_RADIUS_MOON,
     CROSSHAIR_SIZE, USE_DOME, DOME_RADIUS
 )
 
@@ -47,6 +46,7 @@ def draw_crosshair(window):
 def draw_environment(background_stars, use_dome=False):
     """Dibuja el entorno (domo o cuadrado)"""
     
+    glDisable(GL_BLEND)
     if use_dome:
         from dome_renderer import draw_dome_ground, draw_dome
         draw_dome_ground()
@@ -66,7 +66,7 @@ def draw_environment(background_stars, use_dome=False):
         glLineWidth(1)
         glBegin(GL_LINES)
         for i in range(WORLD_MIN, WORLD_MAX + 1, 2):
-            glVertex3f(i, 0.01, WORLD_MIN)  # era -0.99
+            glVertex3f(i, 0.01, WORLD_MIN)
             glVertex3f(i, 0.01, WORLD_MAX)
             glVertex3f(WORLD_MIN, 0.01, i)
             glVertex3f(WORLD_MAX, 0.01, i)
@@ -100,44 +100,99 @@ def draw_environment(background_stars, use_dome=False):
     
     # Estrellas de fondo (siempre se dibujan)
     glPointSize(2)
-    glColor3f(0.7, 0.7, 0.7)
+    glColor3f(0.2, 0.2, 0.2)
     glBegin(GL_POINTS)
     for s in background_stars:
         glVertex3f(*s)
     glEnd()
 
 
+def push_inside_dome(x, y, z, factor=None):
+    """Empuja un punto ligeramente hacia adentro del domo para evitar clipping."""
+    from config import DOME_PUSH_FACTOR
+    if factor is None:
+        factor = DOME_PUSH_FACTOR
+    length = math.sqrt(x*x + y*y + z*z)
+    if length > 0:
+        scale = (length * factor) / length
+        return x * scale, y * scale, z * scale
+    return x, y, z
+
+
 def draw_celestial_objects(stars_coords, galaxies_coords, planets_coords, moon_coords, sphere_quad):
-    """Dibuja todos los objetos celestes"""
-    # Estrellas
-    glPointSize(POINT_SIZE_STAR)
-    glColor3f(*COLOR_STAR)
-    glBegin(GL_POINTS)
-    for _, x, y, z in stars_coords:
-        glVertex3f(x, y, z)
-    glEnd()
+    """Dibuja todos los objetos celestes usando tamaños y colores del JSON"""
+    # Obtener datos del JSON para referencia de tamaños y colores
+    celestial_objects = get_all_celestial_objects()
+
+    # Estrellas (excluyendo el Sol) - con efecto de brillo
+    glEnable(GL_POINT_SMOOTH)
+    glEnable(GL_BLEND)
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
     
+    for name, x, y, z in stars_coords:
+        if name.lower() != "sun" and name.lower() != "sol":  # Excluimos el Sol
+            x, y, z = push_inside_dome(x, y, z)
+            # Obtener datos del diccionario (o usar valores por defecto si no existe)
+            obj_data = celestial_objects.get(name.lower(), {"size": 6, "color": COLOR_STAR})
+            size = obj_data.get("size", 6)
+            color = obj_data.get("color", [c for c in COLOR_STAR])
+            
+            # Dibujar la estrella con brillo intensificado
+            glPointSize(size)
+            # Aumentar el brillo del color (valores > 1.0 para efecto HDR simulado)
+            bright_color = [min(c * 1.25, 1.1) for c in color]
+            glColor3f(*bright_color)
+            glBegin(GL_POINTS)
+            glVertex3f(x, y, z)
+            glEnd()
+    
+    glDisable(GL_POINT_SMOOTH)
+    glDisable(GL_BLEND)
+
+    # Renderizar el Sol como esfera
+    for name, x, y, z in stars_coords:
+        if name.lower() == "sun" or name.lower() == "sol":
+            x, y, z = push_inside_dome(x, y, z)
+            obj_data = celestial_objects.get(name.lower(), {"size": 1.8, "color": COLOR_SUN})
+            size = obj_data.get("size", 1.8)
+            color = obj_data.get("color", [c for c in COLOR_SUN])  # Convertir tupla a lista si es necesario
+            glPushMatrix()
+            glTranslatef(x, y, z)
+            glColor3f(*color)
+            gluSphere(sphere_quad, size, 20, 20)
+            glPopMatrix()
+
     # Galaxias
-    glPointSize(POINT_SIZE_GALAXY)
-    glColor3f(*COLOR_GALAXY)
-    glBegin(GL_POINTS)
-    for _, x, y, z in galaxies_coords:
+    for name, x, y, z in galaxies_coords:
+        obj_data = celestial_objects.get(name.lower(), {"size": 8, "color": COLOR_GALAXY})
+        size = obj_data.get("size", 8)
+        color = obj_data.get("color", [c for c in COLOR_GALAXY])  # Convertir tupla a lista si es necesario
+        glPointSize(size)
+        glColor3f(*color)
+        glBegin(GL_POINTS)
         glVertex3f(x, y, z)
-    glEnd()
-    
+        glEnd()
+
     # Planetas
-    glColor3f(*COLOR_PLANET)
-    for _, x, y, z in planets_coords:
+    for name, x, y, z in planets_coords:
+        obj_data = celestial_objects.get(name.lower(), {"size": 0.4, "color": COLOR_PLANET})
+        size = obj_data.get("size", 0.4)
+        color = obj_data.get("color", [c for c in COLOR_PLANET])  # Convertir tupla a lista si es necesario
         glPushMatrix()
         glTranslatef(x, y, z)
-        gluSphere(sphere_quad, SPHERE_RADIUS_PLANET, 12, 12)
+        glColor3f(*color)
+        gluSphere(sphere_quad, size, 12, 12)
         glPopMatrix()
-    
+
     # Luna
-    glColor3f(*COLOR_MOON)
+    moon_name = "luna"
+    obj_data = celestial_objects.get(moon_name, {"size": 1.2, "color": COLOR_MOON})
+    size = obj_data.get("size", 1.2)
+    color = obj_data.get("color", [c for c in COLOR_MOON])  # Convertir tupla a lista si es necesario
     glPushMatrix()
     glTranslatef(*moon_coords)
-    gluSphere(sphere_quad, SPHERE_RADIUS_MOON, 16, 16)
+    glColor3f(*color)
+    gluSphere(sphere_quad, size, 16, 16)
     glPopMatrix()
 
 
@@ -191,11 +246,6 @@ def draw_cardinals():
     
     if USE_DOME:
         # Posicionar en el horizonte del domo (phi = 90°, diferentes azimuts)
-        # Norte: azimut = 0° (theta = 0)
-        # Sur: azimut = 180° (theta = π)
-        # Este: azimut = 90° (theta = π/2)
-        # Oeste: azimut = 270° (theta = 3π/2)
-        
         y_horizon = -1  # En el horizonte
         
         # Norte (z negativo)
@@ -241,6 +291,7 @@ def draw_text_2d(window, lines, start_y):
     glMatrixMode(GL_PROJECTION)
     glPopMatrix()
     glMatrixMode(GL_MODELVIEW)
+
 
 class CachedTextRenderer:
     """Renderizador de texto 2D optimizado con caché y batch."""
@@ -298,4 +349,4 @@ class CachedTextRenderer:
         glPopMatrix()
         glMatrixMode(GL_PROJECTION)
         glPopMatrix()
-        glMatrixMode(GL_MODELVIEW)  
+        glMatrixMode(GL_MODELVIEW)

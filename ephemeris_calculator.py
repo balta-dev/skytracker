@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # ephemeris_calculator.py
 """
-Calcula posiciones actualizadas de planetas y Luna usando efemerides
+Calcula posiciones actualizadas de planetas, Luna y Sol usando efemerides
 Actualiza directamente el archivo celestial_data.json
 Requiere: pip install skyfield
 """
@@ -14,7 +14,7 @@ import json
 
 def calculate_ephemeris(location_lat=-32.4833, location_lon=-58.229561, date=None):
     """
-    Calcula las coordenadas RA/DEC de planetas y Luna para una fecha y ubicacion
+    Calcula las coordenadas RA/DEC de planetas, Luna y Sol para una fecha y ubicacion
     
     Args:
         location_lat: Latitud del observador en grados
@@ -52,6 +52,7 @@ def calculate_ephemeris(location_lat=-32.4833, location_lon=-58.229561, date=Non
         # Objetos celestes
         earth = eph['earth']
         moon = eph['moon']
+        sun = eph['sun']  # Agregamos el Sol
         
         planets_data = {
             'Mercurio': eph['mercury'],
@@ -59,6 +60,7 @@ def calculate_ephemeris(location_lat=-32.4833, location_lon=-58.229561, date=Non
             'Marte': eph['mars'],
             'Jupiter': eph['jupiter barycenter'],
             'Saturno': eph['saturn barycenter'],
+            'Sol': eph['sun']  # Agregamos Sol a los planetas_data
         }
         
         results = {}
@@ -74,6 +76,16 @@ def calculate_ephemeris(location_lat=-32.4833, location_lon=-58.229561, date=Non
         ra_hours = ra.hours
         dec_degrees = dec.degrees
         results['Luna'] = (ra_hours, dec_degrees)
+        print(f"  RA:  {ra_hours:.6f} horas")
+        print(f"  DEC: {dec_degrees:.6f} grados")
+        
+        # Calcular Sol
+        print("\nSOL:")
+        astrometric = (earth + observer).at(t).observe(sun)
+        ra, dec, distance = astrometric.radec()
+        ra_hours = ra.hours
+        dec_degrees = dec.degrees
+        results['Sol'] = (ra_hours, dec_degrees)
         print(f"  RA:  {ra_hours:.6f} horas")
         print(f"  DEC: {dec_degrees:.6f} grados")
         
@@ -138,6 +150,17 @@ def update_json_file(ephemeris_data, filename='celestial_data.json'):
             data['moon']['last_update'] = now
             print(f"  Actualizado: Luna")
         
+        # Actualizar Sol (busca en estrellas)
+        if 'Sol' in ephemeris_data:
+            for star in data.get('stars', []):
+                if star['name'] == 'Sol':
+                    ra, dec = ephemeris_data['Sol']
+                    star['ra_hours'] = ra
+                    star['dec_degrees'] = dec
+                    star['last_update'] = now
+                    print(f"  Actualizado: Sol")
+                    break
+        
         # Actualizar metadata
         if 'metadata' not in data:
             data['metadata'] = {}
@@ -161,7 +184,7 @@ def print_coordinates(ephemeris_data):
     print("COORDENADAS CALCULADAS:")
     print("="*60)
     
-    for name in ['Mercurio', 'Venus', 'Marte', 'Jupiter', 'Saturno', 'Luna']:
+    for name in ['Mercurio', 'Venus', 'Marte', 'Jupiter', 'Saturno', 'Luna', 'Sol']:
         if name in ephemeris_data:
             ra, dec = ephemeris_data[name]
             print(f"\n{name:12s} | RA: {ra:10.6f} h | DEC: {dec:10.6f} deg")
@@ -205,3 +228,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    

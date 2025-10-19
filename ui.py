@@ -127,8 +127,21 @@ class InfoDisplay:
             f"Rastreando: {tracking_obj if tracking_obj else 'ninguno'}",
             f"Apuntando con mouse: {looked_obj if looked_obj else 'ninguno'}",
             "",
-            "Objetos disponibles: Sirius, Betelgeuse, Rigel, Vega, Antares,",
-            "Polaris, Altair, Deneb, Spica, Arcturus, Luna, M31 (Andromeda), M81, M51,",
-            "Mercurio, Venus, Marte, Jupiter, Saturno"
+            "Objetos disponibles:",
+            "  * Estrellas: Sirius, Betelgeuse, Rigel,",
+            "    Vega, Antares, Polaris,",
+            "    Altair, Deneb, Spica,",
+            "    Arcturus, Canopus, Achernar,",
+            "    Alpha Centauri, Fomalhaut, Diphda,",
+            "    Mintaka, Alnilam, Alnitak,",
+            "    Electra, Merope, Alcyone,",
+            "    Atlas, Pleione, Taygeta, Maia",
+            "",
+            "  * Galaxias: M31, M81, M51",
+            "  * Sistema Solar:",
+            "    - Planetas: Mercurio, Venus,",
+            "      Marte, Jupiter, Saturno,",
+            "    - Sol",
+            "    - Luna"
         ]
         return lines

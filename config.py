@@ -10,14 +10,15 @@ Configuración global de la aplicación SkyTracker
 # Windows: COM0
 #
 # Reemplaza el 0 por el valor real.
-PORT = "/dev/pts/5"
+PORT = "/dev/pts/13"
 SIMULATE = True
 
-# Configuración del domo | ROTO
-DOME_RADIUS = 30.0
-DOME_SEGMENTS = 64
+# Configuración del domo
+DOME_RADIUS = 30
+DOME_SEGMENTS = 32
 DOME_RINGS = 8
 USE_DOME = True
+DOME_PUSH_FACTOR = 0.99 # Factor para empujar objetos hacia adentro del domo/cúpula
 
 # Configuración de cámara
 CAM_YAW = 45.0
@@ -51,21 +52,26 @@ NUM_BACKGROUND_STARS = 150
 COLOR_GROUND = (0.0, 0.1, 0.0)
 COLOR_GRID = (0.0, 0.3, 0.0)
 COLOR_WALLS = (0.0, 0.0, 0.1)
-COLOR_STAR = (1.0, 1.0, 0.8)
-COLOR_GALAXY = (0.5, 1.0, 0.5)
-COLOR_PLANET = (1.0, 0.6, 0.2)
-COLOR_MOON = (0.9, 0.9, 1.0)
+COLOR_STAR = (1.0, 1.0, 0.8)          
+COLOR_STAR_BLUE = (0.5, 0.8, 1.0)     
+COLOR_STAR_RED = (1.1, 0.5, 0.5)     
+COLOR_GALAXY = (0.5, 1.0, 0.5)        
+COLOR_PLANET = (1.0, 0.6, 0.2)        
+COLOR_MOON = (0.9, 0.9, 1.0)        
+COLOR_SUN = (1.0, 1.0, 0.0)           
 COLOR_VECTOR = (1.0, 0.0, 0.0)
 COLOR_VECTOR_TIP = (1.0, 1.0, 0.0)
-COLOR_HIT_POINT = (1.0, 0.0, 1.0)
+COLOR_HIT_POINT = (1.0, 1.0, 1.0)
 COLOR_CROSSHAIR = (1.0, 0.0, 0.0)
-COLOR_CARDINALS = (1.0, 1.0, 0.0)
+COLOR_CARDINALS = (0.7, 0.7, 0)
 
 # Tamaños
 POINT_SIZE_STAR = 6
+POINT_SIZE_BRIGHT_STAR = 8
 POINT_SIZE_GALAXY = 8
 SPHERE_RADIUS_PLANET = 0.4
 SPHERE_RADIUS_MOON = 1.2
+SPHERE_RADIUS_SUN = 1.8
 CROSSHAIR_SIZE = 10
 VECTOR_LENGTH = 3.0
 
