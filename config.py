@@ -64,7 +64,7 @@ COLOR_VECTOR = (1.0, 0.0, 0.0)
 COLOR_VECTOR_TIP = (1.0, 1.0, 0.0)
 COLOR_HIT_POINT = (1.0, 1.0, 1.0)
 COLOR_CROSSHAIR = (1.0, 0.0, 0.0)
-COLOR_CARDINALS = (0.7, 0.7, 0)
+COLOR_CARDINALS = (1, 1, 0)
 
 # Tamaños
 POINT_SIZE_STAR = 6
@@ -86,3 +86,9 @@ THRESHOLD_CAMERA = 2.0
 WORLD_MIN = -30
 WORLD_MAX = 30
 WORLD_SCALE = 30
+
+# Bloom/Glow effect
+BLOOM_ENABLED = False  # True para activar bloom por defecto, False para desactivar
+BLOOM_THRESHOLD = 0.1  # Umbral de brillo (0.0 - 1.0)
+BLOOM_STRENGTH = 1.2   # Intensidad del glow (0.0 - 3.0)
+BLOOM_BLUR_PASSES = 0  # Número de pasadas de blur (1-4)

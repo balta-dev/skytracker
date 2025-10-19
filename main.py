@@ -35,11 +35,16 @@ class SkyTrackerApp:
     """Clase principal de la aplicación SkyTracker"""
     
     def __init__(self):
+        
+        display = pyglet.canvas.get_display()
+        screen = display.get_default_screen()
+
         # Crear ventana
         self.window = pyglet.window.Window(
-            WINDOW_WIDTH, WINDOW_HEIGHT, 
+            screen.width, screen.height, 
             WINDOW_TITLE, 
-            resizable=True
+            resizable=True,
+            vsync=False
         )
         self.window.set_minimum_size(400, 300)
         self.window.set_exclusive_mouse(True)
@@ -142,13 +147,20 @@ class SkyTrackerApp:
         if symbol == key.ESCAPE:
             if self.search_box.active:
                 self.search_box.deactivate()
+                self.window.set_exclusive_mouse(True)
                 return pyglet.event.EVENT_HANDLED
             # Si no hay búsqueda activa, dejar que ESC cierre la app
             return
         
         # T para abrir búsqueda
         if symbol == key.T and not self.search_box.active:
+            self.window.set_exclusive_mouse(False)
             self.search_box.activate()
+            return pyglet.event.EVENT_HANDLED
+
+        # B para toggle bloom
+        if symbol == key.B:
+            self.bloom.toggle()
             return pyglet.event.EVENT_HANDLED
         
         # Si búsqueda está activa
@@ -157,6 +169,7 @@ class SkyTrackerApp:
                 # Intentar rastrear el objeto buscado
                 if self.tracker.start_tracking(self.search_box.get_text()):
                     self.search_box.deactivate()
+                    self.window.set_exclusive_mouse(True)
                 else:
                     self.search_box.clear()
             elif symbol == key.BACKSPACE:
@@ -257,6 +270,7 @@ class SkyTrackerApp:
         """Dibuja la escena"""
         self.window.clear()
         glEnable(GL_DEPTH_TEST)
+        glDepthFunc(GL_LESS)  # Función de profundidad estándar
         
         # Calcular LST actual
         now_utc = datetime.now(timezone.utc)
@@ -295,6 +309,9 @@ class SkyTrackerApp:
         # FUNCIÓN QUE DIBUJA LA ESCENA COMPLETA (PARA BLOOM)
         # ============================================================
         def render_scene_for_bloom():
+            
+            glEnable(GL_DEPTH_TEST)
+            glDepthFunc(GL_LESS)
             self.camera.apply_view()
             
             # Dibujar entorno (con colores oscuros/apagados que no active el bloom)
@@ -356,9 +373,11 @@ class SkyTrackerApp:
         # Mostrar información
         info_lines = InfoDisplay.create_info_text(
             self.camera, self.vector,
+            self.sensor_vector,
             lst_deg, lst_h,
             self.tracker.get_tracked_object_name(),
-            looked_obj
+            looked_obj,
+            self.bloom.user_enabled
         )
         self.text_renderer.draw(self.window, info_lines, self.window.height - 20)
         

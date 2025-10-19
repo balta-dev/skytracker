@@ -121,6 +121,12 @@ def push_inside_dome(x, y, z, factor=None):
 
 def draw_celestial_objects(stars_coords, galaxies_coords, planets_coords, moon_coords, sphere_quad):
     """Dibuja todos los objetos celestes usando tamaños y colores del JSON"""
+
+    # FORZAR depth test en modo lectura+escritura
+    glEnable(GL_DEPTH_TEST)
+    glDepthFunc(GL_LESS)
+    glDepthMask(GL_TRUE)  # Las estrellas SÍ escriben en depth buffer
+
     # Obtener datos del JSON para referencia de tamaños y colores
     celestial_objects = get_all_celestial_objects()
 

@@ -118,12 +118,14 @@ class InfoDisplay:
     """Clase para gestionar la información en pantalla"""
     
     @staticmethod
-    def create_info_text(camera, vector, lst_deg, lst_h, tracking_obj, looked_obj):
+    def create_info_text(camera, vector, sensor_vector, lst_deg, lst_h, tracking_obj, looked_obj, bloom_enabled):
         """Crea las líneas de información a mostrar"""
         lines = [
             f"CÁMARA - Yaw: {camera.yaw:.1f}° Pitch: {camera.pitch:.1f}°",
             f"VECTOR - Yaw: {vector.yaw:.1f}° Pitch: {vector.pitch:.1f}°",
+            f"FEEDBACK - Yaw: {sensor_vector.yaw:.1f}° Pitch: {sensor_vector.pitch:.1f}°",
             f"LST: {lst_deg:.2f}° ({lst_h:.2f}h)",
+            f"Bloom: {'ON' if bloom_enabled else 'OFF'} [B]",
             f"Rastreando: {tracking_obj if tracking_obj else 'ninguno'}",
             f"Apuntando con mouse: {looked_obj if looked_obj else 'ninguno'}",
             "",

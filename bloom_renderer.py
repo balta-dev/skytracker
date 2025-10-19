@@ -201,10 +201,12 @@ class ShaderProgram:
 class FrameBuffer:
     """Framebuffer Object para renderizar a textura"""
     
-    def __init__(self, width, height):
+    def __init__(self, width, height, with_depth=False):
         self.width = width
         self.height = height
         self.created = False
+        self.with_depth = with_depth
+        self.depth_buffer = None
         
         try:
             # Crear textura
@@ -225,16 +227,29 @@ class FrameBuffer:
             glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, 
                                    GL_TEXTURE_2D, self.texture, 0)
             
+            # CAMBIO: Crear depth buffer si es necesario
+            if with_depth:
+                self.depth_buffer = GLuint()
+                glGenRenderbuffers(1, ctypes.byref(self.depth_buffer))
+                glBindRenderbuffer(GL_RENDERBUFFER, self.depth_buffer)
+                glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, width, height)
+                glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
+                                         GL_RENDERBUFFER, self.depth_buffer)
+                print(f"  ✓ Depth buffer creado para FBO {width}x{height}")
+            
             # Verificar
             status = glCheckFramebufferStatus(GL_FRAMEBUFFER)
             if status != GL_FRAMEBUFFER_COMPLETE:
-                raise Exception(f"Framebuffer incomplete: {status}")
+                raise Exception(f"Framebuffer incomplete: {hex(status)}")
             
             glBindFramebuffer(GL_FRAMEBUFFER, 0)
+            glBindRenderbuffer(GL_RENDERBUFFER, 0)
             self.created = True
             
         except Exception as e:
             print(f"ERROR creating framebuffer: {e}")
+            import traceback
+            traceback.print_exc()
             self.created = False
     
     def bind(self):
@@ -259,18 +274,21 @@ class BloomRenderer:
     """Renderizador con efecto Bloom/Glow"""
     
     def __init__(self, width, height):
+        from config import BLOOM_ENABLED, BLOOM_THRESHOLD, BLOOM_STRENGTH, BLOOM_BLUR_PASSES
+
         self.width = width
         self.height = height
         self.enabled = False
+        self.user_enabled = BLOOM_ENABLED
         
         print("Inicializando Bloom Renderer...")
         
         try:
-            # Crear FBOs
-            self.scene_fbo = FrameBuffer(width, height)
-            self.bright_fbo = FrameBuffer(width, height)
-            self.blur_fbo1 = FrameBuffer(width, height)
-            self.blur_fbo2 = FrameBuffer(width, height)
+            # CAMBIO: Solo scene_fbo necesita depth buffer
+            self.scene_fbo = FrameBuffer(width, height, with_depth=True)
+            self.bright_fbo = FrameBuffer(width, height, with_depth=False)
+            self.blur_fbo1 = FrameBuffer(width, height, with_depth=False)
+            self.blur_fbo2 = FrameBuffer(width, height, with_depth=False)
             
             # Compilar shaders
             self.brightness_shader = ShaderProgram(VERTEX_SHADER, BRIGHTNESS_SHADER)
@@ -284,10 +302,14 @@ class BloomRenderer:
                 self.brightness_shader.compiled and self.blur_h_shader.compiled and
                 self.blur_v_shader.compiled and self.combine_shader.compiled):
                 
-                #self.enabled = True
-                #print("✓ Bloom Renderer inicializado correctamente")
-                self.enabled = False
-                print("Bloom Renderer temporalmente deshabilitado.")
+                if self.scene_fbo.with_depth and self.scene_fbo.depth_buffer:
+                    print(f"✓ Scene FBO tiene depth buffer (ID: {self.scene_fbo.depth_buffer.value})")
+                else:
+                    print("✗ WARNING: Scene FBO NO TIENE depth buffer!")
+                
+                self.enabled = True
+                print("✓ Bloom Renderer inicializado correctamente")
+                print(f"  Estado inicial: {'ACTIVADO' if self.user_enabled else 'DESACTIVADO'}")
             else:
                 print("✗ Bloom Renderer falló al inicializar")
             
@@ -296,10 +318,10 @@ class BloomRenderer:
             self.enabled = False
         
         # Parámetros ajustables
-        self.brightness_threshold = 0.9  # Umbral MUY ALTO - solo colores > 1.0 (estrellas brillantes)
-        self.blur_size = 2.0 / width     # Tamaño del blur
-        self.bloom_strength = 1.2        # Intensidad del glow
-        self.blur_passes = 2             # Número de pasadas de blur
+        self.brightness_threshold = 0.9
+        self.blur_size = 2.0 / width
+        self.bloom_strength = 1.2
+        self.blur_passes = 2
     
     def render_with_bloom(self, render_scene_func, viewport_width, viewport_height):
         """
@@ -310,15 +332,23 @@ class BloomRenderer:
             viewport_width: ancho del viewport actual
             viewport_height: alto del viewport actual
         """
-        if not self.enabled:
-            # Si el bloom no está disponible, renderizar normalmente
+        if not self.enabled or not self.user_enabled:
             render_scene_func()
             return
         
-        # Paso 1: Renderizar escena a textura
+        # CAMBIO: Renderizar escena a textura CON depth test
         self.scene_fbo.bind()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+        
+        # FORZAR depth test activo
+        glEnable(GL_DEPTH_TEST)
+        glDepthFunc(GL_LESS)
+        glDepthMask(GL_TRUE)
+        glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE)
+        
         render_scene_func()
+        
+        glFlush()
         self.scene_fbo.unbind()
         
         # Paso 2: Extraer partes brillantes
@@ -326,23 +356,23 @@ class BloomRenderer:
                          self.brightness_shader,
                          {'threshold': self.brightness_threshold})
         
-        # Paso 3: Blur horizontal y vertical (múltiples pasadas)
+        # Paso 3: Blur horizontal y vertical
         src_fbo = self.bright_fbo
         for i in range(self.blur_passes):
-            # Blur horizontal
             self._render_pass(src_fbo, self.blur_fbo1,
                             self.blur_h_shader,
                             {'blur_size': self.blur_size})
-            # Blur vertical
             self._render_pass(self.blur_fbo1, self.blur_fbo2,
                             self.blur_v_shader,
                             {'blur_size': self.blur_size})
             src_fbo = self.blur_fbo2
         
         # Paso 4: Combinar escena + bloom
-        glBindFramebuffer(GL_FRAMEBUFFER, 0)  # Volver al framebuffer por defecto
+        glBindFramebuffer(GL_FRAMEBUFFER, 0)
         glViewport(0, 0, viewport_width, viewport_height)
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+        
+        glDisable(GL_DEPTH_TEST)
         
         self.combine_shader.use()
         
@@ -357,13 +387,18 @@ class BloomRenderer:
         self._draw_fullscreen_quad()
         
         glUseProgram(0)
-        glBindTexture(GL_TEXTURE_2D, 0)  # Desactivar texturas
-        glActiveTexture(GL_TEXTURE0)     # Volver a texture unit 0
+        glBindTexture(GL_TEXTURE_2D, 0)
+        glActiveTexture(GL_TEXTURE0)
+        
+        # CAMBIO: Restaurar depth test
+        glEnable(GL_DEPTH_TEST)
     
     def _render_pass(self, input_fbo, output_fbo, shader, uniforms):
         """Renderiza una pasada de post-procesamiento"""
         output_fbo.bind()
         glClear(GL_COLOR_BUFFER_BIT)
+        
+        glDisable(GL_DEPTH_TEST)
         
         shader.use()
         input_fbo.bind_texture(0)
@@ -406,7 +441,12 @@ class BloomRenderer:
         glMatrixMode(GL_MODELVIEW)
     
     def toggle(self):
-        """Activa/desactiva el bloom"""
+        """Activa/desactiva el bloom (solo si está disponible)"""
         if self.enabled:
-            print(f"Bloom: {'ON' if self.enabled else 'OFF'} (threshold={self.brightness_threshold:.2f}, strength={self.bloom_strength:.2f})")
-        return self.enabled
+            self.user_enabled = not self.user_enabled
+            print(f"Bloom: {'ACTIVADO' if self.user_enabled else 'DESACTIVADO'}")
+            if self.user_enabled:
+                print(f"  (threshold={self.brightness_threshold:.2f}, strength={self.bloom_strength:.2f})")
+        else:
+            print("Bloom no disponible (falló la inicialización)")
+        return self.user_enabled
