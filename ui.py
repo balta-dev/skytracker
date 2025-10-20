@@ -1,17 +1,77 @@
 # ui.py
 """
-Interfaz de usuario: búsqueda y elementos de información
+Interfaz de usuario: búsqueda y elementos de información - OPTIMIZADO
 """
 import pyglet
 from pyglet.gl import *
 
 
 class SearchBox:
-    """Clase para gestionar el cuadro de búsqueda de objetos"""
+    """Clase para gestionar el cuadro de búsqueda de objetos - OPTIMIZADA"""
     
     def __init__(self):
         self.active = False
         self.text = ""
+        
+        # Pre-crear labels para evitar recreación
+        self.title_label = pyglet.text.Label(
+            "Buscar objeto celeste:",
+            x=0, y=0,
+            color=(255, 255, 255, 255),
+            font_size=12
+        )
+        
+        self.search_label = pyglet.text.Label(
+            "",
+            x=0, y=0,
+            color=(0, 255, 255, 255),
+            font_size=14,
+            bold=True
+        )
+        
+        self.help_label = pyglet.text.Label(
+            "ENTER: buscar | ESC: cancelar",
+            x=0, y=0,
+            color=(200, 200, 200, 255),
+            font_size=10
+        )
+        
+        # Batch para renderizar todo junto
+        self.batch = pyglet.graphics.Batch()
+        
+        # Recrear labels con el batch
+        self._recreate_labels_with_batch()
+    
+    def _recreate_labels_with_batch(self):
+        """Recrea los labels usando el batch para mejor performance"""
+        self.title_label.delete()
+        self.search_label.delete()
+        self.help_label.delete()
+        
+        self.title_label = pyglet.text.Label(
+            "Buscar objeto celeste:",
+            x=0, y=0,
+            color=(255, 255, 255, 255),
+            font_size=12,
+            batch=self.batch
+        )
+        
+        self.search_label = pyglet.text.Label(
+            "",
+            x=0, y=0,
+            color=(0, 255, 255, 255),
+            font_size=14,
+            bold=True,
+            batch=self.batch
+        )
+        
+        self.help_label = pyglet.text.Label(
+            "ENTER: buscar | ESC: cancelar",
+            x=0, y=0,
+            color=(200, 200, 200, 255),
+            font_size=10,
+            batch=self.batch
+        )
     
     def activate(self):
         """Activa el cuadro de búsqueda"""
@@ -41,7 +101,7 @@ class SearchBox:
         self.text = ""
     
     def draw(self, window):
-        """Dibuja el cuadro de búsqueda"""
+        """Dibuja el cuadro de búsqueda - OPTIMIZADO"""
         if not self.active:
             return
         
@@ -79,33 +139,19 @@ class SearchBox:
         glVertex2f(box_x, box_y + box_height)
         glEnd()
         
-        # Título
-        title = pyglet.text.Label(
-            "Buscar objeto celeste:",
-            x=box_x + 10, y=box_y + 70,
-            color=(255, 255, 255, 255),
-            font_size=12
-        )
-        title.draw()
+        # Actualizar posiciones de los labels
+        self.title_label.x = box_x + 10
+        self.title_label.y = box_y + 70
         
-        # Texto de búsqueda
-        search_display = pyglet.text.Label(
-            self.text + "_",
-            x=box_x + 10, y=box_y + 40,
-            color=(0, 255, 255, 255),
-            font_size=14,
-            bold=True
-        )
-        search_display.draw()
+        self.search_label.text = self.text + "_"
+        self.search_label.x = box_x + 10
+        self.search_label.y = box_y + 40
         
-        # Ayuda
-        help_text = pyglet.text.Label(
-            "ENTER: buscar | ESC: cancelar",
-            x=box_x + 10, y=box_y + 10,
-            color=(200, 200, 200, 255),
-            font_size=10
-        )
-        help_text.draw()
+        self.help_label.x = box_x + 10
+        self.help_label.y = box_y + 10
+        
+        # Dibujar todos los labels en un solo batch
+        self.batch.draw()
         
         glEnable(GL_DEPTH_TEST)
         glPopMatrix()
@@ -117,10 +163,41 @@ class SearchBox:
 class InfoDisplay:
     """Clase para gestionar la información en pantalla"""
     
+    # Cache de líneas de objetos disponibles (no cambian nunca)
+    _static_lines_cache = None
+    
+    @classmethod
+    def _get_static_lines(cls):
+        """Obtiene las líneas estáticas (se cachean una sola vez)"""
+        if cls._static_lines_cache is None:
+            cls._static_lines_cache = [
+                "",
+                "Objetos disponibles:",
+                "  * Estrellas: Sirius, Betelgeuse, Rigel,",
+                "    Vega, Antares, Polaris,",
+                "    Altair, Deneb, Spica,",
+                "    Arcturus, Canopus, Achernar,",
+                "    Alpha Centauri, Fomalhaut, Diphda,",
+                "    Mintaka, Alnilam, Alnitak,",
+                "    Electra, Merope, Alcyone,",
+                "    Atlas, Pleione, Taygeta, Maia",
+                "",
+                "  * Galaxias: M31, M81, M51",
+                "  * Sistema Solar:",
+                "    - Planetas: Mercurio, Venus,",
+                "      Marte, Jupiter, Saturno,",
+                "    - Sol",
+                "    - Luna"
+            ]
+        return cls._static_lines_cache
+    
     @staticmethod
-    def create_info_text(camera, vector, sensor_vector, lst_deg, lst_h, tracking_obj, looked_obj, bloom_enabled):
-        """Crea las líneas de información a mostrar"""
-        lines = [
+    def create_info_text(camera, vector, sensor_vector, lst_deg, lst_h, 
+                        tracking_obj, looked_obj, bloom_enabled):
+        """Crea las líneas de información a mostrar - OPTIMIZADO"""
+        
+        # Líneas dinámicas (cambian frecuentemente)
+        dynamic_lines = [
             f"CÁMARA - Yaw: {camera.yaw:.1f}° Pitch: {camera.pitch:.1f}°",
             f"VECTOR - Yaw: {vector.yaw:.1f}° Pitch: {vector.pitch:.1f}°",
             f"FEEDBACK - Yaw: {sensor_vector.yaw:.1f}° Pitch: {sensor_vector.pitch:.1f}°",
@@ -128,22 +205,7 @@ class InfoDisplay:
             f"Bloom: {'ON' if bloom_enabled else 'OFF'} [B]",
             f"Rastreando: {tracking_obj if tracking_obj else 'ninguno'}",
             f"Apuntando con mouse: {looked_obj if looked_obj else 'ninguno'}",
-            "",
-            "Objetos disponibles:",
-            "  * Estrellas: Sirius, Betelgeuse, Rigel,",
-            "    Vega, Antares, Polaris,",
-            "    Altair, Deneb, Spica,",
-            "    Arcturus, Canopus, Achernar,",
-            "    Alpha Centauri, Fomalhaut, Diphda,",
-            "    Mintaka, Alnilam, Alnitak,",
-            "    Electra, Merope, Alcyone,",
-            "    Atlas, Pleione, Taygeta, Maia",
-            "",
-            "  * Galaxias: M31, M81, M51",
-            "  * Sistema Solar:",
-            "    - Planetas: Mercurio, Venus,",
-            "      Marte, Jupiter, Saturno,",
-            "    - Sol",
-            "    - Luna"
         ]
-        return lines
+        
+        # Combinar con líneas estáticas cacheadas
+        return dynamic_lines + InfoDisplay._get_static_lines()

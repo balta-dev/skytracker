@@ -15,10 +15,10 @@ SIMULATE = True
 
 # Configuración del domo
 DOME_RADIUS = 30
-DOME_SEGMENTS = 32
+DOME_SEGMENTS = 16
 DOME_RINGS = 8
 USE_DOME = True
-DOME_PUSH_FACTOR = 0.99 # Factor para empujar objetos hacia adentro del domo/cúpula
+DOME_PUSH_FACTOR = 0.97 # Factor para empujar objetos hacia adentro del domo/cúpula
 
 # Configuración de cámara
 CAM_YAW = 45.0
@@ -38,8 +38,6 @@ VEC_PITCH = 45.0
 
 # Configuración de visualización
 FOV = 80.0
-WINDOW_WIDTH = 1280
-WINDOW_HEIGHT = 720
 WINDOW_TITLE = "SkyTracker - GRUPO 7"
 
 # Ubicación del observador (longitud en grados)
@@ -89,6 +87,7 @@ WORLD_SCALE = 30
 
 # Bloom/Glow effect
 BLOOM_ENABLED = False  # True para activar bloom por defecto, False para desactivar
-BLOOM_THRESHOLD = 0.1  # Umbral de brillo (0.0 - 1.0)
-BLOOM_STRENGTH = 1.2   # Intensidad del glow (0.0 - 3.0)
-BLOOM_BLUR_PASSES = 0  # Número de pasadas de blur (1-4)
+BLOOM_THRESHOLD = 0.6  # Umbral de brillo (0.0 - 1.0)
+BLOOM_STRENGTH = 1.3   # Intensidad del glow (0.0 - 3.0)
+BLOOM_SIZE = 2 / 1500
+BLOOM_BLUR_PASSES = 2  # Número de pasadas de blur (1-4)

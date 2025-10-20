@@ -1,10 +1,10 @@
 """
-Funciones de renderizado de objetos 3D
+Funciones de renderizado de objetos 3D - OPTIMIZADO
 """
 import math
 import pyglet
 from pyglet.gl import *
-from celestial_data import get_all_celestial_objects  # Importamos para acceder al JSON
+from celestial_data import get_all_celestial_objects
 from config import (
     WORLD_MIN, WORLD_MAX,
     COLOR_GROUND, COLOR_GRID, COLOR_WALLS,
@@ -13,6 +13,19 @@ from config import (
     COLOR_CROSSHAIR, COLOR_CARDINALS,
     CROSSHAIR_SIZE, USE_DOME, DOME_RADIUS
 )
+
+
+# ============================================================
+# CACHE GLOBAL PARA DATOS CELESTIALES
+# ============================================================
+_celestial_cache = None
+
+def get_cached_celestial_data():
+    """Cache de datos celestiales para evitar búsquedas repetitivas"""
+    global _celestial_cache
+    if _celestial_cache is None:
+        _celestial_cache = get_all_celestial_objects()
+    return _celestial_cache
 
 
 def draw_crosshair(window):
@@ -48,9 +61,9 @@ def draw_environment(background_stars, use_dome=False):
     
     glDisable(GL_BLEND)
     if use_dome:
-        from dome_renderer import draw_dome_ground, draw_dome
+        from dome_renderer import draw_dome_ground, draw_dome_optimized
         draw_dome_ground()
-        draw_dome()
+        draw_dome_optimized()
     else:
         # Suelo
         glColor3f(*COLOR_GROUND)
@@ -119,87 +132,147 @@ def push_inside_dome(x, y, z, factor=None):
     return x, y, z
 
 
-def draw_celestial_objects(stars_coords, galaxies_coords, planets_coords, moon_coords, sphere_quad):
-    """Dibuja todos los objetos celestes usando tamaños y colores del JSON"""
-
-    # FORZAR depth test en modo lectura+escritura
-    glEnable(GL_DEPTH_TEST)
-    glDepthFunc(GL_LESS)
-    glDepthMask(GL_TRUE)  # Las estrellas SÍ escriben en depth buffer
-
-    # Obtener datos del JSON para referencia de tamaños y colores
-    celestial_objects = get_all_celestial_objects()
-
-    # Estrellas (excluyendo el Sol) - con efecto de brillo
-    glEnable(GL_POINT_SMOOTH)
-    glEnable(GL_BLEND)
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+# ============================================================
+# OPTIMIZACIÓN: Batch rendering con VBOs
+# ============================================================
+class CelestialRenderer:
+    """Renderizador optimizado de objetos celestiales usando batching"""
     
-    for name, x, y, z in stars_coords:
-        if name.lower() != "sun" and name.lower() != "sol":  # Excluimos el Sol
-            x, y, z = push_inside_dome(x, y, z)
-            # Obtener datos del diccionario (o usar valores por defecto si no existe)
-            obj_data = celestial_objects.get(name.lower(), {"size": 6, "color": COLOR_STAR})
-            size = obj_data.get("size", 6)
-            color = obj_data.get("color", [c for c in COLOR_STAR])
+    def __init__(self, sphere_quad):
+        self.sphere_quad = sphere_quad
+        self.celestial_data = get_cached_celestial_data()
+        
+        # Pre-cache de colores y tamaños para evitar lookups
+        self.star_cache = {}
+        self.galaxy_cache = {}
+        self.planet_cache = {}
+        
+    def _get_object_data(self, name, cache, default_size, default_color):
+        """Obtiene datos del objeto con cache"""
+        if name not in cache:
+            obj_data = self.celestial_data.get(name.lower(), {
+                "size": default_size, 
+                "color": list(default_color)
+            })
+            cache[name] = (obj_data["size"], obj_data["color"])
+        return cache[name]
+    
+    def draw_stars_batch(self, stars_coords):
+        """Dibuja todas las estrellas en un solo batch (excepto el Sol)"""
+        glEnable(GL_POINT_SMOOTH)
+        glEnable(GL_BLEND)
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+        glEnable(GL_DEPTH_TEST)
+        glDepthFunc(GL_LESS)
+        glDepthMask(GL_TRUE)
+        
+        # Agrupar estrellas por tamaño para minimizar cambios de estado
+        stars_by_size = {}
+        
+        for name, x, y, z in stars_coords:
+            if name.lower() in ("sun", "sol"):
+                continue
+                
+            size, color = self._get_object_data(name, self.star_cache, 6, COLOR_STAR)
             
-            # Dibujar la estrella con brillo intensificado
-            glPointSize(size)
-            # Aumentar el brillo del color (valores > 1.0 para efecto HDR simulado)
+            if size not in stars_by_size:
+                stars_by_size[size] = []
+            
+            x, y, z = push_inside_dome(x, y, z)
             bright_color = [min(c * 1.25, 1.1) for c in color]
-            glColor3f(*bright_color)
+            stars_by_size[size].append((x, y, z, bright_color))
+        
+        # Dibujar agrupadas por tamaño
+        for size, stars in stars_by_size.items():
+            glPointSize(size)
             glBegin(GL_POINTS)
-            glVertex3f(x, y, z)
+            for x, y, z, color in stars:
+                glColor3f(*color)
+                glVertex3f(x, y, z)
+            glEnd()
+        
+        glDisable(GL_POINT_SMOOTH)
+        glDisable(GL_BLEND)
+    
+    def draw_sun(self, stars_coords):
+        """Dibuja el Sol como esfera"""
+        for name, x, y, z in stars_coords:
+            if name.lower() in ("sun", "sol"):
+                x, y, z = push_inside_dome(x, y, z)
+                size, color = self._get_object_data(name, self.star_cache, 1.8, COLOR_SUN)
+                
+                glPushMatrix()
+                glTranslatef(x, y, z)
+                glColor3f(*color)
+                gluSphere(self.sphere_quad, size, 20, 20)
+                glPopMatrix()
+                break
+    
+    def draw_galaxies_batch(self, galaxies_coords):
+        """Dibuja todas las galaxias en un solo batch"""
+        # Agrupar por tamaño
+        galaxies_by_size = {}
+        
+        for name, x, y, z in galaxies_coords:
+            size, color = self._get_object_data(name, self.galaxy_cache, 8, COLOR_GALAXY)
+            
+            if size not in galaxies_by_size:
+                galaxies_by_size[size] = []
+            
+            galaxies_by_size[size].append((x, y, z, color))
+        
+        # Dibujar agrupadas
+        for size, galaxies in galaxies_by_size.items():
+            glPointSize(size)
+            glBegin(GL_POINTS)
+            for x, y, z, color in galaxies:
+                glColor3f(*color)
+                x, y, z = push_inside_dome(x, y, z)
+                glVertex3f(x, y, z)
             glEnd()
     
-    glDisable(GL_POINT_SMOOTH)
-    glDisable(GL_BLEND)
-
-    # Renderizar el Sol como esfera
-    for name, x, y, z in stars_coords:
-        if name.lower() == "sun" or name.lower() == "sol":
+    def draw_planets_batch(self, planets_coords):
+        """Dibuja todos los planetas"""
+        for name, x, y, z in planets_coords:
+            size, color = self._get_object_data(name, self.planet_cache, 0.4, COLOR_PLANET)
             x, y, z = push_inside_dome(x, y, z)
-            obj_data = celestial_objects.get(name.lower(), {"size": 1.8, "color": COLOR_SUN})
-            size = obj_data.get("size", 1.8)
-            color = obj_data.get("color", [c for c in COLOR_SUN])  # Convertir tupla a lista si es necesario
             glPushMatrix()
             glTranslatef(x, y, z)
             glColor3f(*color)
-            gluSphere(sphere_quad, size, 20, 20)
+            gluSphere(self.sphere_quad, size, 12, 12)
             glPopMatrix()
-
-    # Galaxias
-    for name, x, y, z in galaxies_coords:
-        obj_data = celestial_objects.get(name.lower(), {"size": 8, "color": COLOR_GALAXY})
-        size = obj_data.get("size", 8)
-        color = obj_data.get("color", [c for c in COLOR_GALAXY])  # Convertir tupla a lista si es necesario
-        glPointSize(size)
-        glColor3f(*color)
-        glBegin(GL_POINTS)
-        glVertex3f(x, y, z)
-        glEnd()
-
-    # Planetas
-    for name, x, y, z in planets_coords:
-        obj_data = celestial_objects.get(name.lower(), {"size": 0.4, "color": COLOR_PLANET})
-        size = obj_data.get("size", 0.4)
-        color = obj_data.get("color", [c for c in COLOR_PLANET])  # Convertir tupla a lista si es necesario
+    
+    def draw_moon(self, moon_coords):
+        """Dibuja la Luna"""
+        size, color = self._get_object_data("luna", self.planet_cache, 1.2, COLOR_MOON)
+        
         glPushMatrix()
-        glTranslatef(x, y, z)
+        glTranslatef(*moon_coords)
         glColor3f(*color)
-        gluSphere(sphere_quad, size, 12, 12)
+        gluSphere(self.sphere_quad, size, 16, 16)
         glPopMatrix()
 
-    # Luna
-    moon_name = "luna"
-    obj_data = celestial_objects.get(moon_name, {"size": 1.2, "color": COLOR_MOON})
-    size = obj_data.get("size", 1.2)
-    color = obj_data.get("color", [c for c in COLOR_MOON])  # Convertir tupla a lista si es necesario
-    glPushMatrix()
-    glTranslatef(*moon_coords)
-    glColor3f(*color)
-    gluSphere(sphere_quad, size, 16, 16)
-    glPopMatrix()
+
+def draw_celestial_objects(stars_coords, galaxies_coords, planets_coords, moon_coords, sphere_quad):
+    """Dibuja todos los objetos celestes - VERSIÓN OPTIMIZADA"""
+    
+    # Usar renderer singleton (se crea una sola vez)
+    if not hasattr(draw_celestial_objects, '_renderer'):
+        draw_celestial_objects._renderer = CelestialRenderer(sphere_quad)
+    
+    renderer = draw_celestial_objects._renderer
+    
+    # Configurar estado OpenGL una sola vez
+    glEnable(GL_DEPTH_TEST)
+    glDepthFunc(GL_LESS)
+    glDepthMask(GL_TRUE)
+    
+    # Dibujar en orden óptimo (menos cambios de estado)
+    renderer.draw_stars_batch(stars_coords)
+    renderer.draw_sun(stars_coords)
+    renderer.draw_galaxies_batch(galaxies_coords)
+    renderer.draw_planets_batch(planets_coords)
+    renderer.draw_moon(moon_coords)
 
 
 def draw_cardinals():
@@ -251,19 +324,12 @@ def draw_cardinals():
     glColor3f(*COLOR_CARDINALS)
     
     if USE_DOME:
-        # Posicionar en el horizonte del domo (phi = 90°, diferentes azimuts)
-        y_horizon = -1  # En el horizonte
-        
-        # Norte (z negativo)
+        y_horizon = -1
         draw_3d_letter('N', 0, y_horizon + 2, -DOME_RADIUS * 0.95, 0.8)
-        # Sur (z positivo)
         draw_3d_letter('S', 0, y_horizon + 2, DOME_RADIUS * 0.95, 0.8)
-        # Este (x positivo)
         draw_3d_letter('E', DOME_RADIUS * 0.95, y_horizon + 2, 0, 0.8)
-        # Oeste (x negativo)
         draw_3d_letter('O', -DOME_RADIUS * 0.95, y_horizon + 2, 0, 0.8)
     else:
-        # Posiciones para el cubo
         draw_3d_letter('N', 0, 2, -19.5, 0.6)
         draw_3d_letter('S', 0, 2, 19.5, 0.6)
         draw_3d_letter('E', 19.5, 2, 0, 0.6)
@@ -271,7 +337,7 @@ def draw_cardinals():
 
 
 def draw_text_2d(window, lines, start_y):
-    """Dibuja texto 2D en pantalla"""
+    """Dibuja texto 2D en pantalla (legacy - usar CachedTextRenderer)"""
     glMatrixMode(GL_PROJECTION)
     glPushMatrix()
     glLoadIdentity()
@@ -306,9 +372,18 @@ class CachedTextRenderer:
         self.labels = []
         self.batch = pyglet.graphics.Batch()
         self.num_lines = 0
+        self.last_width = 0
+        self.last_height = 0
 
     def draw(self, window, lines, start_y):
         """Dibuja texto 2D en pantalla con mejor performance."""
+        
+        # Detectar si cambió el tamaño de ventana (necesita recrear proyección)
+        window_resized = (self.last_width != window.width or 
+                         self.last_height != window.height)
+        if window_resized:
+            self.last_width = window.width
+            self.last_height = window.height
 
         # Ajustar cantidad de labels si cambió el número de líneas
         while len(self.labels) < len(lines):
@@ -326,11 +401,13 @@ class CachedTextRenderer:
             lbl = self.labels.pop()
             lbl.delete()
 
-        # Actualizar texto y posición sin recrear labels
+        # Actualizar texto y posición solo si cambió
         y = start_y
         for i, line in enumerate(lines):
-            self.labels[i].text = line
-            self.labels[i].y = y
+            if self.labels[i].text != line:
+                self.labels[i].text = line
+            if self.labels[i].y != y:
+                self.labels[i].y = y
             y -= 20
 
         self.num_lines = len(lines)

@@ -74,3 +74,14 @@ def draw_dome_ground():
             z = radius * math.sin(angle)
             glVertex3f(x, 0.01, z)
         glEnd()
+
+_dome_display_list = None
+
+def draw_dome_optimized():
+    global _dome_display_list
+    if _dome_display_list is None:
+        _dome_display_list = glGenLists(1)
+        glNewList(_dome_display_list, GL_COMPILE)
+        draw_dome()  # ← tu función actual, solo se ejecuta 1 vez
+        glEndList()
+    glCallList(_dome_display_list)

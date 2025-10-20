@@ -3,6 +3,7 @@ Sistema de renderizado con efecto Bloom/Glow usando shaders
 Integrado para SkyTracker
 """
 from pyglet.gl import *
+from config import *
 import ctypes
 
 
@@ -318,10 +319,10 @@ class BloomRenderer:
             self.enabled = False
         
         # Parámetros ajustables
-        self.brightness_threshold = 0.9
-        self.blur_size = 2.0 / width
-        self.bloom_strength = 1.2
-        self.blur_passes = 2
+        self.brightness_threshold = BLOOM_THRESHOLD #0.9 default
+        self.blur_size = BLOOM_SIZE # 2.0 / width 
+        self.bloom_strength = BLOOM_STRENGTH # 1.2
+        self.blur_passes = BLOOM_BLUR_PASSES # 2
     
     def render_with_bloom(self, render_scene_func, viewport_width, viewport_height):
         """
