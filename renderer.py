@@ -113,7 +113,7 @@ def draw_environment(background_stars, use_dome=False):
     
     # Estrellas de fondo (siempre se dibujan)
     glPointSize(2)
-    glColor3f(0.2, 0.2, 0.2)
+    glColor3f(0.3, 0.3, 0.3)
     glBegin(GL_POINTS)
     for s in background_stars:
         glVertex3f(*s)
