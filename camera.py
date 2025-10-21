@@ -54,7 +54,7 @@ class Camera:
         dz = -math.cos(math.radians(self.pitch)) * math.cos(math.radians(self.yaw))
         return dx, dy, dz
 
-    def is_in_view(self, obj_pos, fov_deg, max_distance=100.0):
+    def is_in_view(self, obj_pos, fov_deg, max_distance=200.0):
         """Determina si un punto está dentro del campo de visión"""
         # Vector cámara → objeto
         dx = obj_pos[0] - self.x

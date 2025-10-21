@@ -23,7 +23,7 @@ DOME_SEGMENTS = 32
 DOME_RINGS = 8
 USE_DOME_GEOMETRY = True
 ENABLE_DRAW_DOME = False
-DOME_PUSH_FACTOR = 0.97 # Factor para empujar objetos hacia adentro del domo/cúpula
+DOME_PUSH_FACTOR = 1 # Factor para empujar objetos hacia adentro del domo/cúpula
 
 # Configuración de cámara
 CAM_YAW = 45.0
@@ -92,7 +92,7 @@ WORLD_SCALE = 30
 
 # Bloom/Glow effect
 BLOOM_ENABLED = False  # True para activar bloom por defecto, False para desactivar
-BLOOM_THRESHOLD = 0.6  # Umbral de brillo (0.0 - 1.0)
-BLOOM_STRENGTH = 0.5   # Intensidad del glow (0.0 - 3.0)
+BLOOM_THRESHOLD = 0.3  # Umbral de brillo (0.0 - 1.0)
+BLOOM_STRENGTH = 1.1   # Intensidad del glow (0.0 - 3.0)
 BLOOM_SIZE = 2 / 1000
-BLOOM_BLUR_PASSES = 2  # Número de pasadas de blur (1-4)
+BLOOM_BLUR_PASSES = 4  # Número de pasadas de blur (1-4)

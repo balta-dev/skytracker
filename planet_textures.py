@@ -177,7 +177,7 @@ def draw_celestial_objects_with_textures(stars_coords, galaxies_coords, planets_
             size = obj_data.get("size", 6)
             color = obj_data.get("color", list(COLOR_STAR))
             
-            bright_color = [min(c * 1.25, 1.1) for c in color]
+            bright_color = [min(c * 1.25, 1.15) for c in color]
             
             glPointSize(size)
             glColor3f(*bright_color)
@@ -334,6 +334,8 @@ def draw_celestial_objects_with_textures(stars_coords, galaxies_coords, planets_
     # LUNA - CON TEXTURA Y ILUMINACIÓN
     # =================================================================
     moon_name = "luna"
+    
+    moon_coords = push_inside_dome(*moon_coords, 0.9)
     obj_data = celestial_objects.get(moon_name, {"size": 1.2, "color": list(COLOR_MOON)})
     size = obj_data.get("size", 1.2)
     
