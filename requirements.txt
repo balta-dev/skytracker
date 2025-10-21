@@ -1,3 +1,4 @@
 pyglet==1.5.27
 pyserial==3.5
 skyfield
+pillow
