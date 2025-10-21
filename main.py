@@ -105,7 +105,7 @@ class SkyTrackerApp:
             screen.width, screen.height, 
             WINDOW_TITLE, 
             resizable=True,
-            vsync=False
+            vsync=True
         )
         self.window.set_minimum_size(400, 300)
         self.window.set_exclusive_mouse(True)
