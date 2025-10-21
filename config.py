@@ -13,16 +13,21 @@ Configuración global de la aplicación SkyTracker
 PORT = "/dev/pts/13"
 SIMULATE = True
 
+# Mostrar texturas
+SHOW_TEXTURES = True
+USE_LIGHTING = True
+
 # Configuración del domo
 DOME_RADIUS = 30
-DOME_SEGMENTS = 16
+DOME_SEGMENTS = 32
 DOME_RINGS = 8
-USE_DOME = True
+USE_DOME_GEOMETRY = True
+ENABLE_DRAW_DOME = False
 DOME_PUSH_FACTOR = 0.97 # Factor para empujar objetos hacia adentro del domo/cúpula
 
 # Configuración de cámara
 CAM_YAW = 45.0
-CAM_PITCH = -35.26
+CAM_PITCH = 45.0
 CAM_X = 3.0
 CAM_Y = 3.0
 CAM_Z = 3.0

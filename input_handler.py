@@ -58,7 +58,7 @@ class InputHandler:
             camera.move_down(speed)
         
         # Zoom
-        zoom_speed = 20.0 * dt
+        zoom_speed = 20.0 * dt * 10
         if self.is_key_held(key.Z):
             camera.adjust_zoom(-zoom_speed)
         if self.is_key_held(key.X):

@@ -25,6 +25,11 @@ class Camera:
         self.sensitivity = MOUSE_SENSITIVITY_BASE
         self.fov = FOV
 
+        # Caché de la dirección de la cámara
+        self._dir_x, self._dir_y, self._dir_z = self.get_direction()
+        # Caché del coseno del FOV/2
+        self._cos_fov_half = math.cos(math.radians(self.fov / 2))
+
         # Deadzone para eliminar drift en movimientos pequeños
         self.mouse_deadzone = 0.5
 
@@ -48,6 +53,26 @@ class Camera:
         dy = math.sin(math.radians(self.pitch))
         dz = -math.cos(math.radians(self.pitch)) * math.cos(math.radians(self.yaw))
         return dx, dy, dz
+
+    def is_in_view(self, obj_pos, fov_deg, max_distance=100.0):
+        """Determina si un punto está dentro del campo de visión"""
+        # Vector cámara → objeto
+        dx = obj_pos[0] - self.x
+        dy = obj_pos[1] - self.y
+        dz = obj_pos[2] - self.z
+
+        # Verificar distancia (usando distancia al cuadrado)
+        dist_sq = dx*dx + dy*dy + dz*dz
+        max_dist_sq = max_distance * max_distance
+        if dist_sq > max_dist_sq:
+            return False
+
+        # Calcular producto escalar sin normalización explícita
+        distance = math.sqrt(dist_sq)  # Solo necesitamos sqrt si pasamos la verificación de distancia
+        dot = (self._dir_x * dx + self._dir_y * dy + self._dir_z * dz) / distance
+
+        # Comparar con el coseno del ángulo FOV/2
+        return dot >= self._cos_fov_half
     
     def rotate(self, dx, dy):
         """Rota la cámara según el movimiento del mouse"""
@@ -70,6 +95,11 @@ class Camera:
         self.pitch += dy * self.sensitivity
         self.pitch = max(min(self.pitch, 89), -89)
         self.yaw %= 360
+
+        # Actualizar dirección de la cámara
+        self._dir_x, self._dir_y, self._dir_z = self.get_direction()
+        # Actualizar coseno del FOV/2 si cambia (aunque no cambia aquí, por consistencia)
+        self._cos_fov_half = math.cos(math.radians(self.fov * 1.5 / 2))
     
     def move_forward(self, amount):
         """Mueve la cámara hacia adelante"""
@@ -105,6 +135,8 @@ class Camera:
         """Ajusta el zoom (FOV)"""
         self.fov += delta
         self.fov = max(10.0, min(120.0, self.fov))
+        # Actualizar coseno del FOV/2
+        self._cos_fov_half = math.cos(math.radians(self.fov * 1.5 / 2))
     
     def set_speed_modifier(self, is_slow):
         """Ajusta la velocidad de movimiento"""

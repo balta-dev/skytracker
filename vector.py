@@ -4,17 +4,18 @@ Gestión del vector de apuntado
 """
 import math
 from pyglet.gl import *
+from pyglet import graphics
 from config import (
     VEC_BASE_X, VEC_BASE_Y, VEC_BASE_Z,
     VEC_YAW, VEC_PITCH, VECTOR_LENGTH,
     COLOR_VECTOR, COLOR_VECTOR_TIP, COLOR_HIT_POINT,
-    WORLD_MIN, WORLD_MAX, USE_DOME, DOME_RADIUS
+    WORLD_MIN, WORLD_MAX, USE_DOME_GEOMETRY, DOME_RADIUS
 )
 from renderer import push_inside_dome
 
 
 class PointerVector:
-    """Clase para gestionar el vector de apuntado"""
+    """Clase optimizada con VBOs para gestionar el vector de apuntado"""
     
     def __init__(self, color=COLOR_VECTOR, yaw=VEC_YAW, pitch=VEC_PITCH):
         self.base_x = VEC_BASE_X
@@ -24,35 +25,40 @@ class PointerVector:
         self.pitch = pitch
         self.length = VECTOR_LENGTH
         self.color = color
+
+        # === VBOs ===
+        self.line_vbo = graphics.vertex_list(2, ('v3f/stream', [0,0,0, 0,0,0]))
+        self.tip_vbo = graphics.vertex_list(1, ('v3f/stream', [0,0,0]))
+
+        # === Para evitar recomputar ===
+        self._last_yaw = None
+        self._last_pitch = None
+        self._last_length = None
     
     def set_angles(self, yaw, pitch):
-        """Setea directamente los ángulos (por ejemplo desde el sensor)"""
         self.yaw = yaw % 360
         self.pitch = max(min(pitch, 89), -89)
 
     def rotate(self, dyaw, dpitch):
-        """Rota el vector"""
         self.yaw -= dyaw
         self.pitch += dpitch
         self.pitch = max(min(self.pitch, 89), -89)
         self.yaw %= 360
     
     def get_direction(self):
-        """Retorna el vector de dirección normalizado"""
         dx = math.cos(math.radians(self.pitch)) * math.sin(math.radians(self.yaw))
         dy = math.sin(math.radians(self.pitch))
         dz = -math.cos(math.radians(self.pitch)) * math.cos(math.radians(self.yaw))
         return dx, dy, dz
     
     def get_end_point(self):
-        """Retorna las coordenadas del extremo del vector"""
         dx, dy, dz = self.get_direction()
         return (
             self.base_x + self.length * dx,
             self.base_y + self.length * dy,
             self.base_z + self.length * dz
         )
-    
+
     def calculate_wall_hit(self):
         """
         Calcula el punto de impacto del vector en las paredes/techo
@@ -141,67 +147,96 @@ class PointerVector:
         hit_x, hit_y, hit_z = push_inside_dome(hit_x, hit_y, hit_z)
         return hit_x, hit_y, hit_z
     
-    def draw(self, color=COLOR_VECTOR, crosshair=COLOR_HIT_POINT):
+    def _update_vbo_if_needed(self):
+        """Actualiza los datos del VBO solo si cambian los ángulos o longitud"""
+        if (self.yaw, self.pitch, self.length) == (self._last_yaw, self._last_pitch, self._last_length):
+            return  # Nada que actualizar
+
         end_x, end_y, end_z = self.get_end_point()
-        
-        # Línea vector (IGUAL)
+
+        self.line_vbo.vertices = [
+            self.base_x, self.base_y, self.base_z,
+            end_x, end_y, end_z
+        ]
+        self.tip_vbo.vertices = [end_x, end_y, end_z]
+
+        self._last_yaw = self.yaw
+        self._last_pitch = self.pitch
+        self._last_length = self.length
+    
+    def draw(self, color=COLOR_VECTOR, crosshair=COLOR_HIT_POINT):
+        self._update_vbo_if_needed()
+
+        # Dibujar línea del vector
         glColor3f(*color)
         glLineWidth(4)
-        glBegin(GL_LINES)
-        glVertex3f(self.base_x, self.base_y, self.base_z)
-        glVertex3f(end_x, end_y, end_z)
-        glEnd()
-        
-        # Punta (IGUAL)
+        self.line_vbo.draw(GL_LINES)
+
+        # Punta del vector
         glColor3f(*COLOR_VECTOR_TIP)
         glPointSize(6)
-        glBegin(GL_POINTS)
-        glVertex3f(end_x, end_y, end_z)
-        glEnd()
-        
-        # Impacto
-        if USE_DOME:
+        self.tip_vbo.draw(GL_POINTS)
+
+        # Impacto con el entorno
+        if USE_DOME_GEOMETRY:
             hit_x, hit_y, hit_z = self.calculate_dome_hit()
         else:
             hit_x, hit_y, hit_z = self.calculate_wall_hit()
-        
+
+        end_x, end_y, end_z = self.tip_vbo.vertices
         if hit_x is not None:
             self._draw_circle_perpendicular(hit_x, hit_y, hit_z, end_x, end_y, end_z, crosshair)
-        
+
         return end_x, end_y, end_z, hit_x, hit_y, hit_z
 
+    _circle_vbo = None  # cache compartida entre instancias
+
+    @classmethod
+    def _init_circle_vbo(cls, segments=32, radius=0.4):
+        """Inicializa un VBO compartido con los vértices del círculo"""
+        if cls._circle_vbo is not None:
+            return  # ya creado
+
+        verts = []
+        for i in range(segments):
+            angle = (i / segments) * 2 * math.pi
+            verts.extend([math.cos(angle) * radius, math.sin(angle) * radius, 0])
+        cls._circle_vbo = pyglet.graphics.vertex_list(
+            segments, ('v3f/static', verts)
+        )
 
     def _draw_circle_perpendicular(self, x, y, z, from_x, from_y, from_z, crosshair):
-        """CÍRCULO PERPENDICULAR AL VECTOR"""
+        """Dibuja un círculo perpendicular al vector usando un VBO compartido"""
+        # Inicializa el VBO del círculo una vez
+        self._init_circle_vbo()
+
         glPushMatrix()
         glTranslatef(x, y, z)
-        
-        # Vector dirección
+
+        # Vector dirección (desde el vector hasta el punto)
         dx, dy, dz = x - from_x, y - from_y, z - from_z
         length = math.sqrt(dx*dx + dy*dy + dz*dz)
         if length > 0:
             dx, dy, dz = dx/length, dy/length, dz/length
-        
-        # Rotar círculo para que esté PERPENDICULAR
+
+        # Rotar círculo para alinearlo perpendicular al vector
         yaw = math.degrees(math.atan2(dx, dz))
         pitch = math.degrees(math.asin(dy))
-        
+
         glRotatef(yaw, 0, 1, 0)
         glRotatef(-pitch, 1, 0, 0)
-        
+
+        # Configurar blending
         glDisable(GL_DEPTH_TEST)
         glEnable(GL_BLEND)
-        
-        # CÍRCULO HUECO
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+
         glColor4f(*crosshair, 0.6)
         glLineWidth(2.0)
-        segments = 16
-        glBegin(GL_LINE_LOOP)
-        for i in range(segments):
-            angle = (i / segments) * 2 * math.pi
-            glVertex3f(math.cos(angle) * 0.4, math.sin(angle) * 0.4, 0)
-        glEnd()
-        
+
+        # Dibujar el círculo desde VBO
+        self._circle_vbo.draw(GL_LINE_LOOP)
+
         glDisable(GL_BLEND)
         glEnable(GL_DEPTH_TEST)
         glPopMatrix()

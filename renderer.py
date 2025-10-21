@@ -1,5 +1,5 @@
 """
-Funciones de renderizado de objetos 3D - OPTIMIZADO
+Funciones de renderizado de objetos 3D - VERSIÓN SEGURA CON DEBUG
 """
 import math
 import pyglet
@@ -11,21 +11,8 @@ from config import (
     COLOR_STAR, COLOR_STAR_BLUE, COLOR_STAR_RED, COLOR_GALAXY, COLOR_PLANET, COLOR_SUN, COLOR_MOON,
     COLOR_VECTOR, COLOR_VECTOR_TIP, COLOR_HIT_POINT,
     COLOR_CROSSHAIR, COLOR_CARDINALS,
-    CROSSHAIR_SIZE, USE_DOME, DOME_RADIUS
+    CROSSHAIR_SIZE, USE_DOME_GEOMETRY, DOME_RADIUS
 )
-
-
-# ============================================================
-# CACHE GLOBAL PARA DATOS CELESTIALES
-# ============================================================
-_celestial_cache = None
-
-def get_cached_celestial_data():
-    """Cache de datos celestiales para evitar búsquedas repetitivas"""
-    global _celestial_cache
-    if _celestial_cache is None:
-        _celestial_cache = get_all_celestial_objects()
-    return _celestial_cache
 
 
 def draw_crosshair(window):
@@ -56,13 +43,12 @@ def draw_crosshair(window):
     glMatrixMode(GL_MODELVIEW)
 
 
-def draw_environment(background_stars, use_dome=False):
+def draw_environment(camera, background_stars, use_dome=False):
     """Dibuja el entorno (domo o cuadrado)"""
     
     glDisable(GL_BLEND)
     if use_dome:
-        from dome_renderer import draw_dome_ground, draw_dome_optimized
-        draw_dome_ground()
+        from dome_renderer import draw_dome_optimized
         draw_dome_optimized()
     else:
         # Suelo
@@ -116,6 +102,8 @@ def draw_environment(background_stars, use_dome=False):
     glColor3f(0.3, 0.3, 0.3)
     glBegin(GL_POINTS)
     for s in background_stars:
+        if not camera.is_in_view(s, camera.fov):
+            continue
         glVertex3f(*s)
     glEnd()
 
@@ -130,149 +118,6 @@ def push_inside_dome(x, y, z, factor=None):
         scale = (length * factor) / length
         return x * scale, y * scale, z * scale
     return x, y, z
-
-
-# ============================================================
-# OPTIMIZACIÓN: Batch rendering con VBOs
-# ============================================================
-class CelestialRenderer:
-    """Renderizador optimizado de objetos celestiales usando batching"""
-    
-    def __init__(self, sphere_quad):
-        self.sphere_quad = sphere_quad
-        self.celestial_data = get_cached_celestial_data()
-        
-        # Pre-cache de colores y tamaños para evitar lookups
-        self.star_cache = {}
-        self.galaxy_cache = {}
-        self.planet_cache = {}
-        
-    def _get_object_data(self, name, cache, default_size, default_color):
-        """Obtiene datos del objeto con cache"""
-        if name not in cache:
-            obj_data = self.celestial_data.get(name.lower(), {
-                "size": default_size, 
-                "color": list(default_color)
-            })
-            cache[name] = (obj_data["size"], obj_data["color"])
-        return cache[name]
-    
-    def draw_stars_batch(self, stars_coords):
-        """Dibuja todas las estrellas en un solo batch (excepto el Sol)"""
-        glEnable(GL_POINT_SMOOTH)
-        glEnable(GL_BLEND)
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
-        glEnable(GL_DEPTH_TEST)
-        glDepthFunc(GL_LESS)
-        glDepthMask(GL_TRUE)
-        
-        # Agrupar estrellas por tamaño para minimizar cambios de estado
-        stars_by_size = {}
-        
-        for name, x, y, z in stars_coords:
-            if name.lower() in ("sun", "sol"):
-                continue
-                
-            size, color = self._get_object_data(name, self.star_cache, 6, COLOR_STAR)
-            
-            if size not in stars_by_size:
-                stars_by_size[size] = []
-            
-            x, y, z = push_inside_dome(x, y, z)
-            bright_color = [min(c * 1.25, 1.1) for c in color]
-            stars_by_size[size].append((x, y, z, bright_color))
-        
-        # Dibujar agrupadas por tamaño
-        for size, stars in stars_by_size.items():
-            glPointSize(size)
-            glBegin(GL_POINTS)
-            for x, y, z, color in stars:
-                glColor3f(*color)
-                glVertex3f(x, y, z)
-            glEnd()
-        
-        glDisable(GL_POINT_SMOOTH)
-        glDisable(GL_BLEND)
-    
-    def draw_sun(self, stars_coords):
-        """Dibuja el Sol como esfera"""
-        for name, x, y, z in stars_coords:
-            if name.lower() in ("sun", "sol"):
-                x, y, z = push_inside_dome(x, y, z)
-                size, color = self._get_object_data(name, self.star_cache, 1.8, COLOR_SUN)
-                
-                glPushMatrix()
-                glTranslatef(x, y, z)
-                glColor3f(*color)
-                gluSphere(self.sphere_quad, size, 20, 20)
-                glPopMatrix()
-                break
-    
-    def draw_galaxies_batch(self, galaxies_coords):
-        """Dibuja todas las galaxias en un solo batch"""
-        # Agrupar por tamaño
-        galaxies_by_size = {}
-        
-        for name, x, y, z in galaxies_coords:
-            size, color = self._get_object_data(name, self.galaxy_cache, 8, COLOR_GALAXY)
-            
-            if size not in galaxies_by_size:
-                galaxies_by_size[size] = []
-            
-            galaxies_by_size[size].append((x, y, z, color))
-        
-        # Dibujar agrupadas
-        for size, galaxies in galaxies_by_size.items():
-            glPointSize(size)
-            glBegin(GL_POINTS)
-            for x, y, z, color in galaxies:
-                glColor3f(*color)
-                x, y, z = push_inside_dome(x, y, z)
-                glVertex3f(x, y, z)
-            glEnd()
-    
-    def draw_planets_batch(self, planets_coords):
-        """Dibuja todos los planetas"""
-        for name, x, y, z in planets_coords:
-            size, color = self._get_object_data(name, self.planet_cache, 0.4, COLOR_PLANET)
-            x, y, z = push_inside_dome(x, y, z)
-            glPushMatrix()
-            glTranslatef(x, y, z)
-            glColor3f(*color)
-            gluSphere(self.sphere_quad, size, 12, 12)
-            glPopMatrix()
-    
-    def draw_moon(self, moon_coords):
-        """Dibuja la Luna"""
-        size, color = self._get_object_data("luna", self.planet_cache, 1.2, COLOR_MOON)
-        
-        glPushMatrix()
-        glTranslatef(*moon_coords)
-        glColor3f(*color)
-        gluSphere(self.sphere_quad, size, 16, 16)
-        glPopMatrix()
-
-
-def draw_celestial_objects(stars_coords, galaxies_coords, planets_coords, moon_coords, sphere_quad):
-    """Dibuja todos los objetos celestes - VERSIÓN OPTIMIZADA"""
-    
-    # Usar renderer singleton (se crea una sola vez)
-    if not hasattr(draw_celestial_objects, '_renderer'):
-        draw_celestial_objects._renderer = CelestialRenderer(sphere_quad)
-    
-    renderer = draw_celestial_objects._renderer
-    
-    # Configurar estado OpenGL una sola vez
-    glEnable(GL_DEPTH_TEST)
-    glDepthFunc(GL_LESS)
-    glDepthMask(GL_TRUE)
-    
-    # Dibujar en orden óptimo (menos cambios de estado)
-    renderer.draw_stars_batch(stars_coords)
-    renderer.draw_sun(stars_coords)
-    renderer.draw_galaxies_batch(galaxies_coords)
-    renderer.draw_planets_batch(planets_coords)
-    renderer.draw_moon(moon_coords)
 
 
 def draw_cardinals():
@@ -323,7 +168,7 @@ def draw_cardinals():
 
     glColor3f(*COLOR_CARDINALS)
     
-    if USE_DOME:
+    if USE_DOME_GEOMETRY:
         y_horizon = -1
         draw_3d_letter('N', 0, y_horizon + 2, -DOME_RADIUS * 0.95, 0.8)
         draw_3d_letter('S', 0, y_horizon + 2, DOME_RADIUS * 0.95, 0.8)

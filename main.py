@@ -1,5 +1,5 @@
 """
-SkyTracker - Aplicación principal OPTIMIZADA
+SkyTracker - Aplicación principal OPTIMIZADA con TEXTURAS
 Programa de visualización astronómica 3D
 """
 import pyglet
@@ -16,7 +16,7 @@ from camera import Camera
 from vector import PointerVector
 from renderer import (
     draw_crosshair, draw_environment, 
-    draw_celestial_objects, draw_cardinals, draw_text_2d, CachedTextRenderer
+    draw_cardinals, draw_text_2d, CachedTextRenderer
 )
 from ui import SearchBox, InfoDisplay
 from object_detection import (
@@ -28,6 +28,13 @@ from input_handler import InputHandler
 from serial_comm import SerialComm
 from bloom_renderer import BloomRenderer
 from profiling_tools import profiler
+
+# ============================================================
+# IMPORTAR SISTEMA DE TEXTURAS
+# ============================================================
+from planet_textures import PlanetTextureManager, draw_celestial_objects_with_textures
+from custom_sphere_vbo import create_sphere_vertex_list
+
 import time
 
 
@@ -104,6 +111,14 @@ class SkyTrackerApp:
         self.window.set_exclusive_mouse(True)
         self.window.on_close = self.on_close
 
+        # ============================================================
+        # INICIALIZAR GESTOR DE TEXTURAS
+        # ============================================================
+        print("\n=== Inicializando sistema de texturas ===")
+        self.texture_manager = PlanetTextureManager(textures_folder='textures')
+        print(f"Texturas cargadas: {len(self.texture_manager.textures)}")
+        print("=" * 45 + "\n")
+
         # Para usar la placa real:
         if not SIMULATE:
             self.serial_device = SerialComm(port=PORT, baudrate=115200, simulate=False)
@@ -135,7 +150,7 @@ class SkyTrackerApp:
         self.input_handler = InputHandler()
         
         # Generar estrellas de fondo según el modo (solo una vez)
-        if USE_DOME:
+        if USE_DOME_GEOMETRY:
             self.background_stars = self._generate_dome_stars()
         else:
             self.background_stars = [
@@ -149,7 +164,8 @@ class SkyTrackerApp:
         self._register_events()
 
         # Pre-crear quadrics para esferas
-        self.sphere_quad = gluNewQuadric()
+        self.planet_sphere_vbo = create_sphere_vertex_list(radius=1.0, slices=32, stacks=32)
+
         
         # Variables para cálculo de LST (evitar recalcular)
         self.last_lst_calculation = 0
@@ -316,7 +332,6 @@ class SkyTrackerApp:
 
     def on_draw(self):
         
-        t = profiler.start('todo')
         """Dibuja la escena"""
         self.window.clear()
         
@@ -327,7 +342,7 @@ class SkyTrackerApp:
         projection_func = None
         projection_kwargs = {}
         
-        if USE_DOME:
+        if USE_DOME_GEOMETRY:
             from astronomy import ra_dec_to_dome
             projection_func = ra_dec_to_dome
             projection_kwargs = {'dome_radius': DOME_RADIUS}
@@ -356,14 +371,23 @@ class SkyTrackerApp:
             glDepthFunc(GL_LESS)
             self.camera.apply_view()
             
-            # Dibujar entorno
-            draw_environment(self.background_stars, use_dome=USE_DOME)
+            # Dibujar entorno SIN ILUMINACIÓN (colores puros)
+            glDisable(GL_LIGHTING)
+            
+            draw_environment(self.camera, self.background_stars, use_dome=USE_DOME_GEOMETRY)
             draw_cardinals()
             
-            # Dibujar objetos celestes
-            draw_celestial_objects(
+            # ============================================================
+            # OBJETOS CELESTIALES - CON ILUMINACIÓN REALISTA
+            # ============================================================
+            draw_celestial_objects_with_textures(
                 stars_coords, galaxies_coords, 
-                planets_coords, moon_coords, self.sphere_quad
+                planets_coords, moon_coords, 
+                self.planet_sphere_vbo,
+                self.texture_manager,
+                self.camera,
+                fov=self.camera.fov,
+                use_lighting=USE_LIGHTING  # ← ACTIVAR ILUMINACIÓN
             )
         
         # ============================================================
@@ -379,7 +403,11 @@ class SkyTrackerApp:
         # RENDERIZAR VECTORES (SIN BLOOM) - ENCIMA
         # ============================================================
         glDisable(GL_BLEND)
+        glDisable(GL_LIGHTING)  # Los vectores no usan iluminación
+        glDisable(GL_TEXTURE_2D)  # Asegurar que texturas estén OFF
         glEnable(GL_DEPTH_TEST)
+        glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE)  # Restaurar color mask
+        
         self.camera.apply_view()
         
         vector_data[0] = self.vector.draw()
@@ -388,6 +416,9 @@ class SkyTrackerApp:
         # ============================================================
         # RESTAURAR ESTADO DE OPENGL PARA UI
         # ============================================================
+        glDisable(GL_LIGHTING)
+        glDisable(GL_TEXTURE_2D)
+        glDisable(GL_DEPTH_TEST)
         glMatrixMode(GL_PROJECTION)
         glLoadIdentity()
         glMatrixMode(GL_MODELVIEW)
@@ -429,8 +460,7 @@ class SkyTrackerApp:
         # Mostrar FPS
         self.fps_display.draw()
 
-        profiler.end('todo', t)
-    
+
     def run(self):
         """Inicia la aplicación"""
         pyglet.app.run()

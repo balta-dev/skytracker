@@ -4,11 +4,16 @@ Renderizado de domo hemisférico
 """
 import math
 from pyglet.gl import *
-from config import COLOR_WALLS, DOME_RADIUS, DOME_SEGMENTS, DOME_RINGS
+from config import COLOR_WALLS, DOME_RADIUS, DOME_SEGMENTS, DOME_RINGS, ENABLE_DRAW_DOME
+from camera import Camera
 
 
-def draw_dome():
+def draw_dome(enabled = ENABLE_DRAW_DOME):
     """Dibuja un domo hemisférico"""
+    
+    if not enabled:
+        return
+
     glColor3f(*COLOR_WALLS)
     
     for ring in range(DOME_RINGS):
@@ -75,13 +80,21 @@ def draw_dome_ground():
             glVertex3f(x, 0.01, z)
         glEnd()
 
-_dome_display_list = None
+_dome_list = None
+_ground_list = None
 
 def draw_dome_optimized():
-    global _dome_display_list
-    if _dome_display_list is None:
-        _dome_display_list = glGenLists(1)
-        glNewList(_dome_display_list, GL_COMPILE)
-        draw_dome()  # ← tu función actual, solo se ejecuta 1 vez
+    global _dome_list, _ground_list
+    if _dome_list is None:
+        _dome_list = glGenLists(1)
+        glNewList(_dome_list, GL_COMPILE)
+        draw_dome()
         glEndList()
-    glCallList(_dome_display_list)
+    if _ground_list is None:
+        _ground_list = glGenLists(1)
+        glNewList(_ground_list, GL_COMPILE)
+        draw_dome_ground()
+        glEndList()
+
+    glCallList(_ground_list)
+    glCallList(_dome_list)
