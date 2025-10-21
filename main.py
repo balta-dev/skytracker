@@ -18,7 +18,7 @@ from renderer import (
     draw_crosshair, draw_environment, 
     draw_cardinals, draw_text_2d, CachedTextRenderer
 )
-from ui import SearchBox, InfoDisplay
+from ui import SearchBox, InfoDisplay, LookAtDisplay
 from object_detection import (
     detect_pointed_object_by_vector,
     detect_looked_object_by_camera
@@ -134,6 +134,7 @@ class SkyTrackerApp:
 
         # Renderer de texto cacheado
         self.text_renderer = CachedTextRenderer()
+        self.look_at_display = LookAtDisplay()
         
         # Renderizar Bloom
         self.bloom = BloomRenderer(self.window.width, self.window.height)
@@ -256,6 +257,8 @@ class SkyTrackerApp:
     def on_text(self, text):
         """Maneja la entrada de texto"""
         if self.search_box.active:
+            if text.upper() == 'T' and len(self.search_box.get_text()) == 0:
+                return
             self.search_box.add_char(text)
     
     def on_mouse_motion(self, x, y, dx, dy):
@@ -429,6 +432,7 @@ class SkyTrackerApp:
         # ============================================================
         draw_crosshair(self.window)
         self.search_box.draw(self.window)
+        self.look_at_display.draw(self.window)
         
         # Obtener los datos del vector
         end_x, end_y, end_z, hit_x, hit_y, hit_z = vector_data[0]
@@ -445,6 +449,8 @@ class SkyTrackerApp:
             stars_coords, galaxies_coords,
             planets_coords, moon_coords
         )
+
+        self.look_at_display.update(looked_obj)
         
         # Mostrar información
         info_lines = InfoDisplay.create_info_text(

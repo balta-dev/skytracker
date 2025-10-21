@@ -5,6 +5,55 @@ Interfaz de usuario: búsqueda y elementos de información - OPTIMIZADO
 import pyglet
 from pyglet.gl import *
 
+class LookAtDisplay:
+    """Muestra el objeto al que se está apuntando con el mouse"""
+    
+    def __init__(self):
+        self.current_object = None
+        self.label = pyglet.text.Label(
+            "",
+            x=0, y=0,
+            anchor_x='center',
+            anchor_y='bottom',
+            color=(0, 255, 255, 255),
+            font_size=14,
+            bold=True
+        )
+    
+    def update(self, object_name):
+        """Actualiza el objeto mostrado"""
+        self.current_object = object_name
+    
+    def draw(self, window):
+        """Dibuja el label sin fondo"""
+        if not self.current_object:
+            return
+        
+        glMatrixMode(GL_PROJECTION)
+        glPushMatrix()
+        glLoadIdentity()
+        glOrtho(0, window.width, 0, window.height, -1, 1)
+        glMatrixMode(GL_MODELVIEW)
+        glPushMatrix()
+        glLoadIdentity()
+        glDisable(GL_DEPTH_TEST)
+        
+        cx = window.width // 2
+        cy = window.height // 2
+        offset = 30
+        
+        self.label.text = self.current_object
+        self.label.x = cx
+        self.label.y = cy + offset
+        
+        # Sin fondo - directamente dibuja el label
+        self.label.draw()
+        
+        glEnable(GL_DEPTH_TEST)
+        glPopMatrix()
+        glMatrixMode(GL_PROJECTION)
+        glPopMatrix()
+        glMatrixMode(GL_MODELVIEW)
 
 class SearchBox:
     """Clase para gestionar el cuadro de búsqueda de objetos - OPTIMIZADA"""
