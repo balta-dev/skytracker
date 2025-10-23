@@ -26,11 +26,11 @@ ENABLE_DRAW_DOME = False
 DOME_PUSH_FACTOR = 1 # Factor para empujar objetos hacia adentro del domo/cúpula
 
 # Configuración de cámara
-CAM_YAW = 45.0
-CAM_PITCH = 45.0
-CAM_X = 3.0
-CAM_Y = 3.0
-CAM_Z = 3.0
+CAM_YAW = 0.0
+CAM_PITCH = 25.0
+CAM_X = 0.0
+CAM_Y = 0.5
+CAM_Z = 0.0
 CAM_SPEED_BASE = 0.1
 MOUSE_SENSITIVITY_BASE = 0.1
 

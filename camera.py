@@ -24,6 +24,7 @@ class Camera:
         self.sensitivity_base = MOUSE_SENSITIVITY_BASE
         self.sensitivity = MOUSE_SENSITIVITY_BASE
         self.fov = FOV
+        self._first_mouse_event = True
 
         # Caché de la dirección de la cámara
         self._dir_x, self._dir_y, self._dir_z = self.get_direction()
@@ -34,8 +35,8 @@ class Camera:
         self.mouse_deadzone = 0.1
 
         # Compensación de bias sistemático (ajusta estos valores)
-        self.drift_compensation_x = 0.45  # Compensa drift hacia izquierda
-        self.drift_compensation_y = -0.45  # Compensa drift hacia arriba
+        self.drift_compensation_x = 0.42  # Compensa drift hacia izquierda
+        self.drift_compensation_y = -0.42  # Compensa drift hacia arriba
     
     def apply_view(self):
         """Aplica la transformación de la cámara"""
@@ -77,6 +78,10 @@ class Camera:
     def rotate(self, dx, dy):
         """Rota la cámara según el movimiento del mouse"""
         
+        if self._first_mouse_event:
+            self._first_mouse_event = False
+            return
+
         # Aplicar compensación de bias sistemático ANTES del deadzone
         dx += self.drift_compensation_x
         dy += self.drift_compensation_y
@@ -98,8 +103,6 @@ class Camera:
 
         # Actualizar dirección de la cámara
         self._dir_x, self._dir_y, self._dir_z = self.get_direction()
-        # Actualizar coseno del FOV/2 si cambia (aunque no cambia aquí, por consistencia)
-        self._cos_fov_half = math.cos(math.radians(self.fov * 1.5 / 2))
     
     def move_forward(self, amount):
         """Mueve la cámara hacia adelante"""
