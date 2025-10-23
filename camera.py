@@ -29,7 +29,7 @@ class Camera:
         # Caché de la dirección de la cámara
         self._dir_x, self._dir_y, self._dir_z = self.get_direction()
         # Caché del coseno del FOV/2
-        self._cos_fov_half = math.cos(math.radians(self.fov / 2))
+        self._cos_fov_half = math.cos(math.radians(self.fov * 1.65 / 2))
 
         # Deadzone para eliminar drift en movimientos pequeños
         self.mouse_deadzone = 0.1
@@ -139,7 +139,7 @@ class Camera:
         self.fov += delta
         self.fov = max(10.0, min(120.0, self.fov))
         # Actualizar coseno del FOV/2
-        self._cos_fov_half = math.cos(math.radians(self.fov * 1.5 / 2))
+        self._cos_fov_half = math.cos(math.radians(self.fov * 1.65 / 2))
     
     def set_speed_modifier(self, is_slow):
         """Ajusta la velocidad de movimiento"""
