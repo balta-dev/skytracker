@@ -31,7 +31,7 @@ class Camera:
         self._cos_fov_half = math.cos(math.radians(self.fov / 2))
 
         # Deadzone para eliminar drift en movimientos pequeños
-        self.mouse_deadzone = 0.5
+        self.mouse_deadzone = 0.1
 
         # Compensación de bias sistemático (ajusta estos valores)
         self.drift_compensation_x = 0.45  # Compensa drift hacia izquierda

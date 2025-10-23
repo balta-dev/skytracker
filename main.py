@@ -229,7 +229,7 @@ class SkyTrackerApp:
             self.search_box.activate()
             return pyglet.event.EVENT_HANDLED
 
-        if symbol == key.B:
+        if symbol == key.B and not self.search_box.active:
             self.bloom.toggle()
             return pyglet.event.EVENT_HANDLED
         
