@@ -28,6 +28,7 @@ from input_handler import InputHandler
 from serial_comm import SerialComm
 from bloom_renderer import BloomRenderer
 from profiling_tools import profiler
+from server import Server
 
 # ============================================================
 # IMPORTAR SISTEMA DE TEXTURAS
@@ -110,6 +111,9 @@ class SkyTrackerApp:
         self.window.set_minimum_size(400, 300)
         self.window.set_exclusive_mouse(True)
         self.window.on_close = self.on_close
+
+        self.server = Server(self)
+        self.server.start()
 
         # ============================================================
         # INICIALIZAR GESTOR DE TEXTURAS
@@ -306,8 +310,9 @@ class SkyTrackerApp:
 
         yaw, pitch = self.vector.yaw, self.vector.pitch
         
-        # Enviar al ESP32
-        self.serial_device.send_angles(yaw, pitch)
+        # Enviar al ESP32 solo si está trackeando
+        if self.tracker.is_tracking():
+            self.serial_device.send_angles(yaw, pitch)
     
         # Leer del ESP32 o simular lectura con delay
         if not SIMULATE:
@@ -452,6 +457,8 @@ class SkyTrackerApp:
 
         self.look_at_display.update(looked_obj)
         
+        InfoDisplay.set_server_ip(self.server.get_server_ip())
+
         # Mostrar información
         info_lines = InfoDisplay.create_info_text(
             self.camera, self.vector,
@@ -474,6 +481,7 @@ class SkyTrackerApp:
     def on_close(self):
         """Se ejecuta al cerrar la ventana"""
         self.serial_device.close()
+        self.server.stop()
         self.window.close()
 
 

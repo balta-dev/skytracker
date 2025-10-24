@@ -214,13 +214,26 @@ class InfoDisplay:
     
     # Cache de líneas de objetos disponibles (no cambian nunca)
     _static_lines_cache = None
+    # IP del servidor (se setea una vez)
+    _server_ip = None
+    
+    @classmethod
+    def set_server_ip(cls, ip):
+        """Setea la IP del servidor (se llama una sola vez al inicio)"""
+        cls._server_ip = ip
     
     @classmethod
     def _get_static_lines(cls):
         """Obtiene las líneas estáticas (se cachean una sola vez)"""
         if cls._static_lines_cache is None:
-            cls._static_lines_cache = [
-                "",
+            lines = []
+            
+            # Agregar IP del servidor si está disponible
+            if cls._server_ip:
+                lines.append(f"SERVIDOR TCP: {cls._server_ip}:12345")
+                lines.append("")
+            
+            lines.extend([
                 "Objetos disponibles:",
                 "  * Estrellas: Sirius, Betelgeuse, Rigel,",
                 "    Vega, Antares, Polaris,",
@@ -237,7 +250,9 @@ class InfoDisplay:
                 "      Marte, Jupiter, Saturno,",
                 "    - Sol",
                 "    - Luna"
-            ]
+            ])
+            
+            cls._static_lines_cache = lines
         return cls._static_lines_cache
     
     @staticmethod
@@ -254,6 +269,7 @@ class InfoDisplay:
             f"Bloom: {'ON' if bloom_enabled else 'OFF'} [B]",
             f"Rastreando: {tracking_obj if tracking_obj else 'ninguno'}",
             f"Apuntando con mouse: {looked_obj if looked_obj else 'ninguno'}",
+            ""
         ]
         
         # Combinar con líneas estáticas cacheadas
