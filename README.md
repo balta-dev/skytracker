@@ -7,8 +7,8 @@ SkyTracker es un proyecto interactivo que permite localización de planetas, est
 
 No sólamente es un sandbox 3D hecho en Python y OpenGL (Pyglet), su función principal es permitir la comunicación bilateral entre el localizador físico y tu dispositivo móvil.
 
-<img width="450" height="929" alt="image" src="https://github.com/user-attachments/assets/7e3ac4bd-338f-46d9-99aa-fb89cd044a7f" />
-<img width="450" height="745" alt="image" src="https://github.com/user-attachments/assets/9a25cc7b-eaa0-4959-af3b-731407be0639" />
+<img width="400" height="929" alt="image" src="https://github.com/user-attachments/assets/7e3ac4bd-338f-46d9-99aa-fb89cd044a7f" />
+<img width="400" height="745" alt="image" src="https://github.com/user-attachments/assets/9a25cc7b-eaa0-4959-af3b-731407be0639" />
 
 ---
 
