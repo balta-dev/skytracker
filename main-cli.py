@@ -8,6 +8,7 @@ from vector import PointerVector
 from tracker import ObjectTracker
 from config import *
 from serial_comm import SerialComm
+from server import Server
 import sys
 
 class SkyTrackerConsole:
@@ -19,6 +20,9 @@ class SkyTrackerConsole:
         self.input_text = ""
         self.current_input = ""
         self.lock = threading.Lock()
+
+        self.server = Server(self)
+        self.server.start()
 
         # Simulación ESP32
         if not SIMULATE:
@@ -60,12 +64,15 @@ class SkyTrackerConsole:
         now_utc = datetime.now(timezone.utc)
         lst_deg, lst_h = calculate_lst(now_utc, LOCATION_LONGITUDE)
         tracking_obj = self.tracker.get_tracked_object_name()
+        server_ip = self.server.get_server_ip()
 
         lines = [
             f"VECTOR - Yaw: {self.vector.yaw:.1f}° Pitch: {self.vector.pitch:.1f}°",
             f"FEEDBACK - Yaw: {self.sensor_vector.yaw:.1f}° Pitch: {self.sensor_vector.pitch:.1f}°",
             f"LST: {lst_deg:.2f}° ({lst_h:.2f}h)",
             f"Rastreando: {tracking_obj if tracking_obj else 'ninguno'}",
+            "",
+            f"SERVIDOR TCP: {server_ip}:12345",
             "",
             "Objetos disponibles:",
             get_object_list_text(),
@@ -119,6 +126,7 @@ class SkyTrackerConsole:
             print("\nSaliendo...")
         finally:
             termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+            self.server.stop()
 
 
 if __name__ == "__main__":
