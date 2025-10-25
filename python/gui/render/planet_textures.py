@@ -7,14 +7,14 @@ from pyglet.gl import *
 import os
 import ctypes
 from config import SHOW_TEXTURES, POINT_SIZE_GALAXY
-from custom_sphere_vbo import draw_sphere
-from camera import Camera
+from gui.render.custom_sphere_vbo import draw_sphere
+from gui.controls.camera import Camera
 
 
 class PlanetTextureManager:
     """Gestor de texturas de planetas"""
     
-    def __init__(self, textures_folder='textures'):
+    def __init__(self, textures_folder='gui/assets/textures/'):
 
         self.textures_folder = textures_folder
         self.textures = {}
@@ -120,9 +120,9 @@ def draw_celestial_objects_with_textures(stars_coords, galaxies_coords, planets_
         texture_manager: instancia de PlanetTextureManager
         use_lighting: si True, aplica iluminación realista a planetas
     """
-    from celestial_data import get_all_celestial_objects
+    from shared.celestial_data import get_all_celestial_objects
     from config import COLOR_STAR, COLOR_SUN, COLOR_GALAXY, COLOR_PLANET, COLOR_MOON
-    from renderer import push_inside_dome
+    from gui.render.renderer import push_inside_dome
     
     celestial_objects = get_all_celestial_objects()
 

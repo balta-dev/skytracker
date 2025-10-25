@@ -11,7 +11,7 @@ from config import (
     COLOR_VECTOR, COLOR_VECTOR_TIP, COLOR_HIT_POINT,
     WORLD_MIN, WORLD_MAX, USE_DOME_GEOMETRY, DOME_RADIUS
 )
-from renderer import push_inside_dome
+from gui.render.renderer import push_inside_dome
 
 
 class PointerVector:

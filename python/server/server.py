@@ -9,7 +9,7 @@ Servidor TCP con soporte para tracking y datos en tiempo real.
 import socket
 import threading
 import time
-from celestial_data import get_all_celestial_objects
+from shared.celestial_data import get_all_celestial_objects
 
 
 class Server:

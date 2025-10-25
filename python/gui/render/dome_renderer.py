@@ -5,7 +5,7 @@ Renderizado de domo hemisférico
 import math
 from pyglet.gl import *
 from config import COLOR_WALLS, DOME_RADIUS, DOME_SEGMENTS, DOME_RINGS, ENABLE_DRAW_DOME
-from camera import Camera
+from gui.controls.camera import Camera
 
 
 def draw_dome(enabled = ENABLE_DRAW_DOME):

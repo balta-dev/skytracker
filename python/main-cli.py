@@ -2,13 +2,13 @@ import threading
 import time
 from datetime import datetime, timezone
 
-from celestial_data import get_object_list_text
-from astronomy import calculate_lst
-from vector import PointerVector
-from tracker import ObjectTracker
+from shared.celestial_data import get_object_list_text
+from shared.calculations.astronomy import calculate_lst
+from gui.controls.vector import PointerVector
+from shared.tracker import ObjectTracker
 from config import *
-from serial_comm import SerialComm
-from server import Server
+from server.serial_comm import SerialComm
+from server.server import Server
 import sys
 
 class SkyTrackerConsole:

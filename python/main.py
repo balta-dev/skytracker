@@ -10,31 +10,31 @@ import random
 
 # Importar módulos del proyecto
 from config import *
-from celestial_data import REAL_STARS, GALAXIES, PLANETS, MOON_RA_DEC
-from astronomy import calculate_lst, ra_dec_to_xyz
-from camera import Camera
-from vector import PointerVector
-from renderer import (
+from shared.celestial_data import REAL_STARS, GALAXIES, PLANETS, MOON_RA_DEC
+from shared.calculations.astronomy import calculate_lst, ra_dec_to_xyz
+from gui.controls.camera import Camera
+from gui.controls.vector import PointerVector
+from gui.render.renderer import (
     draw_crosshair, draw_environment, 
     draw_cardinals, draw_text_2d, CachedTextRenderer
 )
-from ui import SearchBox, InfoDisplay, LookAtDisplay
-from object_detection import (
+from gui.render.ui import SearchBox, InfoDisplay, LookAtDisplay
+from gui.controls.object_detection import (
     detect_pointed_object_by_vector,
     detect_looked_object_by_camera
 )
-from tracker import ObjectTracker
-from input_handler import InputHandler
-from serial_comm import SerialComm
-from bloom_renderer import BloomRenderer
-from profiling_tools import profiler
-from server import Server
+from shared.tracker import ObjectTracker
+from gui.controls.input_handler import InputHandler
+from server.serial_comm import SerialComm
+from gui.shaders.bloom_renderer import BloomRenderer
+from profiling.profiling_tools import profiler
+from server.server import Server
 
 # ============================================================
 # IMPORTAR SISTEMA DE TEXTURAS
 # ============================================================
-from planet_textures import PlanetTextureManager, draw_celestial_objects_with_textures
-from custom_sphere_vbo import create_sphere_vertex_list
+from gui.render.planet_textures import PlanetTextureManager, draw_celestial_objects_with_textures
+from gui.render.custom_sphere_vbo import create_sphere_vertex_list
 
 import time
 
@@ -119,7 +119,7 @@ class SkyTrackerApp:
         # INICIALIZAR GESTOR DE TEXTURAS
         # ============================================================
         print("\n=== Inicializando sistema de texturas ===")
-        self.texture_manager = PlanetTextureManager(textures_folder='textures')
+        self.texture_manager = PlanetTextureManager(textures_folder='gui/assets/textures')
         print(f"Texturas cargadas: {len(self.texture_manager.textures)}")
         print("=" * 45 + "\n")
 
@@ -351,11 +351,11 @@ class SkyTrackerApp:
         projection_kwargs = {}
         
         if USE_DOME_GEOMETRY:
-            from astronomy import ra_dec_to_dome
+            from shared.calculations.astronomy import ra_dec_to_dome
             projection_func = ra_dec_to_dome
             projection_kwargs = {'dome_radius': DOME_RADIUS}
         else:
-            from astronomy import ra_dec_to_xyz
+            from shared.calculations.astronomy import ra_dec_to_xyz
             projection_func = ra_dec_to_xyz
 
         # Actualizar coordenadas solo si es necesario

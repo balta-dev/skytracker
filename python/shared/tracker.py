@@ -3,8 +3,8 @@
 Sistema de rastreo de objetos celestes
 """
 from datetime import datetime, timezone
-from astronomy import calculate_lst, ra_dec_to_xyz, calculate_vector_angles
-from celestial_data import get_all_celestial_objects
+from shared.calculations.astronomy import calculate_lst, ra_dec_to_xyz, calculate_vector_angles
+from shared.celestial_data import get_all_celestial_objects
 from config import LOCATION_LONGITUDE
 
 

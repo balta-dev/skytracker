@@ -4,7 +4,7 @@ Funciones de renderizado de objetos 3D - VERSIÓN SEGURA CON DEBUG
 import math
 import pyglet
 from pyglet.gl import *
-from celestial_data import get_all_celestial_objects
+from shared.celestial_data import get_all_celestial_objects
 from config import (
     WORLD_MIN, WORLD_MAX,
     COLOR_GROUND, COLOR_GRID, COLOR_WALLS,
@@ -48,7 +48,7 @@ def draw_environment(camera, background_stars, use_dome=False):
     
     glDisable(GL_BLEND)
     if use_dome:
-        from dome_renderer import draw_dome_optimized
+        from gui.render.dome_renderer import draw_dome_optimized
         draw_dome_optimized()
     else:
         # Suelo

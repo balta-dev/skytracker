@@ -8,7 +8,7 @@ from datetime import datetime, timezone
 class CelestialDataLoader:
     """Carga y gestiona datos de objetos celestes desde JSON"""
     
-    def __init__(self, json_file='celestial_data.json'):
+    def __init__(self, json_file='shared/celestial_data.json'):
         self.json_file = json_file
         self.data = self._load_json()
     
