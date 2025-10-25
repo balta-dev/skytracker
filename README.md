@@ -1,18 +1,33 @@
-# SkyTracker - Visualizador Celeste 3D (GRUPO 7)
-
-SkyTracker es una aplicación 3D interactiva para explorar el cielo nocturno y controlar físicamente un Sky Tracker mediante Arduino o ESP32.
-
-Aunque muestra estrellas, planetas, la Luna y galaxias en tiempo real usando Python y Pyglet, su función principal es comunicarle al hardware hacia dónde moverse. 
-
-El usuario puede buscar un objeto celeste mediante el buscador, y el vector en pantalla se moverá automáticamente para apuntarlo; estas coordenadas ```vec_yaw``` y ```vec_pitch``` se envían vía serial al Arduino/ESP32 para mover los servos correspondientes.
-
-El 3D en pantalla sirve como visualización interactiva y control, permitiendo verificar y ajustar el seguimiento sin necesidad de mirar el Sky Tracker físico.
+# SkyTracker - Rastreador a Tiempo Real de Cuerpos Celestes (GRUPO 7)
+<img width="1484" height="666" alt="image" src="https://github.com/user-attachments/assets/836cf393-3c05-4a1d-aecc-24039496e26d" />
 
 ---
 
-<img width="1271" height="746" alt="image" src="https://github.com/user-attachments/assets/105007b6-24dd-4811-962b-97b8512919e4" />
+SkyTracker es un proyecto interactivo que permite localización de planetas, estrellas y galaxias a través de una interfaz que se comunica con un ESP32.
+
+No sólamente es un sandbox 3D hecho en Python y OpenGL (Pyglet), su función principal es permitir la comunicación bilateral entre el localizador físico y tu dispositivo móvil.
+
+<img width="450" height="929" alt="image" src="https://github.com/user-attachments/assets/7e3ac4bd-338f-46d9-99aa-fb89cd044a7f" />
+<img width="450" height="745" alt="image" src="https://github.com/user-attachments/assets/9a25cc7b-eaa0-4959-af3b-731407be0639" />
 
 ---
+
+El usuario puede buscar un objeto celeste mediante el buscador (PC/Android), y el vector *rojo* (TARGET) en pantalla se moverá automáticamente para apuntarlo; estas coordenadas ```vec_yaw``` y ```vec_pitch``` se envían vía serial al ESP32 para 
+mover los servos correspondientes. El vector *verde* corresponde al FEEDBACK (retroalimentación) de los sensores para comparar posiciones, compensar y ajustar, etcétera. 
+
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/14de4f69-648c-408a-b4d3-2b10ab065a77" />
+<img width="1920" height="1053" alt="image" src="https://github.com/user-attachments/assets/ce78b566-bbfc-42bc-a5a4-1ebeb8598768" />
+<img width="1920" height="1048" alt="image" src="https://github.com/user-attachments/assets/9c6f4c1d-2989-4a77-bd2e-73b4f93275e1" />
+
+---
+
+No es obligatorio utilizar la interfaz gráfica, también existe una versión de consola ```main-cli.py``` para ahorrar batería y recursos del sistema.
+
+<img width="1157" height="339" alt="image" src="https://github.com/user-attachments/assets/daba160d-4552-4ac7-9e75-77703e51fb07" />
+
+
+---
+
 Simulación con Potenciómetros en Tinkercad:
 [<img width="1657" height="909" alt="image" src="https://github.com/user-attachments/assets/558280fc-9322-458c-a0b2-35c1ace515cb" />](https://www.tinkercad.com/things/3lo1FGcupPU-skytracker-grupo-7-simulacion)
 
@@ -115,7 +130,7 @@ Basado en la idea de Görkem Bozkurt:
 
 ```bash
 git clone https://github.com/balta-dev/skytracker.git
-cd skytracker
+cd python/skytracker
 ```
 
 ---
@@ -160,7 +175,7 @@ Con el entorno virtual activado:
 python3 main.py
 ```
 
-> **⚠️ Nota**: Es recomendable ejecutar ```ephemeris_calculator.py``` periódicamente para mantener actualizados los objetos celestiales en el cielo, sobre todo la Luna y los planetas.
+> **⚠️ Nota**: Es recomendable ejecutar ```/shared/calculations/ephemeris_calculator.py``` periódicamente para mantener actualizados los objetos celestiales en el cielo, sobre todo la Luna y los planetas.
 
 ---
 
