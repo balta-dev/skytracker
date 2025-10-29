@@ -476,7 +476,11 @@ class SkyTrackerApp:
 
     def run(self):
         """Inicia la aplicación"""
-        pyglet.app.run()
+        try:
+            pyglet.app.run()
+        except KeyboardInterrupt:
+            self.on_close();
+            
 
     def on_close(self):
         """Se ejecuta al cerrar la ventana"""

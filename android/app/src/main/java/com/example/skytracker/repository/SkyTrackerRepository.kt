@@ -70,6 +70,13 @@ class SkyTrackerRepository(context: Context) {
     }
 
     /**
+     * Obtiene la edad del cache en minutos
+     */
+    fun getCacheAgeMinutes(): Long {
+        return database.getCacheAgeMinutes()
+    }
+
+    /**
      * Conecta en modo servidor Python
      */
     fun connectToServer(ipAddress: String, port: Int, scope: CoroutineScope) {
@@ -122,7 +129,7 @@ class SkyTrackerRepository(context: Context) {
         esp32Connection = ESP32Connection(ipAddress, port)
 
         // Usar el método que SÍ existe: connectWithAutoReconnect()
-        esp32Connection?.connectWithAutoReconnect()
+        esp32Connection?.connectWithAutoReconnect(scope)
 
         // Observar estado de conexión
         scope.launch {
@@ -130,8 +137,8 @@ class SkyTrackerRepository(context: Context) {
                 _isConnected.value = (state == ESP32Connection.ConnectionState.CONNECTED)
                 _connectionStatus.value = when (state) {
                     ESP32Connection.ConnectionState.CONNECTED -> "Conectado al ESP32"
-                    ESP32Connection.ConnectionState.CONNECTING -> "Conectando al ESP32..."
-                    ESP32Connection.ConnectionState.RECONNECTING -> "Reconectando al ESP32..."
+                    ESP32Connection.ConnectionState.CONNECTING -> "Conectando..."
+                    ESP32Connection.ConnectionState.RECONNECTING -> "Conectando..."
                     ESP32Connection.ConnectionState.DISCONNECTED -> "Desconectado"
                     ESP32Connection.ConnectionState.ERROR -> "Error de conexión"
                 }

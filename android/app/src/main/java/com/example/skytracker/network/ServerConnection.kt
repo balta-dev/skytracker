@@ -41,11 +41,7 @@ class ServerConnection(
     private var currentTrackingObject: String? = null
 
     enum class ConnectionState {
-        DISCONNECTED,
-        CONNECTING,
-        CONNECTED,
-        RECONNECTING,
-        ERROR
+        DISCONNECTED, CONNECTING, CONNECTED, RECONNECTING, ERROR
     }
 
     /**
@@ -56,14 +52,14 @@ class ServerConnection(
         connectionJob?.cancel()
 
         connectionJob = scope.launch(Dispatchers.IO) {
-            var reconnectDelay = 2000L
+            var reconnectDelay = 5000L
 
             while (isActive) {
                 try {
                     _connectionState.value = ConnectionState.CONNECTING
                     _statusMessage.value = "Conectando..."
 
-                    // Crear socket y conectar (IGUAL AL ORIGINAL)
+                    // Crear socket y conectar
                     socket = Socket()
                     socket?.connect(InetSocketAddress(ipAddress, port), 5000)
                     reader = socket?.getInputStream()?.bufferedReader()
@@ -71,11 +67,11 @@ class ServerConnection(
 
                     withContext(Dispatchers.Main) {
                         _connectionState.value = ConnectionState.CONNECTED
-                        _statusMessage.value = "Conectado"
-                        reconnectDelay = 2000L
+                        _statusMessage.value = "Conectado a Python"
+                        reconnectDelay = 5000L
                     }
 
-                    // LEER LÍNEAS (IGUAL AL ORIGINAL)
+                    // LEER LÍNEAS
                     while (isActive) {
                         val line = reader?.readLine() ?: break
                         withContext(Dispatchers.Main) {
@@ -86,7 +82,7 @@ class ServerConnection(
                 } catch (e: Exception) {
                     withContext(Dispatchers.Main) {
                         _connectionState.value = ConnectionState.RECONNECTING
-                        _statusMessage.value = "Reconectando en ${reconnectDelay / 1000}s..."
+                        _statusMessage.value = "Conectando..."
                         _targetAngles.value = null
                         _sensorAngles.value = null
                     }

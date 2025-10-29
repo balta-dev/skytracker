@@ -146,6 +146,26 @@ class CelestialDatabase private constructor(context: Context) {
     }
 
     /**
+     * Obtiene la edad del caché en minutos
+     */
+    fun getCacheAgeMinutes(): Long {
+        val timestamp = prefs.getLong(CACHE_TIMESTAMP_KEY, -1)
+        println("CelestialDatabase: getCacheAgeMinutes - Timestamp: $timestamp")
+
+        if (timestamp < 0) {
+            println("CelestialDatabase: No hay timestamp guardado")
+            return -1
+        }
+
+        val ageMillis = System.currentTimeMillis() - timestamp
+        val ageMinutes = ageMillis / (1000 * 60) // milisegundos → minutos
+
+        println("CelestialDatabase: Edad del caché: $ageMinutes minutos")
+        return ageMinutes
+    }
+
+
+    /**
      * Guarda datos en caché
      */
     private fun saveCachedData(data: CelestialData) {

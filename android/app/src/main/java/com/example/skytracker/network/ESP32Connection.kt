@@ -22,17 +22,18 @@ class ESP32Connection(
     val sensorAngles: StateFlow<PointingAngles?> = _sensorAngles
 
     private var connectionJob: Job? = null
-    private var listenJob: Job? = null
-    private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
     enum class ConnectionState {
         DISCONNECTED, CONNECTING, CONNECTED, RECONNECTING, ERROR
     }
 
-    fun connectWithAutoReconnect() {
+    // ← RECIBIR SCOPE COMO PARÁMETRO (igual que ServerConnection)
+    fun connectWithAutoReconnect(scope: CoroutineScope) {
         connectionJob?.cancel()
-        connectionJob = scope.launch {
-            var delayMs = 1000L
+
+        connectionJob = scope.launch(Dispatchers.IO) {
+            var reconnectDelay = 5000L
+
             while (isActive) {
                 try {
                     _connectionState.value = ConnectionState.CONNECTING
@@ -42,18 +43,34 @@ class ESP32Connection(
                     reader = socket?.getInputStream()?.bufferedReader()
                     writer = socket?.getOutputStream()?.bufferedWriter()
 
-                    _connectionState.value = ConnectionState.CONNECTED
-                    delayMs = 1000L
-                    startListening()
-
-                    while (isActive && socket?.isConnected == true) {
-                        delay(100)
+                    withContext(Dispatchers.Main) {
+                        _connectionState.value = ConnectionState.CONNECTED
+                        reconnectDelay = 5000L
                     }
+
+                    // LEER LÍNEAS (como ServerConnection, más eficiente)
+                    while (isActive) {
+                        val line = reader?.readLine() ?: break
+
+                        if (line.startsWith("SENS:")) {
+                            val parts = line.removePrefix("SENS:").split(",")
+                            if (parts.size == 2) {
+                                val yaw = parts[0].trim().toDouble()
+                                val pitch = parts[1].trim().toDouble()
+                                withContext(Dispatchers.Main) {
+                                    _sensorAngles.value = PointingAngles(yaw, pitch)
+                                }
+                            }
+                        }
+                    }
+
                 } catch (e: Exception) {
-                    cleanup()
-                    _connectionState.value = ConnectionState.RECONNECTING
-                    delay(delayMs)
-                    delayMs = (delayMs * 2).coerceAtMost(10000L)
+                    withContext(Dispatchers.Main) {
+                        _connectionState.value = ConnectionState.RECONNECTING
+                        _sensorAngles.value = null
+                    }
+                    delay(reconnectDelay)
+                    reconnectDelay = minOf(reconnectDelay * 2, 10000L)
                 }
             }
         }
@@ -70,31 +87,7 @@ class ESP32Connection(
         }
     }
 
-    private fun startListening() {
-        listenJob?.cancel()
-        listenJob = scope.launch {
-            while (isActive && _connectionState.value == ConnectionState.CONNECTED) {
-                try {
-                    val line = reader?.readLine() ?: break
-                    if (line.isNotBlank() && line.startsWith("SENS:")) {
-                        val parts = line.removePrefix("SENS:").split(",")
-                        if (parts.size == 2) {
-                            val yaw = parts[0].trim().toDouble()
-                            val pitch = parts[1].trim().toDouble()
-                            withContext(Dispatchers.Main) {
-                                _sensorAngles.value = PointingAngles(yaw, pitch)
-                            }
-                        }
-                    }
-                } catch (e: Exception) {
-                    delay(100)
-                }
-            }
-        }
-    }
-
     private fun cleanup() {
-        listenJob?.cancel()
         try { socket?.close() } catch (e: Exception) {}
         socket = null
         reader = null
@@ -104,9 +97,9 @@ class ESP32Connection(
 
     fun disconnect() {
         connectionJob?.cancel()
+        connectionJob = null
         cleanup()
         _connectionState.value = ConnectionState.DISCONNECTED
     }
 
-    fun isConnected() = _connectionState.value == ConnectionState.CONNECTED
 }

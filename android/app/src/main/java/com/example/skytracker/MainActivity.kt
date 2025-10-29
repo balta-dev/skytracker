@@ -66,6 +66,7 @@ fun SkyTrackerScreen(viewModel: SkyTrackerViewModel) {
     val telemetryData by viewModel.telemetryData.collectAsState()
     val connectionStatus by viewModel.connectionStatus.collectAsState()
     val isConnected by viewModel.isConnected.collectAsState()
+    val isConnecting by viewModel.isConnecting.collectAsState()
     val operationMode by viewModel.operationMode.collectAsState()
     val isRefreshing by viewModel.isRefreshing.collectAsState()
     val cacheAge by viewModel.cacheAge.collectAsState()
@@ -172,28 +173,33 @@ fun SkyTrackerScreen(viewModel: SkyTrackerViewModel) {
                         letterSpacing = 12.sp
                     )
 
-                    // Badge de modo
-                    Surface(
-                        color = when(operationMode) {
-                            OperationMode.SERVER -> Color(0xFF00D4FF)
-                            OperationMode.DIRECT -> Color(0xFFFF6B00)
-                        }.copy(alpha = 0.2f),
-                        shape = RoundedCornerShape(20.dp),
-                        modifier = Modifier.padding(top = 8.dp)
+                    AnimatedVisibility(
+                        visible = isConnecting || isConnected,
+                        enter = fadeIn() + expandVertically(),
+                        exit = fadeOut() + shrinkVertically()
                     ) {
-                        Text(
-                            text = when(operationMode) {
-                                OperationMode.SERVER -> "MODO SERVIDOR"
-                                OperationMode.DIRECT -> "MODO DIRECTO"
-                            },
-                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp),
-                            fontSize = 10.sp,
-                            fontWeight = FontWeight.Bold,
+                        Surface(
                             color = when(operationMode) {
                                 OperationMode.SERVER -> Color(0xFF00D4FF)
                                 OperationMode.DIRECT -> Color(0xFFFF6B00)
-                            }
-                        )
+                            }.copy(alpha = 0.2f),
+                            shape = RoundedCornerShape(20.dp),
+                            modifier = Modifier.padding(top = 8.dp)
+                        ) {
+                            Text(
+                                text = when(operationMode) {
+                                    OperationMode.SERVER -> "MODO SERVIDOR"
+                                    OperationMode.DIRECT -> "MODO DIRECTO"
+                                },
+                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp),
+                                fontSize = 10.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = when(operationMode) {
+                                    OperationMode.SERVER -> Color(0xFF00D4FF)
+                                    OperationMode.DIRECT -> Color(0xFFFF6B00)
+                                }
+                            )
+                        }
                     }
 
                     // Indicador de estado
@@ -210,7 +216,7 @@ fun SkyTrackerScreen(viewModel: SkyTrackerViewModel) {
                                 .background(
                                     when {
                                         isConnected -> Color(0xFF00FF88)
-                                        connectionStatus.contains("Reconectando") -> Color(0xFFFFAA00)
+                                        connectionStatus.contains("tando") -> Color(0xFFFFAA00)
                                         else -> Color(0xFFFF4444)
                                     }
                                 )
@@ -319,13 +325,15 @@ fun SkyTrackerScreen(viewModel: SkyTrackerViewModel) {
                 ) {
                     ModeSelector(
                         selectedMode = selectedMode,
-                        onModeSelected = { selectedMode = it }
+                        onModeSelected = { selectedMode = it },
+                        isConnecting
                     )
                 }
 
                 // CONFIGURACIÓN DE CONEXIÓN
                 ConnectionConfig(
                     isConnected = isConnected,
+                    isConnecting = isConnecting,
                     selectedMode = selectedMode,
                     serverIp = serverIp,
                     serverPort = serverPort,
@@ -336,7 +344,8 @@ fun SkyTrackerScreen(viewModel: SkyTrackerViewModel) {
                     onEsp32IpChange = { esp32Ip = it },
                     onEsp32PortChange = { esp32Port = it },
                     onConnect = { connect() },
-                    onDisconnect = { disconnect() }
+                    onDisconnect = { disconnect() },
+                    onCancel = { viewModel.cancelConnection() }
                 )
 
                 // TELEMETRÍA
@@ -356,13 +365,13 @@ fun SkyTrackerScreen(viewModel: SkyTrackerViewModel) {
 @Composable
 fun ModeSelector(
     selectedMode: OperationMode,
-    onModeSelected: (OperationMode) -> Unit
+    onModeSelected: (OperationMode) -> Unit,
+    isConnecting: Boolean
 ) {
     Card(
         colors = CardDefaults.cardColors(
             containerColor = Color(0xFF1E2239).copy(alpha = 0.8f)
         ),
-        elevation = CardDefaults.cardElevation(16.dp),
         shape = RoundedCornerShape(20.dp),
         modifier = Modifier.fillMaxWidth()
     ) {
@@ -377,33 +386,68 @@ fun ModeSelector(
                 fontSize = 16.sp
             )
 
+            // 🔹 Usamos tween para control total sobre la duración
+            val animSpec = tween<Float>(
+                durationMillis = 600,
+                easing = FastOutSlowInEasing
+            )
+
+            val serverWeight by animateFloatAsState(
+                targetValue = when {
+                    isConnecting && selectedMode == OperationMode.SERVER -> 1f
+                    isConnecting && selectedMode == OperationMode.DIRECT -> 0.05f // deja una "franja"
+                    else -> 1f
+                },
+                animationSpec = animSpec,
+                label = "serverWeight"
+            )
+
+            val directWeight by animateFloatAsState(
+                targetValue = when {
+                    isConnecting && selectedMode == OperationMode.DIRECT -> 1f
+                    isConnecting && selectedMode == OperationMode.SERVER -> 0.05f
+                    else -> 1f
+                },
+                animationSpec = animSpec,
+                label = "directWeight"
+            )
+
             Row(
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                 modifier = Modifier.fillMaxWidth()
             ) {
                 ModeButton(
                     title = "SERVIDOR",
-                    description = "Conectar a Python\nCálculos en servidor",
+                    description = if (isConnecting && selectedMode == OperationMode.SERVER)
+                        "Conectando a Python..." else "Conectar a Python\nCálculos en servidor",
                     icon = Icons.Default.Info,
                     color = Color(0xFF00D4FF),
                     isSelected = selectedMode == OperationMode.SERVER,
-                    onClick = { onModeSelected(OperationMode.SERVER) },
-                    modifier = Modifier.weight(1f)
+                    onClick = { if (!isConnecting) onModeSelected(OperationMode.SERVER) },
+                    enabled = !isConnecting || selectedMode == OperationMode.SERVER,
+                    modifier = Modifier
+                        .weight(serverWeight)
+                        .animateContentSize()
                 )
 
                 ModeButton(
                     title = "DIRECTO",
-                    description = "Conectar al ESP32\nCálculos locales",
+                    description = if (isConnecting && selectedMode == OperationMode.DIRECT)
+                        "Conectando al ESP32..." else "Conectar al ESP32\nCálculos locales",
                     icon = Icons.Default.Star,
                     color = Color(0xFFFF6B00),
                     isSelected = selectedMode == OperationMode.DIRECT,
-                    onClick = { onModeSelected(OperationMode.DIRECT) },
-                    modifier = Modifier.weight(1f)
+                    onClick = { if (!isConnecting) onModeSelected(OperationMode.DIRECT) },
+                    enabled = !isConnecting || selectedMode == OperationMode.DIRECT,
+                    modifier = Modifier
+                        .weight(directWeight)
+                        .animateContentSize()
                 )
             }
         }
     }
 }
+
 
 @Composable
 fun ModeButton(
@@ -413,10 +457,12 @@ fun ModeButton(
     color: Color,
     isSelected: Boolean,
     onClick: () -> Unit,
+    enabled: Boolean = true,
     modifier: Modifier = Modifier
 ) {
     Button(
         onClick = onClick,
+        enabled = enabled,
         colors = ButtonDefaults.buttonColors(
             containerColor = if (isSelected) color else Color(0xFF0F1419).copy(alpha = 0.6f),
             contentColor = if (isSelected) Color.Black else color
@@ -477,11 +523,11 @@ fun TrackingControl(
                     modifier = Modifier
                         .size(8.dp)
                         .clip(CircleShape)
-                        .background(if (isTracking) Color(0xFF00FF88) else Color.Gray)
+                        .background(if (isTracking) Color(0xFF00FF88) else Color.White)
                 )
                 Text(
                     "Control de Rastreo",
-                    color = if (isTracking) Color(0xFF00FF88) else Color.Gray,
+                    color = if (isTracking) Color(0xFF00FF88) else Color.White,
                     fontWeight = FontWeight.Bold,
                     fontSize = 16.sp
                 )
@@ -511,14 +557,23 @@ fun TrackingControl(
             if (!isTracking) {
                 Button(
                     onClick = onStartTracking,
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF00FF88)),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFF00FF88),             // verde cuando habilitado
+                        contentColor = Color.Black,                     // texto negro cuando habilitado
+                        disabledContainerColor = Color.Gray,           // gris cuando deshabilitado
+                        disabledContentColor = Color.White             // texto blanco cuando deshabilitado
+                    ),
                     shape = RoundedCornerShape(12.dp),
                     enabled = objectName.isNotBlank(),
                     modifier = Modifier.fillMaxWidth().height(56.dp)
                 ) {
-                    Icon(Icons.Default.CheckCircle, contentDescription = null, tint = Color.Black)
+                    Icon(
+                        Icons.Default.CheckCircle,
+                        contentDescription = null,
+                        tint = if (objectName.isNotBlank()) Color.Black else Color.White
+                    )
                     Spacer(Modifier.width(8.dp))
-                    Text("INICIAR RASTREO", color = Color.Black, fontWeight = FontWeight.Bold)
+                    Text("INICIAR RASTREO", fontWeight = FontWeight.Bold)
                 }
             } else {
                 Button(
@@ -539,6 +594,7 @@ fun TrackingControl(
 @Composable
 fun ConnectionConfig(
     isConnected: Boolean,
+    isConnecting: Boolean,  // ← NUEVO parámetro
     selectedMode: OperationMode,
     serverIp: String,
     serverPort: String,
@@ -549,7 +605,8 @@ fun ConnectionConfig(
     onEsp32IpChange: (String) -> Unit,
     onEsp32PortChange: (String) -> Unit,
     onConnect: () -> Unit,
-    onDisconnect: () -> Unit
+    onDisconnect: () -> Unit,
+    onCancel: () -> Unit  // ← NUEVO parámetro
 ) {
     Card(
         colors = CardDefaults.cardColors(
@@ -581,7 +638,7 @@ fun ConnectionConfig(
                 )
             }
 
-            AnimatedVisibility(visible = !isConnected) {
+            AnimatedVisibility(visible = !isConnected && !isConnecting) {  // ← Modificado
                 Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
                     when (selectedMode) {
                         OperationMode.SERVER -> {
@@ -656,32 +713,51 @@ fun ConnectionConfig(
                 }
             }
 
-            if (!isConnected) {
-                Button(
-                    onClick = onConnect,
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = when(selectedMode) {
-                            OperationMode.SERVER -> Color(0xFF00D4FF)
-                            OperationMode.DIRECT -> Color(0xFFFF6B00)
-                        }
-                    ),
-                    shape = RoundedCornerShape(12.dp),
-                    modifier = Modifier.fillMaxWidth().height(56.dp)
-                ) {
-                    Icon(Icons.Default.Refresh, contentDescription = null, tint = Color.Black)
-                    Spacer(Modifier.width(8.dp))
-                    Text("CONECTAR", color = Color.Black, fontWeight = FontWeight.Bold)
+            // Botones (MODIFICAR TODA ESTA SECCIÓN)
+            when {
+                isConnected -> {
+                    // Botón DESCONECTAR
+                    OutlinedButton(
+                        onClick = onDisconnect,
+                        colors = ButtonDefaults.outlinedButtonColors(contentColor = Color(0xFFFF4444)),
+                        shape = RoundedCornerShape(12.dp),
+                        modifier = Modifier.fillMaxWidth().height(56.dp)
+                    ) {
+                        Icon(Icons.Default.Close, contentDescription = null)
+                        Spacer(Modifier.width(8.dp))
+                        Text("DESCONECTAR", fontWeight = FontWeight.Bold)
+                    }
                 }
-            } else {
-                OutlinedButton(
-                    onClick = onDisconnect,
-                    colors = ButtonDefaults.outlinedButtonColors(contentColor = Color(0xFFFF4444)),
-                    shape = RoundedCornerShape(12.dp),
-                    modifier = Modifier.fillMaxWidth().height(56.dp)
-                ) {
-                    Icon(Icons.Default.Close, contentDescription = null)
-                    Spacer(Modifier.width(8.dp))
-                    Text("DESCONECTAR", fontWeight = FontWeight.Bold)
+                isConnecting -> {
+                    // Botón CANCELAR (mientras conecta)
+                    OutlinedButton(
+                        onClick = onCancel,
+                        colors = ButtonDefaults.outlinedButtonColors(contentColor = Color(0xFFFFAA00)),
+                        shape = RoundedCornerShape(12.dp),
+                        modifier = Modifier.fillMaxWidth().height(56.dp)
+                    ) {
+                        Icon(Icons.Default.Close, contentDescription = null)
+                        Spacer(Modifier.width(8.dp))
+                        Text("CANCELAR", fontWeight = FontWeight.Bold)
+                    }
+                }
+                else -> {
+                    // Botón CONECTAR
+                    Button(
+                        onClick = onConnect,
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = when(selectedMode) {
+                                OperationMode.SERVER -> Color(0xFF00D4FF)
+                                OperationMode.DIRECT -> Color(0xFFFF6B00)
+                            }
+                        ),
+                        shape = RoundedCornerShape(12.dp),
+                        modifier = Modifier.fillMaxWidth().height(56.dp)
+                    ) {
+                        Icon(Icons.Default.Refresh, contentDescription = null, tint = Color.Black)
+                        Spacer(Modifier.width(8.dp))
+                        Text("CONECTAR", color = Color.Black, fontWeight = FontWeight.Bold)
+                    }
                 }
             }
         }
@@ -727,7 +803,7 @@ fun TelemetryCard(
         shape = RoundedCornerShape(20.dp),
         modifier = Modifier.fillMaxWidth()
     ) {
-        Column(modifier = Modifier.padding(20.dp)) {
+        Column(modifier = Modifier.padding(10.dp)) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp),

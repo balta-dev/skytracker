@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.skytracker.data.models.TelemetryData
 import com.example.skytracker.repository.OperationMode
 import com.example.skytracker.repository.SkyTrackerRepository
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -36,6 +37,11 @@ class SkyTrackerViewModel(application: Application) : AndroidViewModel(applicati
 
     private val _showCacheAge = MutableStateFlow(false)
     val showCacheAge: StateFlow<Boolean> = _showCacheAge
+
+    private val _isConnecting = MutableStateFlow(false)
+    val isConnecting: StateFlow<Boolean> = _isConnecting
+
+    private var connectionObserverJob: Job? = null
 
 
     init {
@@ -85,12 +91,19 @@ class SkyTrackerViewModel(application: Application) : AndroidViewModel(applicati
      * Actualiza la edad del cache
      */
     private fun updateCacheAge() {
-        val hours = repository.getCacheAgeHours()
+        val minutes = repository.getCacheAgeMinutes() // mejor trabajar con minutos
         _cacheAge.value = when {
-            hours < 0 -> "Sin cache"
-            hours == 0L -> "Recién actualizado"
-            hours < 24 -> "$hours horas"
-            else -> "${hours / 24} días"
+            minutes < 0 -> "sin datos"
+            minutes < 1 -> "actualizado!"
+            minutes < 60 -> "hace $minutes minuto${if (minutes == 1L) "" else "s"}"
+            minutes < 1440 -> { // menos de 24 horas
+                val hours = minutes / 60
+                "hace $hours hora${if (hours == 1L) "" else "s"}"
+            }
+            else -> { // 1 día o más
+                val days = minutes / 1440
+                "hace $days día${if (days == 1L) "" else "s"}"
+            }
         }
     }
 
@@ -98,17 +111,35 @@ class SkyTrackerViewModel(application: Application) : AndroidViewModel(applicati
      * Conecta al servidor Python
      */
     fun connectToServer(ipAddress: String, port: String) {
+        _isConnecting.value = true
         val portInt = port.toIntOrNull() ?: 12345
         repository.connectToServer(ipAddress, portInt, viewModelScope)
+        observeConnection()
     }
 
     /**
      * Conecta directamente al ESP32
      */
     fun connectToESP32(ipAddress: String, port: String) {
+        _isConnecting.value = true
         viewModelScope.launch {
             val portInt = port.toIntOrNull() ?: 12345
             repository.connectToESP32(ipAddress, portInt, viewModelScope)
+        }
+        observeConnection()
+    }
+
+    /**
+     * Observa el estado de conexión (evita múltiples collectors)
+     */
+    private fun observeConnection() {
+        connectionObserverJob?.cancel()
+        connectionObserverJob = viewModelScope.launch {
+            repository.isConnected.collect { connected ->
+                if (connected) {
+                    _isConnecting.value = false
+                }
+            }
         }
     }
 
@@ -135,6 +166,11 @@ class SkyTrackerViewModel(application: Application) : AndroidViewModel(applicati
         repository.disconnectAll()
     }
 
+    fun cancelConnection() {
+        _isConnecting.value = false
+        repository.disconnectAll()
+    }
+
     /**
      * Verifica si un objeto existe
      */
@@ -144,6 +180,7 @@ class SkyTrackerViewModel(application: Application) : AndroidViewModel(applicati
 
     override fun onCleared() {
         super.onCleared()
+        connectionObserverJob?.cancel()
         repository.disconnectAll()
     }
 }
