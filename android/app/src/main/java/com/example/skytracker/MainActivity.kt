@@ -58,7 +58,7 @@ fun SkyTrackerScreen(viewModel: SkyTrackerViewModel) {
     var serverIp by remember { mutableStateOf("192.168.101.6") }
     var serverPort by remember { mutableStateOf("12345") }
     var esp32Ip by remember { mutableStateOf("192.168.101.100") }
-    var esp32Port by remember { mutableStateOf("80") }
+    var esp32Port by remember { mutableStateOf("12345") }
     var objectName by remember { mutableStateOf("") }
     var selectedMode by remember { mutableStateOf(OperationMode.SERVER) }
 
@@ -69,6 +69,7 @@ fun SkyTrackerScreen(viewModel: SkyTrackerViewModel) {
     val operationMode by viewModel.operationMode.collectAsState()
     val isRefreshing by viewModel.isRefreshing.collectAsState()
     val cacheAge by viewModel.cacheAge.collectAsState()
+    val showCacheAge by viewModel.showCacheAge.collectAsState()
     val updateMessage by viewModel.updateMessage.collectAsState()
 
     val focusManager = LocalFocusManager.current
@@ -225,9 +226,9 @@ fun SkyTrackerScreen(viewModel: SkyTrackerViewModel) {
 
                     // Info del cache de efemérides
                     AnimatedVisibility(
-                        visible = cacheAge != "--",
-                        enter = fadeIn(),
-                        exit = fadeOut()
+                        visible = showCacheAge,
+                        enter = fadeIn() + expandVertically(),
+                        exit = fadeOut() + shrinkVertically()
                     ) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
@@ -256,7 +257,7 @@ fun SkyTrackerScreen(viewModel: SkyTrackerViewModel) {
                                     )
                                 }
                             }
-
+                            /*
                             // Botón de actualización manual
                             IconButton(
                                 onClick = { viewModel.refreshEphemeris() },
@@ -290,6 +291,7 @@ fun SkyTrackerScreen(viewModel: SkyTrackerViewModel) {
                                         )
                                 )
                             }
+                             */
                         }
                     }
                 }

@@ -9,7 +9,7 @@ import java.net.Socket
 
 class ESP32Connection(
     private val ipAddress: String,
-    private val port: Int = 80
+    private val port: Int = 12345
 ) {
     private var socket: Socket? = null
     private var reader: java.io.BufferedReader? = null

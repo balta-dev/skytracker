@@ -34,10 +34,26 @@ class SkyTrackerViewModel(application: Application) : AndroidViewModel(applicati
     private val _updateMessage = MutableStateFlow<String?>(null)
     val updateMessage: StateFlow<String?> = _updateMessage
 
+    private val _showCacheAge = MutableStateFlow(false)
+    val showCacheAge: StateFlow<Boolean> = _showCacheAge
+
+
     init {
         // Cargar objetos disponibles
         _availableObjects.value = repository.getAvailableObjects()
         updateCacheAge()
+
+        // Mostrar cache al inicio por 4 segundos
+        viewModelScope.launch {
+            _showCacheAge.value = true
+            delay(4000)
+            _showCacheAge.value = shouldShowCacheWarning()
+        }
+    }
+
+    private fun shouldShowCacheWarning(): Boolean {
+        val hours = repository.getCacheAgeHours()
+        return hours > 24 // Mostrar permanente si es viejo
     }
 
     /**
@@ -52,6 +68,9 @@ class SkyTrackerViewModel(application: Application) : AndroidViewModel(applicati
                 _availableObjects.value = repository.getAvailableObjects()
                 updateCacheAge()
                 _updateMessage.value = "✓ Datos actualizados correctamente"
+                _showCacheAge.value = true
+                delay(4000)
+                _showCacheAge.value = shouldShowCacheWarning()
             } else {
                 _updateMessage.value = "✗ Error al actualizar datos"
             }
@@ -60,13 +79,6 @@ class SkyTrackerViewModel(application: Application) : AndroidViewModel(applicati
             delay(3000)
             _updateMessage.value = null
         }
-    }
-
-    /**
-     * Limpia el mensaje de actualización
-     */
-    fun clearUpdateMessage() {
-        _updateMessage.value = null
     }
 
     /**
@@ -95,7 +107,7 @@ class SkyTrackerViewModel(application: Application) : AndroidViewModel(applicati
      */
     fun connectToESP32(ipAddress: String, port: String) {
         viewModelScope.launch {
-            val portInt = port.toIntOrNull() ?: 80
+            val portInt = port.toIntOrNull() ?: 12345
             repository.connectToESP32(ipAddress, portInt, viewModelScope)
         }
     }

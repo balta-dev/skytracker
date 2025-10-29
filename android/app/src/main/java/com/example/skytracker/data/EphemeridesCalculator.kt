@@ -75,6 +75,9 @@ class EphemerisCalculator(private val context: Context) {
         }
     }
 
+    /**
+     * Crear cliente OkHttp no seguro. Omite certificados.
+     */
     private fun createUnsafeOkHttpClient(): OkHttpClient {
         val trustAllCerts = arrayOf<TrustManager>(
             object : X509TrustManager {
