@@ -126,6 +126,8 @@ class ServerConnection(
     suspend fun stopTracking() = withContext(Dispatchers.IO) {
         try {
             writer?.write("STOP\n")
+            _targetAngles.value = null
+            _sensorAngles.value = null
             writer?.flush()
         } catch (e: Exception) {
             // Ignorar errores
@@ -136,6 +138,7 @@ class ServerConnection(
         currentTrackingObject = null
         _trackingObject.value = null
         _targetAngles.value = null
+        _sensorAngles.value = null
         _statusMessage.value = "Conectado - Esperando comando"
     }
 
