@@ -232,12 +232,18 @@ class SkyTrackerRepository(context: Context) {
         when (_operationMode.value) {
             OperationMode.SERVER -> {
                 serverConnection?.stopTracking()
+                _telemetryData.value = TelemetryData(
+                    targetAngles = null,
+                    sensorAngles = null,
+                    trackingObject = null,
+                    isTracking = false
+                )
             }
 
             OperationMode.DIRECT -> {
                 _telemetryData.value = TelemetryData(
-                    targetAngles = null,
-                    sensorAngles = _telemetryData.value.sensorAngles,
+                    targetAngles = null,      // Limpia comandado
+                    sensorAngles = null,      // Limpia feedback
                     trackingObject = null,
                     isTracking = false
                 )

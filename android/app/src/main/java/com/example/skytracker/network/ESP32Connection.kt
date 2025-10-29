@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import java.net.InetSocketAddress
 import java.net.Socket
+import java.util.Locale
 
 class ESP32Connection(
     private val ipAddress: String,
@@ -79,10 +80,16 @@ class ESP32Connection(
     suspend fun sendAngles(angles: PointingAngles): Boolean = withContext(Dispatchers.IO) {
         if (_connectionState.value != ConnectionState.CONNECTED) return@withContext false
         try {
-            writer?.write("CMD:%.2f,%.2f\n".format(angles.yaw, angles.pitch))
+            // USAR Locale.US para forzar punto decimal
+            val message = "CMD:%.2f,%.2f\n".format(Locale.US, angles.yaw, angles.pitch)
+
+            writer?.write(message)
             writer?.flush()
+            println("ENVIADO: ${message.trim()}")
             true
         } catch (e: Exception) {
+            println("ERROR: ${e.message}")
+            _sensorAngles.value = null
             false
         }
     }
