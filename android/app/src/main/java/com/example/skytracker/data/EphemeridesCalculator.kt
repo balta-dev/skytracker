@@ -3,6 +3,7 @@ package com.example.skytracker.data
 import android.content.Context
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import okhttp3.CertificatePinner
 import java.net.HttpURLConnection
 import java.net.URL
 import java.util.*
@@ -10,11 +11,15 @@ import kotlin.math.*
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import java.io.IOException
+import java.io.InputStream
+import java.security.KeyStore
 import java.security.SecureRandom
+import java.security.cert.CertificateFactory
 import java.security.cert.X509Certificate
 import java.util.concurrent.TimeUnit
 import javax.net.ssl.SSLContext
 import javax.net.ssl.TrustManager
+import javax.net.ssl.TrustManagerFactory
 import javax.net.ssl.X509TrustManager
 
 /**
@@ -36,21 +41,9 @@ class EphemerisCalculator(private val context: Context) {
             val nowUtc = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
             val jd = calculateJulianDate(nowUtc)
 
-            // Formato: JD2460977.500 (sin espacio después de JD)
             val jdStart = String.format(Locale.US, "JD%.3f", jd)
             val jdStop = String.format(Locale.US, "JD%.3f", jd + 0.001)
 
-            // Coordenadas: lon,lat,alt_km (sin espacios)
-            val siteCoord = String.format(
-                Locale.US,
-                "%.6f,%.6f,%.3f",
-                observerLon,
-                observerLat,
-                observerAlt / 1000.0
-            )
-
-            // IMPORTANTE: Seguir el formato EXACTO de la URL de referencia
-            // NO usar comillas simples en COMMAND, CENTER ni SITE_COORD
             val url = "https://ssd.jpl.nasa.gov/api/horizons.api" +
                     "?format=text" +
                     "&COMMAND=$objectId" +
@@ -76,24 +69,12 @@ class EphemerisCalculator(private val context: Context) {
     }
 
     /**
-     * Crear cliente OkHttp no seguro. Omite certificados.
+     * Crear cliente OkHttp seguro
      */
-    private fun createUnsafeOkHttpClient(): OkHttpClient {
-        val trustAllCerts = arrayOf<TrustManager>(
-            object : X509TrustManager {
-                override fun checkClientTrusted(chain: Array<X509Certificate>, authType: String) {}
-                override fun checkServerTrusted(chain: Array<X509Certificate>, authType: String) {}
-                override fun getAcceptedIssuers(): Array<X509Certificate> = arrayOf()
-            }
-        )
-
-        val sslContext = SSLContext.getInstance("SSL")
-        sslContext.init(null, trustAllCerts, SecureRandom())
-        val sslSocketFactory = sslContext.socketFactory
-
+    private fun createSecureOkHttpClient(): OkHttpClient {
         return OkHttpClient.Builder()
-            .sslSocketFactory(sslSocketFactory, trustAllCerts[0] as X509TrustManager)
-            .hostnameVerifier { _, _ -> true }
+            .connectTimeout(30, TimeUnit.SECONDS)
+            .readTimeout(30, TimeUnit.SECONDS)
             .build()
     }
 
@@ -104,7 +85,7 @@ class EphemerisCalculator(private val context: Context) {
         return try {
             println("EphemerisCalculator: Fetching URL: $urlString")
 
-            val client = createUnsafeOkHttpClient() // <--- USAR ESTE CLIENTE
+            val client = createSecureOkHttpClient()
             val request = okhttp3.Request.Builder()
                 .url(urlString)
                 .get()
