@@ -1,10 +1,12 @@
 package com.example.skytracker.ui.viewmodel
 
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.skytracker.data.models.TelemetryData
 import com.example.skytracker.repository.OperationMode
 import com.example.skytracker.repository.SkyTrackerRepository
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -12,22 +14,72 @@ import kotlinx.coroutines.launch
 /**
  * ViewModel para la pantalla principal
  */
-class SkyTrackerViewModel : ViewModel() {
+class SkyTrackerViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val repository = SkyTrackerRepository()
+    private val repository = SkyTrackerRepository(application.applicationContext)
 
     // Estados de UI
     val telemetryData: StateFlow<TelemetryData> = repository.telemetryData
     val connectionStatus: StateFlow<String> = repository.connectionStatus
     val isConnected: StateFlow<Boolean> = repository.isConnected
     val operationMode: StateFlow<OperationMode> = repository.operationMode
+    val isRefreshing: StateFlow<Boolean> = repository.isRefreshing
 
     private val _availableObjects = MutableStateFlow<List<String>>(emptyList())
     val availableObjects: StateFlow<List<String>> = _availableObjects
 
+    private val _cacheAge = MutableStateFlow<String>("--")
+    val cacheAge: StateFlow<String> = _cacheAge
+
+    private val _updateMessage = MutableStateFlow<String?>(null)
+    val updateMessage: StateFlow<String?> = _updateMessage
+
     init {
         // Cargar objetos disponibles
         _availableObjects.value = repository.getAvailableObjects()
+        updateCacheAge()
+    }
+
+    /**
+     * Actualiza las efemérides (pull-to-refresh)
+     */
+    fun refreshEphemeris() {
+        viewModelScope.launch {
+            _updateMessage.value = "Actualizando..."
+            val success = repository.refreshEphemeris()
+            if (success) {
+                // Recargar lista de objetos con nuevas coordenadas
+                _availableObjects.value = repository.getAvailableObjects()
+                updateCacheAge()
+                _updateMessage.value = "✓ Datos actualizados correctamente"
+            } else {
+                _updateMessage.value = "✗ Error al actualizar datos"
+            }
+
+            // Limpiar mensaje después de 3 segundos
+            delay(3000)
+            _updateMessage.value = null
+        }
+    }
+
+    /**
+     * Limpia el mensaje de actualización
+     */
+    fun clearUpdateMessage() {
+        _updateMessage.value = null
+    }
+
+    /**
+     * Actualiza la edad del cache
+     */
+    private fun updateCacheAge() {
+        val hours = repository.getCacheAgeHours()
+        _cacheAge.value = when {
+            hours < 0 -> "Sin cache"
+            hours == 0L -> "Recién actualizado"
+            hours < 24 -> "$hours horas"
+            else -> "${hours / 24} días"
+        }
     }
 
     /**
@@ -42,9 +94,10 @@ class SkyTrackerViewModel : ViewModel() {
      * Conecta directamente al ESP32
      */
     fun connectToESP32(ipAddress: String, port: String) {
-        val portInt = port.toIntOrNull() ?: 80
-        // PASAR viewModelScope como tercer parámetro
-        repository.connectToESP32(ipAddress, portInt, viewModelScope)
+        viewModelScope.launch {
+            val portInt = port.toIntOrNull() ?: 80
+            repository.connectToESP32(ipAddress, portInt, viewModelScope)
+        }
     }
 
     /**

@@ -1,8 +1,8 @@
 package com.example.skytracker.repository
 
+import android.content.Context
 import com.example.skytracker.calculation.CelestialTracker
 import com.example.skytracker.data.CelestialDatabase
-import com.example.skytracker.data.models.CelestialData
 import com.example.skytracker.data.models.CelestialObject
 import com.example.skytracker.data.models.PointingAngles
 import com.example.skytracker.data.models.TelemetryData
@@ -22,9 +22,9 @@ enum class OperationMode {
 /**
  * Repositorio principal que abstrae la fuente de datos
  */
-class SkyTrackerRepository {
+class SkyTrackerRepository(context: Context) {
 
-    private val celestialData: CelestialData = CelestialDatabase.getCelestialData()
+    private val database = CelestialDatabase.getInstance(context)
     private val tracker = CelestialTracker()
 
     // Conexiones
@@ -46,8 +46,28 @@ class SkyTrackerRepository {
     private val _isConnected = MutableStateFlow(false)
     val isConnected: StateFlow<Boolean> = _isConnected
 
+    private val _isRefreshing = MutableStateFlow(false)
+    val isRefreshing: StateFlow<Boolean> = _isRefreshing
+
     private var trackingJob: Job? = null
     private var currentTrackedObject: CelestialObject? = null
+
+    /**
+     * Actualiza las efemérides (pull-to-refresh)
+     */
+    suspend fun refreshEphemeris(): Boolean {
+        _isRefreshing.value = true
+        val success = database.updateEphemeris()
+        _isRefreshing.value = false
+        return success
+    }
+
+    /**
+     * Obtiene la edad del cache en horas
+     */
+    fun getCacheAgeHours(): Long {
+        return database.getCacheAge()
+    }
 
     /**
      * Conecta en modo servidor Python
@@ -93,30 +113,37 @@ class SkyTrackerRepository {
 
     /**
      * Conecta en modo directo al ESP32
+     * CORREGIDO: Usa connectWithAutoReconnect() y observa estados
      */
     fun connectToESP32(ipAddress: String, port: Int, scope: CoroutineScope) {
         disconnectAll()
+
         _operationMode.value = OperationMode.DIRECT
         esp32Connection = ESP32Connection(ipAddress, port)
+
+        // Usar el método que SÍ existe: connectWithAutoReconnect()
         esp32Connection?.connectWithAutoReconnect()
 
-        // OBSERVAR ESTADO
+        // Observar estado de conexión
         scope.launch {
             esp32Connection?.connectionState?.collect { state ->
-                _isConnected.value = state == ESP32Connection.ConnectionState.CONNECTED
+                _isConnected.value = (state == ESP32Connection.ConnectionState.CONNECTED)
                 _connectionStatus.value = when (state) {
                     ESP32Connection.ConnectionState.CONNECTED -> "Conectado al ESP32"
                     ESP32Connection.ConnectionState.CONNECTING -> "Conectando al ESP32..."
                     ESP32Connection.ConnectionState.RECONNECTING -> "Reconectando al ESP32..."
-                    ESP32Connection.ConnectionState.DISCONNECTED, ESP32Connection.ConnectionState.ERROR -> "Desconectado"
+                    ESP32Connection.ConnectionState.DISCONNECTED -> "Desconectado"
+                    ESP32Connection.ConnectionState.ERROR -> "Error de conexión"
                 }
             }
         }
 
-        // OBSERVAR SENSOR
+        // Observar ángulos del sensor
         scope.launch {
             esp32Connection?.sensorAngles?.collect { angles ->
-                _telemetryData.value = _telemetryData.value.copy(sensorAngles = angles)
+                _telemetryData.value = _telemetryData.value.copy(
+                    sensorAngles = angles
+                )
             }
         }
     }
@@ -125,6 +152,7 @@ class SkyTrackerRepository {
      * Inicia el rastreo de un objeto
      */
     fun startTracking(objectName: String, scope: CoroutineScope): Boolean {
+        val celestialData = database.getCelestialData()
         val obj = celestialData.findObject(objectName)
         if (obj == null) {
             _connectionStatus.value = "Objeto no encontrado: $objectName"
@@ -159,8 +187,8 @@ class SkyTrackerRepository {
         _connectionStatus.value = "Rastreando ${obj.name}"
 
         trackingJob = scope.launch {
-            while (isActive) {
-                try {
+            try {
+                while (isActive) {
                     // Calcular ángulos para el objeto
                     val angles = tracker.calculateTrackingAngles(
                         obj.raHours,
@@ -175,13 +203,13 @@ class SkyTrackerRepository {
                     // Enviar al ESP32
                     esp32Connection?.sendAngles(angles)
 
-                    // Actualizar cada 1 segundo (el ESP32 se mueve lentamente)
+                    // Actualizar cada 1 segundo
                     delay(1000)
-
-                } catch (e: Exception) {
-                    _connectionStatus.value = "Error en rastreo: ${e.message}"
-                    break
                 }
+            } catch (e: CancellationException) {
+                // No hacer nada, la corutina fue cancelada intencionalmente
+            } catch (e: Exception) {
+                _connectionStatus.value = "Error en rastreo: ${e.message}"
             }
         }
     }
@@ -215,14 +243,14 @@ class SkyTrackerRepository {
      * Obtiene la lista de objetos disponibles
      */
     fun getAvailableObjects(): List<String> {
-        return celestialData.getAllNames()
+        return database.getCelestialData().getAllNames()
     }
 
     /**
      * Busca un objeto por nombre
      */
     fun findObject(name: String): CelestialObject? {
-        return celestialData.findObject(name)
+        return database.getCelestialData().findObject(name)
     }
 
     /**

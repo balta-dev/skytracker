@@ -109,7 +109,7 @@ def calculate_ephemeris(location_lat=-32.4833, location_lon=-58.229561, date=Non
         return None
 
 
-def update_json_file(ephemeris_data, filename='celestial_data.json'):
+def update_json_file(ephemeris_data, filename='../celestial_data.json'):
     """
     Actualiza el archivo JSON con las nuevas coordenadas
     

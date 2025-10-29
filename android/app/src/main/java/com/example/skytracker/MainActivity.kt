@@ -18,6 +18,8 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -36,13 +38,13 @@ import com.example.skytracker.ui.theme.SkyTrackerTheme
 import com.example.skytracker.ui.viewmodel.SkyTrackerViewModel
 
 class MainActivity : ComponentActivity() {
-    private val viewModel: SkyTrackerViewModel by viewModels()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             SkyTrackerTheme {
+                // Usar viewModels() delegate en lugar de viewModel()
+                val viewModel: SkyTrackerViewModel by viewModels()
                 SkyTrackerScreen(viewModel)
             }
         }
@@ -65,8 +67,22 @@ fun SkyTrackerScreen(viewModel: SkyTrackerViewModel) {
     val connectionStatus by viewModel.connectionStatus.collectAsState()
     val isConnected by viewModel.isConnected.collectAsState()
     val operationMode by viewModel.operationMode.collectAsState()
+    val isRefreshing by viewModel.isRefreshing.collectAsState()
+    val cacheAge by viewModel.cacheAge.collectAsState()
+    val updateMessage by viewModel.updateMessage.collectAsState()
 
     val focusManager = LocalFocusManager.current
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    // Mostrar Snackbar cuando hay mensaje de actualización
+    LaunchedEffect(updateMessage) {
+        updateMessage?.let { message ->
+            snackbarHostState.showSnackbar(
+                message = message,
+                duration = SnackbarDuration.Short
+            )
+        }
+    }
 
     // Animación de pulso
     val infiniteTransition = rememberInfiniteTransition(label = "pulse")
@@ -120,141 +136,217 @@ fun SkyTrackerScreen(viewModel: SkyTrackerViewModel) {
                 )
             )
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(20.dp),
-            verticalArrangement = Arrangement.spacedBy(20.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+        PullToRefreshBox(
+            isRefreshing = isRefreshing,
+            onRefresh = { viewModel.refreshEphemeris() },
+            modifier = Modifier.fillMaxSize()
         ) {
-            Spacer(modifier = Modifier.height(20.dp))
-
-            // TÍTULO Y ESTADO
             Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.padding(vertical = 8.dp)
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .padding(20.dp),
+                verticalArrangement = Arrangement.spacedBy(20.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(
-                    text = "SKY",
-                    fontSize = 40.sp,
-                    fontWeight = FontWeight.Black,
-                    color = Color(0xFFFFD700),
-                    letterSpacing = 8.sp
-                )
-                Text(
-                    text = "TRACKER",
-                    fontSize = 32.sp,
-                    fontWeight = FontWeight.Light,
-                    color = Color(0xFF00D4FF),
-                    letterSpacing = 12.sp
-                )
+                Spacer(modifier = Modifier.height(20.dp))
 
-                // Badge de modo
-                Surface(
-                    color = when(operationMode) {
-                        OperationMode.SERVER -> Color(0xFF00D4FF)
-                        OperationMode.DIRECT -> Color(0xFFFF6B00)
-                    }.copy(alpha = 0.2f),
-                    shape = RoundedCornerShape(20.dp),
-                    modifier = Modifier.padding(top = 8.dp)
+                // TÍTULO Y ESTADO
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.padding(vertical = 8.dp)
                 ) {
                     Text(
-                        text = when(operationMode) {
-                            OperationMode.SERVER -> "MODO SERVIDOR"
-                            OperationMode.DIRECT -> "MODO DIRECTO"
-                        },
-                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp),
-                        fontSize = 10.sp,
-                        fontWeight = FontWeight.Bold,
+                        text = "SKY",
+                        fontSize = 40.sp,
+                        fontWeight = FontWeight.Black,
+                        color = Color(0xFFFFD700),
+                        letterSpacing = 8.sp
+                    )
+                    Text(
+                        text = "TRACKER",
+                        fontSize = 32.sp,
+                        fontWeight = FontWeight.Light,
+                        color = Color(0xFF00D4FF),
+                        letterSpacing = 12.sp
+                    )
+
+                    // Badge de modo
+                    Surface(
                         color = when(operationMode) {
                             OperationMode.SERVER -> Color(0xFF00D4FF)
                             OperationMode.DIRECT -> Color(0xFFFF6B00)
-                        }
-                    )
-                }
+                        }.copy(alpha = 0.2f),
+                        shape = RoundedCornerShape(20.dp),
+                        modifier = Modifier.padding(top = 8.dp)
+                    ) {
+                        Text(
+                            text = when(operationMode) {
+                                OperationMode.SERVER -> "MODO SERVIDOR"
+                                OperationMode.DIRECT -> "MODO DIRECTO"
+                            },
+                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp),
+                            fontSize = 10.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = when(operationMode) {
+                                OperationMode.SERVER -> Color(0xFF00D4FF)
+                                OperationMode.DIRECT -> Color(0xFFFF6B00)
+                            }
+                        )
+                    }
 
-                // Indicador de estado
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center,
-                    modifier = Modifier.padding(top = 12.dp)
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .size(12.dp)
-                            .scale(if (isConnected) pulseScale else 1f)
-                            .clip(CircleShape)
-                            .background(
-                                when {
-                                    isConnected -> Color(0xFF00FF88)
-                                    connectionStatus.contains("Reconectando") -> Color(0xFFFFAA00)
-                                    else -> Color(0xFFFF4444)
+                    // Indicador de estado
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center,
+                        modifier = Modifier.padding(top = 12.dp)
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(12.dp)
+                                .scale(if (isConnected) pulseScale else 1f)
+                                .clip(CircleShape)
+                                .background(
+                                    when {
+                                        isConnected -> Color(0xFF00FF88)
+                                        connectionStatus.contains("Reconectando") -> Color(0xFFFFAA00)
+                                        else -> Color(0xFFFF4444)
+                                    }
+                                )
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = connectionStatus,
+                            color = Color.White.copy(alpha = 0.8f),
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Medium
+                        )
+                    }
+
+                    // Info del cache de efemérides
+                    AnimatedVisibility(
+                        visible = cacheAge != "--",
+                        enter = fadeIn(),
+                        exit = fadeOut()
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Surface(
+                                color = Color(0xFF1E2239).copy(alpha = 0.5f),
+                                shape = RoundedCornerShape(12.dp),
+                                modifier = Modifier.padding(top = 4.dp)
+                            ) {
+                                Row(
+                                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
+                                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Icon(
+                                        Icons.Default.DateRange,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(12.dp),
+                                        tint = Color.White.copy(alpha = 0.6f)
+                                    )
+                                    Text(
+                                        text = "Cache: $cacheAge",
+                                        fontSize = 9.sp,
+                                        color = Color.White.copy(alpha = 0.6f)
+                                    )
                                 }
-                            )
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = connectionStatus,
-                        color = Color.White.copy(alpha = 0.8f),
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Medium
+                            }
+
+                            // Botón de actualización manual
+                            IconButton(
+                                onClick = { viewModel.refreshEphemeris() },
+                                modifier = Modifier
+                                    .size(32.dp)
+                                    .padding(top = 4.dp),
+                                enabled = !isRefreshing
+                            ) {
+                                Icon(
+                                    Icons.Default.Refresh,
+                                    contentDescription = "Actualizar efemérides",
+                                    tint = if (isRefreshing)
+                                        Color.White.copy(alpha = 0.3f)
+                                    else
+                                        Color(0xFF00D4FF),
+                                    modifier = Modifier
+                                        .size(16.dp)
+                                        .then(
+                                            if (isRefreshing)
+                                                Modifier.scale(
+                                                    animateFloatAsState(
+                                                        targetValue = 1.2f,
+                                                        animationSpec = infiniteRepeatable(
+                                                            animation = tween(500),
+                                                            repeatMode = RepeatMode.Reverse
+                                                        ),
+                                                        label = "refresh_pulse"
+                                                    ).value
+                                                )
+                                            else Modifier
+                                        )
+                                )
+                            }
+                        }
+                    }
+                }
+
+                // CONTROL DE RASTREO (cuando está conectado)
+                AnimatedVisibility(
+                    visible = isConnected,
+                    enter = expandVertically() + fadeIn(),
+                    exit = shrinkVertically() + fadeOut()
+                ) {
+                    TrackingControl(
+                        objectName = objectName,
+                        onObjectNameChange = { objectName = it },
+                        isTracking = telemetryData.isTracking,
+                        onStartTracking = { startTracking() },
+                        onStopTracking = { stopTracking() }
                     )
                 }
-            }
 
-            // CONTROL DE RASTREO (cuando está conectado)
-            AnimatedVisibility(
-                visible = isConnected,
-                enter = expandVertically() + fadeIn(),
-                exit = shrinkVertically() + fadeOut()
-            ) {
-                TrackingControl(
-                    objectName = objectName,
-                    onObjectNameChange = { objectName = it },
-                    isTracking = telemetryData.isTracking,
-                    onStartTracking = { startTracking() },
-                    onStopTracking = { stopTracking() }
-                )
-            }
+                // SELECTOR DE MODO (solo cuando no está conectado)
+                AnimatedVisibility(
+                    visible = !isConnected,
+                    enter = expandVertically() + fadeIn(),
+                    exit = shrinkVertically() + fadeOut()
+                ) {
+                    ModeSelector(
+                        selectedMode = selectedMode,
+                        onModeSelected = { selectedMode = it }
+                    )
+                }
 
-            // SELECTOR DE MODO (solo cuando no está conectado)
-            AnimatedVisibility(
-                visible = !isConnected,
-                enter = expandVertically() + fadeIn(),
-                exit = shrinkVertically() + fadeOut()
-            ) {
-                ModeSelector(
+                // CONFIGURACIÓN DE CONEXIÓN
+                ConnectionConfig(
+                    isConnected = isConnected,
                     selectedMode = selectedMode,
-                    onModeSelected = { selectedMode = it }
+                    serverIp = serverIp,
+                    serverPort = serverPort,
+                    esp32Ip = esp32Ip,
+                    esp32Port = esp32Port,
+                    onServerIpChange = { serverIp = it },
+                    onServerPortChange = { serverPort = it },
+                    onEsp32IpChange = { esp32Ip = it },
+                    onEsp32PortChange = { esp32Port = it },
+                    onConnect = { connect() },
+                    onDisconnect = { disconnect() }
                 )
+
+                // TELEMETRÍA
+                TelemetryDisplay(
+                    targetYaw = telemetryData.targetAngles?.yaw?.let { "%.2f".format(it) } ?: "--",
+                    targetPitch = telemetryData.targetAngles?.pitch?.let { "%.2f".format(it) } ?: "--",
+                    sensorYaw = telemetryData.sensorAngles?.yaw?.let { "%.2f".format(it) } ?: "--",
+                    sensorPitch = telemetryData.sensorAngles?.pitch?.let { "%.2f".format(it) } ?: "--"
+                )
+
+                Spacer(modifier = Modifier.height(20.dp))
             }
-
-            // CONFIGURACIÓN DE CONEXIÓN
-            ConnectionConfig(
-                isConnected = isConnected,
-                selectedMode = selectedMode,
-                serverIp = serverIp,
-                serverPort = serverPort,
-                esp32Ip = esp32Ip,
-                esp32Port = esp32Port,
-                onServerIpChange = { serverIp = it },
-                onServerPortChange = { serverPort = it },
-                onEsp32IpChange = { esp32Ip = it },
-                onEsp32PortChange = { esp32Port = it },
-                onConnect = { connect() },
-                onDisconnect = { disconnect() }
-            )
-
-            // TELEMETRÍA
-            TelemetryDisplay(
-                targetYaw = telemetryData.targetAngles?.yaw?.let { "%.2f".format(it) } ?: "--",
-                targetPitch = telemetryData.targetAngles?.pitch?.let { "%.2f".format(it) } ?: "--",
-                sensorYaw = telemetryData.sensorAngles?.yaw?.let { "%.2f".format(it) } ?: "--",
-                sensorPitch = telemetryData.sensorAngles?.pitch?.let { "%.2f".format(it) } ?: "--"
-            )
-
-            Spacer(modifier = Modifier.height(20.dp))
         }
     }
 }
@@ -274,7 +366,7 @@ fun ModeSelector(
     ) {
         Column(
             modifier = Modifier.padding(20.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+            verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             Text(
                 "Modo de Operación",
@@ -683,7 +775,7 @@ fun DataCard(label: String, value: String, color: Color, modifier: Modifier = Mo
             Text(
                 text = if (value != "--") "$value°" else "--",
                 color = if (value != "--") color else Color.White.copy(alpha = 0.3f),
-                fontSize = 32.sp,
+                fontSize = 30.sp,
                 fontWeight = FontWeight.Black
             )
         }

@@ -1,6 +1,126 @@
 {
   "stars": [
     {
+      "name": "Acrux",
+      "ra_hours": 12.444,
+      "dec_degrees": -63.099,
+      "size": 6.5,
+      "description": "Estrella del sur",
+      "color": [
+        1.0,
+        0.9,
+        0.7
+      ]
+    },
+    {
+      "name": "Aldebaran",
+      "ra_hours": 4.598,
+      "dec_degrees": 16.509,
+      "size": 6.5,
+      "description": "Estrella del toro",
+      "color": [
+        1.0,
+        0.9,
+        0.7
+      ]
+    },
+    {
+      "name": "Hadar",
+      "ra_hours": 14.063,
+      "dec_degrees": -60.373,
+      "size": 6.5,
+      "description": "Estrella brillante",
+      "color": [
+        1.0,
+        0.9,
+        0.7
+      ]
+    },
+    {
+      "name": "Adhara",
+      "ra_hours": 6.977,
+      "dec_degrees": -28.972,
+      "size": 6.0,
+      "description": "Estrella del sur",
+      "color": [
+        1.0,
+        0.9,
+        0.7
+      ]
+    },
+    {
+      "name": "Castor",
+      "ra_hours": 7.576,
+      "dec_degrees": 31.888,
+      "size": 6.0,
+      "description": "Estrella binaria",
+      "color": [
+        1.0,
+        0.9,
+        0.7
+      ]
+    },
+    {
+      "name": "Gacrux",
+      "ra_hours": 12.519,
+      "dec_degrees": -57.113,
+      "size": 6.0,
+      "description": "Estrella del sur",
+      "color": [
+        1.0,
+        0.9,
+        0.7
+      ]
+    },
+    {
+      "name": "Bellatrix",
+      "ra_hours": 5.418,
+      "dec_degrees": 6.35,
+      "size": 6.0,
+      "description": "Estrella de Orion",
+      "color": [
+        1.0,
+        0.9,
+        0.7
+      ]
+    },
+    {
+      "name": "Elnath",
+      "ra_hours": 5.438,
+      "dec_degrees": 28.608,
+      "size": 6.0,
+      "description": "Estrella del toro",
+      "color": [
+        1.0,
+        0.9,
+        0.7
+      ]
+    },
+    {
+      "name": "Saiph",
+      "ra_hours": 5.796,
+      "dec_degrees": -9.669,
+      "size": 6.0,
+      "description": "Estrella de Orion",
+      "color": [
+        1.0,
+        0.9,
+        0.7
+      ]
+    },
+    {
+      "name": "Regulus",
+      "ra_hours": 10.139,
+      "dec_degrees": 11.967,
+      "size": 6.0,
+      "description": "Estrella de Leo",
+      "color": [
+        1.0,
+        0.9,
+        0.7
+      ]
+    },
+    {
       "name": "Sirius",
       "ra_hours": 6.7715556,
       "dec_degrees": -16.7474167,
@@ -182,8 +302,8 @@
     },
     {
       "name": "Sol",
-      "ra_hours": 13.895552667194467,
-      "dec_degrees": -11.660501700309688,
+      "ra_hours": 14.228003075723477,
+      "dec_degrees": -13.425761692600458,
       "description": "Sol",
       "size": 1.6,
       "color": [
@@ -191,7 +311,7 @@
         1.0,
         0.0
       ],
-      "last_update": "2025-10-24T01:36:11.840854+00:00"
+      "last_update": "2025-10-29T06:07:27.024327+00:00"
     },
     {
       "name": "Mintaka",
@@ -316,10 +436,46 @@
   ],
   "galaxies": [
     {
+      "name": "LMC",
+      "ra_hours": 5.4,
+      "dec_degrees": -69.756,
+      "description": "Gran Nube de Magallanes",
+      "size": 10,
+      "color": [
+        0.8,
+        0.8,
+        1.0
+      ]
+    },
+    {
+      "name": "SMC",
+      "ra_hours": 0.875,
+      "dec_degrees": -72.8,
+      "description": "Pequeña Nube de Magallanes",
+      "size": 8,
+      "color": [
+        0.8,
+        0.8,
+        1.0
+      ]
+    },
+    {
       "name": "M31",
       "ra_hours": 0.736306,
       "dec_degrees": 41.413222,
       "description": "Galaxia de Andromeda",
+      "size": 8,
+      "color": [
+        0.5,
+        1.0,
+        0.5
+      ]
+    },
+    {
+      "name": "M33",
+      "ra_hours": 1.564,
+      "dec_degrees": 30.66,
+      "description": "Galaxia del Triángulo",
       "size": 8,
       "color": [
         0.5,
@@ -355,9 +511,9 @@
   "planets": [
     {
       "name": "Mercurio",
-      "ra_hours": 15.367925146599223,
-      "dec_degrees": -21.142520698412152,
-      "last_update": "2025-10-24T01:36:11.840854+00:00",
+      "ra_hours": 15.771246843507857,
+      "dec_degrees": -22.797264778764855,
+      "last_update": "2025-10-29T06:07:27.024327+00:00",
       "size": 0.3,
       "color": [
         0.8,
@@ -367,9 +523,9 @@
     },
     {
       "name": "Venus",
-      "ra_hours": 12.7943973631315,
-      "dec_degrees": -3.4495354969408893,
-      "last_update": "2025-10-24T01:36:11.840854+00:00",
+      "ra_hours": 13.193376958532951,
+      "dec_degrees": -5.965015807022978,
+      "last_update": "2025-10-29T06:07:27.024327+00:00",
       "size": 0.5,
       "color": [
         1.0,
@@ -379,9 +535,9 @@
     },
     {
       "name": "Marte",
-      "ra_hours": 15.26519579384088,
-      "dec_degrees": -18.43604541538805,
-      "last_update": "2025-10-24T01:36:11.840854+00:00",
+      "ra_hours": 15.514773073340116,
+      "dec_degrees": -19.406953771675262,
+      "last_update": "2025-10-29T06:07:27.024327+00:00",
       "size": 0.4,
       "color": [
         1.0,
@@ -391,9 +547,9 @@
     },
     {
       "name": "Jupiter",
-      "ra_hours": 7.742568519505663,
-      "dec_degrees": 21.332728656886708,
-      "last_update": "2025-10-24T01:36:11.840854+00:00",
+      "ra_hours": 7.761526851805713,
+      "dec_degrees": 21.297223955697024,
+      "last_update": "2025-10-29T06:07:27.024327+00:00",
       "size": 0.8,
       "color": [
         0.9,
@@ -403,9 +559,9 @@
     },
     {
       "name": "Saturno",
-      "ra_hours": 23.81096033233015,
-      "dec_degrees": -3.9344791627242546,
-      "last_update": "2025-10-24T01:36:11.840854+00:00",
+      "ra_hours": 23.793850665074192,
+      "dec_degrees": -4.032364615402364,
+      "last_update": "2025-10-29T06:07:27.024327+00:00",
       "size": 0.7,
       "color": [
         0.8,
@@ -415,9 +571,9 @@
     }
   ],
   "moon": {
-    "ra_hours": 15.61235850767053,
-    "dec_degrees": -23.900008006006185,
-    "last_update": "2025-10-24T01:36:11.840854+00:00",
+    "ra_hours": 20.21295570381267,
+    "dec_degrees": -22.933440539013212,
+    "last_update": "2025-10-29T06:07:27.024327+00:00",
     "size": 1.4,
     "color": [
       0.9,
@@ -431,6 +587,6 @@
       "latitude": -32.4833,
       "longitude": -58.229561
     },
-    "last_full_update": "2025-10-24T01:36:11.840854+00:00"
+    "last_full_update": "2025-10-29T06:07:27.024327+00:00"
   }
 }

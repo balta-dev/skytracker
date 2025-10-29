@@ -1,21 +1,241 @@
 package com.example.skytracker.data
 
+import android.content.Context
+import android.content.SharedPreferences
 import com.example.skytracker.data.models.CelestialData
 import com.example.skytracker.data.models.CelestialObject
 import com.example.skytracker.data.models.ObjectType
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import org.json.JSONArray
+import org.json.JSONObject
 
 /**
- * Base de datos hardcodeada de objetos celestiales
- * Estos datos deben actualizarse periódicamente para planetas y la Luna
+ * Base de datos de objetos celestiales con caché de efemérides
  */
-object CelestialDatabase {
+class CelestialDatabase private constructor(context: Context) {
+
+    private val prefs: SharedPreferences = context.getSharedPreferences("ephemeris_cache", Context.MODE_PRIVATE)
+    private val calculator = EphemerisCalculator(context)
+
+    companion object {
+        @Volatile
+        private var INSTANCE: CelestialDatabase? = null
+
+        fun getInstance(context: Context): CelestialDatabase {
+            return INSTANCE ?: synchronized(this) {
+                INSTANCE ?: CelestialDatabase(context.applicationContext).also { INSTANCE = it }
+            }
+        }
+
+        private const val CACHE_KEY = "cached_objects"
+        private const val CACHE_TIMESTAMP_KEY = "cache_timestamp"
+    }
 
     /**
-     * Datos celestiales principales
-     * NOTA: Los datos de planetas y Luna están desactualizados,
-     * idealmente deberían calcularse con efemérides
+     * Obtiene datos celestiales (desde caché o defaults)
      */
     fun getCelestialData(): CelestialData {
+        // Intentar cargar desde caché
+        val cachedJson = prefs.getString(CACHE_KEY, null)
+        println("CelestialDatabase: getCelestialData - Caché encontrado: ${cachedJson != null}")
+
+        if (cachedJson != null) {
+            try {
+                println("CelestialDatabase: Cargando desde caché (${cachedJson.length} chars)")
+                val data = parseCachedData(cachedJson)
+                println("CelestialDatabase: ✓ Caché cargado: ${data.planets.size} planetas, Luna: ${data.moon.name}")
+                return data
+            } catch (e: Exception) {
+                println("CelestialDatabase: ✗ Error parseando caché: ${e.message}")
+                e.printStackTrace()
+            }
+        }
+
+        // Fallback a datos por defecto
+        println("CelestialDatabase: Usando datos por defecto")
+        return getDefaultCelestialData()
+    }
+
+    /**
+     * Actualiza efemérides desde JPL Horizons
+     */
+    suspend fun updateEphemeris(): Boolean = withContext(Dispatchers.IO) {
+        try {
+            println("CelestialDatabase: Iniciando actualización de efemérides...")
+            val updatedObjects = mutableListOf<CelestialObject>()
+
+            // Actualizar planetas - USAR getRaDec() en lugar de getTopocentric()
+            val planetIds = mapOf(
+                "Mercurio" to "199",
+                "Venus" to "299",
+                "Marte" to "499",
+                "Jupiter" to "599",
+                "Saturno" to "699"
+            )
+
+            for ((name, id) in planetIds) {
+                println("CelestialDatabase: Obteniendo coordenadas de $name (ID: $id)")
+                val coords = calculator.getRaDec(id)
+                if (coords != null) {
+                    println("CelestialDatabase: $name - RA=${coords.raHours}h, Dec=${coords.decDegrees}°")
+                    updatedObjects.add(
+                        CelestialObject(name, coords.raHours, coords.decDegrees, 0.5, ObjectType.PLANET)
+                    )
+                } else {
+                    println("CelestialDatabase: ERROR - No se obtuvieron coordenadas para $name")
+                }
+            }
+
+            // Actualizar Luna
+            println("CelestialDatabase: Obteniendo coordenadas de Luna (ID: 301)")
+            val moonCoords = calculator.getRaDec("301")
+            if (moonCoords != null) {
+                println("CelestialDatabase: Luna - RA=${moonCoords.raHours}h, Dec=${moonCoords.decDegrees}°")
+                updatedObjects.add(
+                    CelestialObject("Luna", moonCoords.raHours, moonCoords.decDegrees, 1.2, ObjectType.MOON)
+                )
+            } else {
+                println("CelestialDatabase: ERROR - No se obtuvieron coordenadas para Luna")
+            }
+
+            // Si obtuvimos datos, guardar en caché
+            if (updatedObjects.isNotEmpty()) {
+                println("CelestialDatabase: Se obtuvieron ${updatedObjects.size} objetos, guardando en caché...")
+                val defaultData = getDefaultCelestialData()
+                val updatedData = CelestialData(
+                    stars = defaultData.stars,
+                    galaxies = defaultData.galaxies,
+                    planets = updatedObjects.filter { it.type == ObjectType.PLANET },
+                    moon = updatedObjects.firstOrNull { it.type == ObjectType.MOON }
+                        ?: defaultData.moon
+                )
+
+                saveCachedData(updatedData)
+                println("CelestialDatabase: ✓ Actualización completada exitosamente")
+                return@withContext true
+            } else {
+                println("CelestialDatabase: ERROR - No se obtuvo ningún objeto")
+            }
+
+            false
+        } catch (e: Exception) {
+            println("CelestialDatabase: Exception en updateEphemeris: ${e.message}")
+            e.printStackTrace()
+            false
+        }
+    }
+
+    /**
+     * Obtiene la edad del caché en horas
+     */
+    fun getCacheAge(): Long {
+        val timestamp = prefs.getLong(CACHE_TIMESTAMP_KEY, -1)
+        println("CelestialDatabase: getCacheAge - Timestamp: $timestamp")
+
+        if (timestamp < 0) {
+            println("CelestialDatabase: No hay timestamp guardado")
+            return -1
+        }
+
+        val ageMillis = System.currentTimeMillis() - timestamp
+        val ageHours = ageMillis / (1000 * 60 * 60)
+
+        println("CelestialDatabase: Edad del caché: $ageHours horas")
+        return ageHours
+    }
+
+    /**
+     * Guarda datos en caché
+     */
+    private fun saveCachedData(data: CelestialData) {
+        try {
+            println("CelestialDatabase: Guardando caché...")
+            println("CelestialDatabase: - ${data.planets.size} planetas")
+            println("CelestialDatabase: - Luna: ${data.moon.name}")
+
+            val json = JSONObject().apply {
+                put("stars", objectsToJson(data.stars))
+                put("galaxies", objectsToJson(data.galaxies))
+                put("planets", objectsToJson(data.planets))
+                put("moon", objectToJson(data.moon))
+            }
+
+            val timestamp = System.currentTimeMillis()
+            val success = prefs.edit()
+                .putString(CACHE_KEY, json.toString())
+                .putLong(CACHE_TIMESTAMP_KEY, timestamp)
+                .commit() // Usar commit() en lugar de apply() para saber si fue exitoso
+
+            if (success) {
+                println("CelestialDatabase: ✓ Caché guardado exitosamente")
+                println("CelestialDatabase: Timestamp: $timestamp")
+
+                // Verificar que se guardó
+                val saved = prefs.getString(CACHE_KEY, null)
+                val savedTimestamp = prefs.getLong(CACHE_TIMESTAMP_KEY, -1)
+                println("CelestialDatabase: Verificación - JSON length: ${saved?.length}, Timestamp: $savedTimestamp")
+            } else {
+                println("CelestialDatabase: ✗ ERROR - No se pudo guardar el caché")
+            }
+        } catch (e: Exception) {
+            println("CelestialDatabase: Exception guardando caché: ${e.message}")
+            e.printStackTrace()
+        }
+    }
+
+    /**
+     * Parsea datos desde JSON
+     */
+    private fun parseCachedData(json: String): CelestialData {
+        val obj = JSONObject(json)
+        return CelestialData(
+            stars = jsonToObjects(obj.getJSONArray("stars")),
+            galaxies = jsonToObjects(obj.getJSONArray("galaxies")),
+            planets = jsonToObjects(obj.getJSONArray("planets")),
+            moon = jsonToObject(obj.getJSONObject("moon"))
+        )
+    }
+
+    private fun objectsToJson(objects: List<CelestialObject>): JSONArray {
+        return JSONArray().apply {
+            objects.forEach {
+                put(objectToJson(it))
+                println("CelestialDatabase: Serializando ${it.name}: RA=${it.raHours}h, Dec=${it.decDegrees}°")
+            }
+        }
+    }
+
+    private fun objectToJson(obj: CelestialObject): JSONObject {
+        return JSONObject().apply {
+            put("name", obj.name)
+            put("raHours", obj.raHours)
+            put("decDegrees", obj.decDegrees)
+            put("size", obj.size)
+            put("type", obj.type.name)
+        }
+    }
+
+    private fun jsonToObjects(array: JSONArray): List<CelestialObject> {
+        return (0 until array.length()).map { i ->
+            jsonToObject(array.getJSONObject(i))
+        }
+    }
+
+    private fun jsonToObject(obj: JSONObject): CelestialObject {
+        return CelestialObject(
+            name = obj.getString("name"),
+            raHours = obj.getDouble("raHours"),
+            decDegrees = obj.getDouble("decDegrees"),
+            size = obj.optDouble("size", 1.0),
+            type = ObjectType.valueOf(obj.getString("type"))
+        )
+    }
+
+    /**
+     * Datos por defecto (estrellas fijas y posiciones aproximadas de planetas)
+     */
+    private fun getDefaultCelestialData(): CelestialData {
         return CelestialData(
             stars = getStars(),
             galaxies = getGalaxies(),
@@ -25,43 +245,44 @@ object CelestialDatabase {
     }
 
     private fun getStars(): List<CelestialObject> = listOf(
-        CelestialObject("Sirius", 6.752, -16.716, 8.0, ObjectType.STAR),
-        CelestialObject("Canopus", 6.399, -52.696, 7.0, ObjectType.STAR),
-        CelestialObject("Rigil Kentaurus", 14.661, -60.834, 6.5, ObjectType.STAR),
-        CelestialObject("Arcturus", 14.261, 19.182, 6.5, ObjectType.STAR),
-        CelestialObject("Vega", 18.615, 38.783, 6.5, ObjectType.STAR),
-        CelestialObject("Capella", 5.278, 45.998, 6.5, ObjectType.STAR),
-        CelestialObject("Rigel", 5.242, -8.202, 6.5, ObjectType.STAR),
-        CelestialObject("Procyon", 7.655, 5.225, 6.5, ObjectType.STAR),
-        CelestialObject("Achernar", 1.628, -57.237, 6.5, ObjectType.STAR),
-        CelestialObject("Betelgeuse", 5.919, 7.407, 7.0, ObjectType.STAR),
-        CelestialObject("Hadar", 14.063, -60.373, 6.5, ObjectType.STAR),
-        CelestialObject("Altair", 19.846, 8.868, 6.0, ObjectType.STAR),
-        CelestialObject("Acrux", 12.444, -63.099, 6.5, ObjectType.STAR),
-        CelestialObject("Aldebaran", 4.598, 16.509, 6.5, ObjectType.STAR),
-        CelestialObject("Antares", 16.490, -26.432, 6.5, ObjectType.STAR),
-        CelestialObject("Spica", 13.420, -11.161, 6.0, ObjectType.STAR),
-        CelestialObject("Pollux", 7.755, 28.026, 6.0, ObjectType.STAR),
-        CelestialObject("Fomalhaut", 22.961, -29.622, 6.0, ObjectType.STAR),
-        CelestialObject("Deneb", 20.690, 45.280, 6.0, ObjectType.STAR),
-        CelestialObject("Mimosa", 12.795, -59.689, 6.0, ObjectType.STAR),
-        CelestialObject("Regulus", 10.139, 11.967, 6.0, ObjectType.STAR),
-        CelestialObject("Adhara", 6.977, -28.972, 6.0, ObjectType.STAR),
-        CelestialObject("Castor", 7.576, 31.888, 6.0, ObjectType.STAR),
-        CelestialObject("Gacrux", 12.519, -57.113, 6.0, ObjectType.STAR),
-        CelestialObject("Bellatrix", 5.418, 6.350, 6.0, ObjectType.STAR),
-        CelestialObject("Elnath", 5.438, 28.608, 6.0, ObjectType.STAR),
-        CelestialObject("Alnilam", 5.603, -1.202, 6.0, ObjectType.STAR),
-        CelestialObject("Alnitak", 5.679, -1.943, 6.0, ObjectType.STAR),
-        CelestialObject("Saiph", 5.796, -9.669, 6.0, ObjectType.STAR),
-        CelestialObject("Mintaka", 5.533, -0.299, 6.0, ObjectType.STAR)
+        // Hemisferio Sur primero
+        CelestialObject("Canopus", 6.409528, -52.702861, 8.0, ObjectType.STAR),
+        CelestialObject("Achernar", 1.645444, -57.104222, 6.0, ObjectType.STAR),
+        CelestialObject("Alpha Centauri", 14.68875, -60.942194, 6.0, ObjectType.STAR), // Alpha Centauri
+        CelestialObject("Antares", 16.51625, -26.489222, 7.0, ObjectType.STAR),
+        CelestialObject("Fomalhaut", 22.984944, -29.485417, 6.0, ObjectType.STAR),
+        CelestialObject("Betelgeuse", 5.9429722, 7.4137222, 7.0, ObjectType.STAR),
+        CelestialObject("Rigel", 5.26325, -8.1685, 7.0, ObjectType.STAR),
+        CelestialObject("Sirius", 6.7715556, -16.7474167, 9.0, ObjectType.STAR),
+        CelestialObject("Vega", 18.630056, 38.811306, 8.0, ObjectType.STAR),
+        CelestialObject("Polaris", 3.116, 89.371111, 6.0, ObjectType.STAR),
+        CelestialObject("Altair", 19.867389, 8.938889, 6.0, ObjectType.STAR),
+        CelestialObject("Deneb", 20.705222, 45.376972, 6.0, ObjectType.STAR),
+        CelestialObject("Spica", 13.44225, -11.294333, 6.0, ObjectType.STAR),
+        CelestialObject("Arcturus", 14.280361, 19.049444, 6.0, ObjectType.STAR),
+        // Pléyades y cinturón de Orión
+        CelestialObject("Mintaka", 5.555694, -0.277361, 4.0, ObjectType.STAR),
+        CelestialObject("Alnilam", 5.625639, -1.182722, 4.0, ObjectType.STAR),
+        CelestialObject("Alnitak", 5.701278, -1.926139, 4.0, ObjectType.STAR),
+        CelestialObject("Electra", 3.773917, 24.195583, 3.0, ObjectType.STAR),
+        CelestialObject("Merope", 3.798083, 24.029861, 3.0, ObjectType.STAR),
+        CelestialObject("Alcyone", 3.817417, 24.186028, 3.0, ObjectType.STAR),
+        CelestialObject("Atlas", 3.845389, 24.133444, 3.0, ObjectType.STAR),
+        CelestialObject("Pleione", 3.845806, 24.216694, 3.0, ObjectType.STAR),
+        CelestialObject("Taygeta", 3.779528, 24.549417, 3.0, ObjectType.STAR),
+        CelestialObject("Maia", 3.789806, 24.4495, 3.0, ObjectType.STAR),
+        CelestialObject("Diphda", 0.748528, -17.843167, 6.0, ObjectType.STAR)
     )
 
     private fun getGalaxies(): List<CelestialObject> = listOf(
-        CelestialObject("M31", 0.712, 41.269, 8.0, ObjectType.GALAXY),
-        CelestialObject("M33", 1.564, 30.660, 8.0, ObjectType.GALAXY),
+        // Prioridad sur
         CelestialObject("LMC", 5.400, -69.756, 10.0, ObjectType.GALAXY),
-        CelestialObject("SMC", 0.875, -72.800, 8.0, ObjectType.GALAXY)
+        CelestialObject("SMC", 0.875, -72.800, 8.0, ObjectType.GALAXY),
+        // Resto
+        CelestialObject("M31", 0.736306, 41.413222, 8.0, ObjectType.GALAXY),
+        CelestialObject("M33", 1.564, 30.660, 8.0, ObjectType.GALAXY),
+        CelestialObject("M81", 9.960667, 68.939444, 8.0, ObjectType.GALAXY),
+        CelestialObject("M51", 13.515722, 47.062389, 8.0, ObjectType.GALAXY)
     )
 
     private fun getPlanets(): List<CelestialObject> = listOf(
