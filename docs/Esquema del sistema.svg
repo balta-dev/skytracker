@@ -1,0 +1,1908 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   viewBox="0 0 2000 1440"
+   version="1.1"
+   id="svg102"
+   sodipodi:docname="ARQUITECTURA MODERNIZADO.svg"
+   inkscape:version="1.4.2 (ebf0e940d0, 2025-05-08)"
+   width="2000"
+   height="1440"
+   inkscape:export-filename="ARQUITECTURA MODERNIZADO3.png"
+   inkscape:export-xdpi="500"
+   inkscape:export-ydpi="500"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview102"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="0.4175"
+     inkscape:cx="1125.7485"
+     inkscape:cy="862.27545"
+     inkscape:window-width="1920"
+     inkscape:window-height="1052"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg102" />
+  <defs
+     id="defs4">
+    <pattern
+       inkscape:collect="always"
+       xlink:href="#grid"
+       id="pattern1"
+       patternTransform="scale(1)" />
+    <rect
+       x="37.125748"
+       y="980.83832"
+       width="55.089821"
+       height="15.568862"
+       id="rect203" />
+    <rect
+       x="47.904194"
+       y="842.51495"
+       width="206.58682"
+       height="61.676647"
+       id="rect115" />
+    <marker
+       id="arrow-green"
+       markerWidth="10"
+       markerHeight="10"
+       refX="9"
+       refY="3"
+       orient="auto">
+      <polygon
+         points="0,6 0,0 10,3 "
+         fill="#00ff00"
+         id="polygon1" />
+    </marker>
+    <marker
+       id="arrow-orange"
+       markerWidth="10"
+       markerHeight="10"
+       refX="9"
+       refY="3"
+       orient="auto">
+      <polygon
+         points="0,6 0,0 10,3 "
+         fill="#ff8800"
+         id="polygon2" />
+    </marker>
+    <marker
+       id="arrow-cyan"
+       markerWidth="8"
+       markerHeight="4.8000002"
+       refX="9"
+       refY="3"
+       orient="auto-start-reverse"
+       viewBox="0 0 10 6"
+       preserveAspectRatio="xMidYMid"
+       markerUnits="strokeWidth">
+      <polygon
+         points="10,3 0,6 0,0 "
+         fill="#00ffff"
+         id="polygon3" />
+    </marker>
+    <marker
+       id="arrow-yellow"
+       markerWidth="10"
+       markerHeight="10"
+       refX="9"
+       refY="3"
+       orient="auto">
+      <polygon
+         points="0,6 0,0 10,3 "
+         fill="#ffff00"
+         id="polygon4" />
+    </marker>
+    <marker
+       id="arrow-cyan-0"
+       markerWidth="7"
+       markerHeight="4.1999998"
+       refX="9"
+       refY="3"
+       orient="auto-start-reverse"
+       viewBox="0 0 10 6"
+       preserveAspectRatio="xMidYMid"
+       markerUnits="strokeWidth">
+      <polygon
+         points="10,3 0,6 0,0 "
+         fill="#00ffff"
+         id="polygon3-6" />
+    </marker>
+    <marker
+       id="arrow-cyan-7"
+       markerWidth="8"
+       markerHeight="4.8000002"
+       refX="9"
+       refY="3"
+       orient="auto-start-reverse"
+       viewBox="0 0 10 6"
+       preserveAspectRatio="xMidYMid"
+       markerUnits="strokeWidth">
+      <polygon
+         points="0,6 0,0 10,3 "
+         fill="#00ffff"
+         id="polygon3-8" />
+    </marker>
+    <marker
+       id="arrow-cyan-7-0"
+       markerWidth="8"
+       markerHeight="4.8000002"
+       refX="9"
+       refY="3"
+       orient="auto-start-reverse"
+       viewBox="0 0 10 6"
+       preserveAspectRatio="xMidYMid"
+       markerUnits="strokeWidth">
+      <polygon
+         points="0,0 10,3 0,6 "
+         fill="#00ffff"
+         id="polygon3-8-3" />
+    </marker>
+  </defs>
+  <!-- Fondo -->
+  <rect
+     width="2000.1101"
+     height="1440.0264"
+     fill="#0a0a0a"
+     id="rect4"
+     x="0"
+     y="0"
+     style="display:inline;stroke-width:0.883916"
+     sodipodi:insensitive="true" />
+  <pattern
+     id="grid"
+     width="30"
+     height="30"
+     patternUnits="userSpaceOnUse">
+    <path
+       d="M 30 0 L 0 0 0 30"
+       fill="none"
+       stroke="#1a1a1a"
+       stroke-width="1"
+       id="path4" />
+  </pattern>
+  <rect
+     width="1998.3234"
+     height="1440"
+     fill="url(#grid)"
+     id="rect5"
+     x="0"
+     y="0"
+     style="display:inline;fill:url(#pattern1);stroke-width:0.883513"
+     sodipodi:insensitive="true" />
+  <!-- Título (centrado arriba) -->
+  <text
+     x="620.14594"
+     y="1387.233"
+     font-family="monospace"
+     font-size="55.1761px"
+     fill="#00ff00"
+     text-anchor="middle"
+     font-weight="bold"
+     id="text5"
+     style="display:inline;stroke-width:1.724;stroke-dasharray:none"><tspan
+       style="fill:#ffffff;fill-opacity:1"
+       id="tspan109">SkyTracker - Esquema del Sistema</tspan></text>
+  <!-- Leyenda -->
+  <g
+     transform="translate(64.572007,1400.2229)"
+     id="g10"
+     style="display:inline">
+    <text
+       font-family="monospace"
+       font-size="13px"
+       fill="#aaaaaa"
+       id="text6"
+       x="32.097263"
+       y="-188.20668">Modos de operación:</text>
+    <line
+       x1="32.097263"
+       y1="-166.20668"
+       x2="77.097267"
+       y2="-166.20668"
+       stroke="#00ff00"
+       stroke-width="2"
+       marker-end="url(#arrow-green)"
+       id="line6" />
+    <text
+       x="82.097267"
+       y="-161.20668"
+       font-family="monospace"
+       font-size="12px"
+       fill="#00ff00"
+       id="text7">MODO 1: Directo (Android → ESP32)</text>
+    <line
+       x1="32.097263"
+       y1="-143.20668"
+       x2="77.097267"
+       y2="-143.20668"
+       stroke="#ff8800"
+       stroke-width="2"
+       marker-end="url(#arrow-orange)"
+       id="line7" />
+    <text
+       x="82.097267"
+       y="-138.20668"
+       font-family="monospace"
+       font-size="12px"
+       fill="#ff8800"
+       id="text8">MODO 2: Servidor (Android → Python → ESP32)</text>
+    <line
+       x1="32.097263"
+       y1="-120.20669"
+       x2="77.097267"
+       y2="-120.20669"
+       stroke="#ffff00"
+       stroke-width="2"
+       marker-end="url(#arrow-yellow)"
+       id="line8" />
+    <text
+       x="82.097267"
+       y="-115.20669"
+       font-family="monospace"
+       font-size="12px"
+       fill="#ffff00"
+       id="text9">MODO 3: Standalone</text>
+    <line
+       x1="32.097263"
+       y1="-97.206688"
+       x2="77.097267"
+       y2="-97.206688"
+       stroke="#00ffff"
+       stroke-width="2"
+       stroke-dasharray="4, 4"
+       id="line9" />
+    <text
+       x="82.097267"
+       y="-92.206688"
+       font-family="monospace"
+       font-size="12px"
+       fill="#00ffff"
+       id="text10">Conexión de datos</text>
+  </g>
+  <!-- ================================ -->
+  <!-- MODO 1: DIRECTO (Arriba izquierda) -->
+  <!-- ================================ -->
+  <g
+     id="modo-directo"
+     transform="matrix(1.0904308,0,0,1.0904308,630.16555,-32.250347)">
+    <rect
+       x="50.3792"
+       y="150.38434"
+       width="708.09589"
+       height="279.23135"
+       fill="none"
+       stroke="#00ff00"
+       stroke-width="3.75806"
+       stroke-dasharray="8, 4"
+       rx="12.588371"
+       id="rect10" />
+    <text
+       x="578.47845"
+       y="177.72945"
+       font-family="monospace"
+       font-size="22.3072px"
+       fill="#00ff00"
+       font-weight="bold"
+       id="text11"
+       style="stroke-width:1.31219">MODO DIRECTO</text>
+    <!-- Android App -->
+    <rect
+       x="75.973465"
+       y="181.7757"
+       width="179.70139"
+       height="220.87531"
+       fill="#0d2a0d"
+       stroke="#00ff00"
+       stroke-width="2.20009"
+       rx="4.4925342"
+       id="rect11" />
+    <text
+       x="162.16379"
+       y="206.53947"
+       font-family="monospace"
+       font-size="15.0872px"
+       fill="#00ff00"
+       text-anchor="middle"
+       font-weight="bold"
+       id="text12"
+       style="stroke-width:1.07766">Android App</text>
+    <text
+       x="162.16379"
+       y="224.85966"
+       font-family="monospace"
+       font-size="10.7766px"
+       fill="#888888"
+       text-anchor="middle"
+       id="text13"
+       style="stroke-width:1.07766">(Kotlin)</text>
+    <rect
+       x="81.764999"
+       y="241.06606"
+       width="167.93645"
+       height="32.246773"
+       fill="#0a1f0a"
+       stroke="#00aa00"
+       stroke-width="1.16065"
+       rx="3.7597713"
+       id="rect13" />
+    <text
+       x="162.16379"
+       y="262.57776"
+       font-family="monospace"
+       font-size="11.8542px"
+       fill="#00ff00"
+       text-anchor="middle"
+       id="text14"
+       style="stroke-width:1.07766">TCP/IP Client</text>
+    <rect
+       x="81.765938"
+       y="282.01801"
+       width="168.48375"
+       height="32.244919"
+       fill="#0a1f0a"
+       stroke="#00aa00"
+       stroke-width="1.16251"
+       rx="3.7720242"
+       id="rect14" />
+    <text
+       x="162.16379"
+       y="301.69464"
+       font-family="monospace"
+       font-size="11.8542px"
+       fill="#00ff00"
+       text-anchor="middle"
+       id="text15"
+       style="stroke-width:1.07766">Cálculos astronómicos</text>
+    <rect
+       x="81.764069"
+       y="322.96722"
+       width="167.38918"
+       height="32.248634"
+       fill="#0a1f0a"
+       stroke="#00aa00"
+       stroke-width="1.1588"
+       rx="3.7475188"
+       id="rect15" />
+    <text
+       x="162.16379"
+       y="342.64569"
+       font-family="monospace"
+       font-size="11.8542px"
+       fill="#00ff00"
+       text-anchor="middle"
+       id="text16"
+       style="stroke-width:1.07766">UI + Búsqueda</text>
+    <rect
+       x="133.7608"
+       y="363.87769"
+       width="53.882946"
+       height="15.087225"
+       fill="#0a1f0a"
+       stroke="#666666"
+       stroke-width="1.07766"
+       rx="2.1553178"
+       id="rect16" />
+    <text
+       x="160.70218"
+       y="374.65427"
+       font-family="monospace"
+       font-size="9.69893px"
+       fill="#888888"
+       text-anchor="middle"
+       id="text17"
+       style="stroke-width:1.07766">Caché</text>
+    <!-- ESP32 -->
+    <rect
+       x="554.41101"
+       y="192.36099"
+       width="184.98279"
+       height="204.91417"
+       fill="#0d1a2a"
+       stroke="#0099ff"
+       stroke-width="2.08584"
+       rx="4.3525357"
+       id="rect17" />
+    <circle
+       cx="646.37695"
+       cy="344.78802"
+       r="11.407295"
+       fill="none"
+       stroke="#ff8800"
+       stroke-width="2.53495"
+       id="circle43-9" />
+    <text
+       x="645.70215"
+       y="348.73334"
+       font-family="monospace"
+       font-size="10px"
+       fill="#ff8800"
+       text-anchor="middle"
+       id="text44-4">IMU</text>
+    <text
+       x="646.83923"
+       y="215.31807"
+       font-family="monospace"
+       font-size="14px"
+       fill="#0099ff"
+       text-anchor="middle"
+       font-weight="bold"
+       id="text18">ESP32</text>
+    <text
+       x="646.83923"
+       y="232.31807"
+       font-family="monospace"
+       font-size="10px"
+       fill="#888888"
+       text-anchor="middle"
+       id="text19">(C++)</text>
+    <rect
+       x="560.97827"
+       y="247.36055"
+       width="169.98402"
+       height="29.915056"
+       fill="#0a1520"
+       stroke="#0077cc"
+       stroke-width="1.08495"
+       rx="3.5413339"
+       id="rect19" />
+    <text
+       x="646.83923"
+       y="265.63345"
+       font-family="monospace"
+       font-size="11px"
+       fill="#0099ff"
+       text-anchor="middle"
+       id="text20">TCP/IP Server</text>
+    <rect
+       x="562.13593"
+       y="285.62112"
+       width="169.40652"
+       height="29.916868"
+       fill="#0a1520"
+       stroke="#0077cc"
+       stroke-width="1.08314"
+       rx="3.5293026"
+       id="rect20" />
+    <text
+       x="646.83923"
+       y="303.89493"
+       font-family="monospace"
+       font-size="11px"
+       fill="#0099ff"
+       text-anchor="middle"
+       id="text21">Controla Servos</text>
+    <text
+       x="646.83923"
+       y="370.26419"
+       font-family="monospace"
+       font-size="9px"
+       fill="#888888"
+       text-anchor="middle"
+       id="text23">Sensores</text>
+    <!-- Flechas MODO 1 -->
+    <line
+       x1="262.25104"
+       y1="279.37976"
+       x2="544.54431"
+       y2="279.37976"
+       stroke="#00ff00"
+       stroke-width="2.5"
+       marker-end="url(#arrow-green)"
+       id="line23"
+       style="stroke-width:0.91706874;stroke-dasharray:none" />
+    <text
+       x="287.39807"
+       y="270.11502"
+       font-family="monospace"
+       font-size="10px"
+       fill="#00ff00"
+       text-anchor="middle"
+       id="text24">WiFi</text>
+    <text
+       x="288.61386"
+       y="292.03021"
+       font-family="monospace"
+       font-size="9px"
+       fill="#aaaaaa"
+       text-anchor="middle"
+       id="text25">{yaw,pitch}</text>
+    <line
+       x1="544.10242"
+       y1="312.37976"
+       x2="263.82715"
+       y2="312.37976"
+       stroke="#00ff00"
+       stroke-width="2.5"
+       marker-end="url(#arrow-green)"
+       id="line25"
+       style="stroke-width:0.91706874;stroke-dasharray:0.91706874,0.91706874;stroke-dashoffset:0" />
+    <text
+       x="288.61386"
+       y="325.03021"
+       font-family="monospace"
+       font-size="9px"
+       fill="#aaaaaa"
+       text-anchor="middle"
+       id="text26">feedback</text>
+  </g>
+  <!-- ================================ -->
+  <!-- MODO 2: SERVIDOR (Centro-izquierda) -->
+  <!-- ================================ -->
+  <g
+     id="modo-servidor"
+     transform="matrix(1.0904308,0,0,1.0904308,629.2722,-27.888627)">
+    <rect
+       x="49.978806"
+       y="469.97891"
+       width="709.34052"
+       height="276.26071"
+       fill="none"
+       stroke="#ff8800"
+       stroke-width="2.95777"
+       stroke-dasharray="8, 4"
+       rx="7.8815627"
+       id="rect26" />
+    <text
+       x="564.10046"
+       y="495.91739"
+       font-family="monospace"
+       font-size="22.2811px"
+       fill="#ff8800"
+       font-weight="bold"
+       id="text27"
+       style="stroke-width:1.31065">MODO SERVIDOR</text>
+    <!-- Android App -->
+    <rect
+       x="76.577446"
+       y="501.75143"
+       width="172.08997"
+       height="220.49025"
+       fill="#2a1a0d"
+       stroke="#ff8800"
+       stroke-width="2.15113"
+       rx="4.3022485"
+       id="rect27"
+       style="fill:#0d2a0d;fill-opacity:1;stroke:#00ff00;stroke-opacity:1" />
+    <text
+       x="162.62242"
+       y="526.48938"
+       font-family="monospace"
+       font-size="15.0578px"
+       fill="#ff8800"
+       text-anchor="middle"
+       font-weight="bold"
+       id="text28"
+       style="fill:#00ff00;fill-opacity:1;stroke-width:1.07556">Android App</text>
+    <text
+       x="162.62242"
+       y="544.77393"
+       font-family="monospace"
+       font-size="10.7556px"
+       fill="#888888"
+       text-anchor="middle"
+       id="text29"
+       style="stroke-width:1.07556">(Kotlin)</text>
+    <rect
+       x="82.487381"
+       y="560.93512"
+       width="159.647"
+       height="32.211403"
+       fill="#1f150a"
+       stroke="#cc6600"
+       stroke-width="1.13103"
+       rx="3.5741863"
+       id="rect29"
+       style="fill:#0a1f0a;fill-opacity:1;stroke:#00aa00;stroke-opacity:1" />
+    <text
+       x="162.62242"
+       y="582.41858"
+       font-family="monospace"
+       font-size="11.8311px"
+       fill="#ff8800"
+       text-anchor="middle"
+       id="text30"
+       style="fill:#00ff00;fill-opacity:1;stroke-width:1.07556">TCP/IP Client</text>
+    <rect
+       x="83.10939"
+       y="601.80536"
+       width="159.02606"
+       height="32.213566"
+       fill="#1f150a"
+       stroke="#cc6600"
+       stroke-width="1.12886"
+       rx="3.5602851"
+       id="rect30"
+       style="fill:#0a1f0a;fill-opacity:1;stroke:#00aa00;stroke-opacity:1" />
+    <text
+       x="162.62242"
+       y="623.28998"
+       font-family="monospace"
+       font-size="11.8311px"
+       fill="#ff8800"
+       text-anchor="middle"
+       id="text31"
+       style="fill:#00ff00;fill-opacity:1;stroke-width:1.07556">Enviar nombre</text>
+    <rect
+       x="84.353386"
+       y="642.67456"
+       width="157.78424"
+       height="32.217907"
+       fill="#1f150a"
+       stroke="#cc6600"
+       stroke-width="1.12452"
+       rx="3.5324829"
+       id="rect31"
+       style="fill:#0a1f0a;fill-opacity:1;stroke:#00aa00;stroke-opacity:1" />
+    <text
+       x="162.62242"
+       y="664.16132"
+       font-family="monospace"
+       font-size="11.8311px"
+       fill="#ff8800"
+       text-anchor="middle"
+       id="text32"
+       style="fill:#00ff00;fill-opacity:1;stroke-width:1.07556">UI + Búsqueda</text>
+    <rect
+       x="135.73033"
+       y="683.52148"
+       width="53.778111"
+       height="15.057872"
+       fill="#1f150a"
+       stroke="#666666"
+       stroke-width="1.07556"
+       rx="2.1511242"
+       id="rect32"
+       style="fill:#0a1f0a;fill-opacity:1" />
+    <text
+       x="162.61929"
+       y="694.2771"
+       font-family="monospace"
+       font-size="9.68006px"
+       fill="#888888"
+       text-anchor="middle"
+       id="text33"
+       style="stroke-width:1.07556">Caché</text>
+    <!-- Python Server -->
+    <rect
+       x="309.24173"
+       y="514.95819"
+       width="183.54868"
+       height="205.08363"
+       fill="#2a2a0d"
+       stroke="#ffff00"
+       stroke-width="1.91637"
+       rx="3.6709735"
+       id="rect33" />
+    <rect
+       x="374.99207"
+       y="680.77399"
+       width="50"
+       height="14"
+       fill="#1f150a"
+       stroke="#666666"
+       stroke-width="1"
+       rx="2"
+       id="rect32-6"
+       style="fill:#1f1f0a;fill-opacity:1" />
+    <text
+       x="399.99207"
+       y="690.77399"
+       font-family="monospace"
+       font-size="9px"
+       fill="#888888"
+       text-anchor="middle"
+       id="text33-7">Caché</text>
+    <text
+       x="401.50241"
+       y="538"
+       font-family="monospace"
+       font-size="14px"
+       fill="#ffff00"
+       text-anchor="middle"
+       font-weight="bold"
+       id="text34">Python Server</text>
+    <text
+       x="401.50241"
+       y="555"
+       font-family="monospace"
+       font-size="10px"
+       fill="#888888"
+       text-anchor="middle"
+       id="text35">(main.py/main-cli.py)</text>
+    <rect
+       x="314.50241"
+       y="570"
+       width="174"
+       height="28"
+       fill="#1f1f0a"
+       stroke="#cccc00"
+       stroke-width="1"
+       rx="3"
+       id="rect35" />
+    <text
+       x="401.50241"
+       y="588"
+       font-family="monospace"
+       font-size="10px"
+       fill="#ffff00"
+       text-anchor="middle"
+       id="text36">TCP/IP Server</text>
+    <rect
+       x="314.50241"
+       y="605"
+       width="174"
+       height="28"
+       fill="#1f1f0a"
+       stroke="#cccc00"
+       stroke-width="1"
+       rx="3"
+       id="rect36" />
+    <text
+       x="401.50241"
+       y="623"
+       font-family="monospace"
+       font-size="10px"
+       fill="#ffff00"
+       text-anchor="middle"
+       id="text37">Resolución nombre</text>
+    <rect
+       x="314.55273"
+       y="640.05035"
+       width="173.89935"
+       height="33.939919"
+       fill="#1f1f0a"
+       stroke="#cccc00"
+       stroke-width="1.10065"
+       rx="2.9982646"
+       id="rect37" />
+    <text
+       x="401.50241"
+       y="659.83417"
+       font-family="monospace"
+       font-size="10px"
+       fill="#ffff00"
+       text-anchor="middle"
+       id="text38">Cálculos astronómicos</text>
+    <!-- ESP32 -->
+    <rect
+       x="556.01117"
+       y="510.35156"
+       width="179.97763"
+       height="209.63727"
+       fill="#0d1a2a"
+       stroke="#0099ff"
+       stroke-width="2.02237"
+       rx="3.9995029"
+       id="rect39" />
+    <text
+       x="646"
+       y="538"
+       font-family="monospace"
+       font-size="14px"
+       fill="#0099ff"
+       text-anchor="middle"
+       font-weight="bold"
+       id="text40">ESP32</text>
+    <text
+       x="646"
+       y="555"
+       font-family="monospace"
+       font-size="10px"
+       fill="#888888"
+       text-anchor="middle"
+       id="text41">(C++)</text>
+    <rect
+       x="561.49329"
+       y="575.02429"
+       width="169.59283"
+       height="29.951443"
+       fill="#0a1520"
+       stroke="#0077cc"
+       stroke-width="1.04856"
+       rx="3.3037562"
+       id="rect41" />
+    <text
+       x="646"
+       y="593.31537"
+       font-family="monospace"
+       font-size="11px"
+       fill="#0099ff"
+       text-anchor="middle"
+       id="text42">Recibe coordenadas</text>
+    <rect
+       x="560.33551"
+       y="614.65588"
+       width="170.17038"
+       height="29.94969"
+       fill="#0a1520"
+       stroke="#0077cc"
+       stroke-width="1.05031"
+       rx="3.3150074"
+       id="rect42" />
+    <text
+       x="646"
+       y="632.94611"
+       font-family="monospace"
+       font-size="11px"
+       fill="#0099ff"
+       text-anchor="middle"
+       id="text43">Controla Servos</text>
+    <circle
+       cx="646.6748"
+       cy="673.00079"
+       r="11.407295"
+       fill="none"
+       stroke="#ff8800"
+       stroke-width="2.53495"
+       id="circle43" />
+    <text
+       x="646"
+       y="676.94611"
+       font-family="monospace"
+       font-size="10px"
+       fill="#ff8800"
+       text-anchor="middle"
+       id="text44">IMU</text>
+    <text
+       x="646"
+       y="695.94611"
+       font-family="monospace"
+       font-size="9px"
+       fill="#888888"
+       text-anchor="middle"
+       id="text45">Sensores</text>
+    <!-- Flechas MODO 2 -->
+    <line
+       x1="255.33145"
+       y1="587"
+       x2="301.00885"
+       y2="587"
+       stroke="#ff8800"
+       stroke-width="2.5"
+       marker-end="url(#arrow-orange)"
+       id="line45"
+       style="stroke-width:0.91706874;stroke-dasharray:none" />
+    <text
+       x="275.05389"
+       y="580"
+       font-family="monospace"
+       font-size="10px"
+       fill="#ff8800"
+       text-anchor="middle"
+       id="text46">WiFi</text>
+    <text
+       x="276.008"
+       y="599.64728"
+       font-family="monospace"
+       font-size="7.93024px"
+       fill="#aaaaaa"
+       text-anchor="middle"
+       id="text47"
+       style="stroke-width:0.881138">&quot;Sirius&quot;</text>
+    <line
+       x1="301.15347"
+       y1="620"
+       x2="256.57468"
+       y2="620"
+       stroke="#ff8800"
+       stroke-width="2.5"
+       marker-end="url(#arrow-orange)"
+       id="line47"
+       style="stroke-width:0.91706874;stroke-dasharray:0.91706874,0.91706874;stroke-dashoffset:0" />
+    <text
+       x="277.92599"
+       y="633.49011"
+       font-family="monospace"
+       font-size="8.49896px"
+       fill="#aaaaaa"
+       text-anchor="middle"
+       id="text48"
+       style="stroke-width:0.944329">feedback</text>
+    <line
+       x1="500.26154"
+       y1="585"
+       x2="548.95917"
+       y2="585"
+       stroke="#ff8800"
+       stroke-width="2.5"
+       marker-end="url(#arrow-orange)"
+       id="line48"
+       style="stroke-width:0.91706874;stroke-dasharray:none" />
+    <text
+       x="523.83417"
+       y="578"
+       font-family="monospace"
+       font-size="10px"
+       fill="#ff8800"
+       text-anchor="middle"
+       id="text49">Serial</text>
+    <text
+       x="523.72107"
+       y="597.04883"
+       font-family="monospace"
+       font-size="7.45452px"
+       fill="#aaaaaa"
+       text-anchor="middle"
+       id="text50"
+       style="stroke-width:0.82828">{yaw,pitch}</text>
+    <line
+       x1="548.57111"
+       y1="620"
+       x2="499.63016"
+       y2="620"
+       stroke="#ff8800"
+       stroke-width="2.5"
+       marker-end="url(#arrow-orange)"
+       id="line50"
+       style="stroke-width:0.91706874;stroke-dasharray:0.91706874,0.91706874;stroke-dashoffset:0" />
+    <text
+       x="523.23322"
+       y="633.78253"
+       font-family="monospace"
+       font-size="7.99793px"
+       fill="#aaaaaa"
+       text-anchor="middle"
+       id="text51"
+       style="stroke-width:0.888659">feedback</text>
+  </g>
+  <!-- ================================ -->
+  <!-- MODO 3: STANDALONE (ahora debajo de MODO 2) -->
+  <!-- Movido con transform: translate(-790,620) para alinearlo a la izquierda debajo de MODO 2 -->
+  <!-- ================================ -->
+  <g
+     id="modo-standalone"
+     transform="matrix(1.1849241,0,0,1.1695496,-168.05474,598.4354)">
+    <rect
+       x="931.05286"
+       y="207.44695"
+       width="441.23401"
+       height="288.42798"
+       fill="none"
+       stroke="#ffff00"
+       stroke-width="2.40031"
+       stroke-dasharray="8, 4"
+       rx="4.9716511"
+       id="rect51" />
+    <text
+       x="1227.2826"
+       y="232.66389"
+       font-family="monospace"
+       font-size="20.4805px"
+       fill="#ffff00"
+       font-weight="bold"
+       id="text52"
+       style="stroke-width:1.20474">STANDALONE</text>
+    <!-- Python GUI/CLI -->
+    <rect
+       x="953.6991"
+       y="248.05972"
+       width="174.82812"
+       height="213.54276"
+       fill="#2a2a0d"
+       stroke="#ffff00"
+       stroke-width="1.61295"
+       rx="2.4975445"
+       id="rect52" />
+    <rect
+       x="1020.1422"
+       y="275.40216"
+       width="44.284718"
+       height="12.399721"
+       fill="#1f150a"
+       stroke="#666666"
+       stroke-width="0.885694"
+       rx="1.7713888"
+       id="rect32-6-2"
+       style="fill:#1f1f0a;fill-opacity:1" />
+    <text
+       x="1042.2845"
+       y="284.259"
+       font-family="monospace"
+       font-size="7.97125px"
+       fill="#888888"
+       text-anchor="middle"
+       id="text33-7-9"
+       style="stroke-width:0.885694">Caché</text>
+    <text
+       x="1040.6899"
+       y="268.90921"
+       font-family="monospace"
+       font-size="12.3997px"
+       fill="#ffff00"
+       text-anchor="middle"
+       font-weight="bold"
+       id="text53"
+       style="stroke-width:0.885694">Python GUI/CLI</text>
+    <!-- Separador GUI/CLI -->
+    <line
+       x1="970.41901"
+       y1="296.3656"
+       x2="1110.8505"
+       y2="296.3656"
+       stroke="#666666"
+       stroke-width="0.691651"
+       stroke-dasharray="2, 2"
+       id="line53" />
+    <!-- GUI -->
+    <text
+       x="1040.9406"
+       y="312.30814"
+       font-family="monospace"
+       font-size="10.6284px"
+       fill="#ffff00"
+       text-anchor="middle"
+       font-weight="bold"
+       id="text54"
+       style="stroke-width:0.885694">GUI (main.py)</text>
+    <rect
+       x="958.70068"
+       y="318.52686"
+       width="164.32597"
+       height="31.556643"
+       fill="#1f1f0a"
+       stroke="#cccc00"
+       stroke-width="0.922302"
+       rx="1.9408581"
+       id="rect54" />
+    <text
+       x="1041.024"
+       y="331.79343"
+       font-family="monospace"
+       font-size="8.85694px"
+       fill="#ffff00"
+       text-anchor="middle"
+       id="text55"
+       style="stroke-width:0.885694"><tspan
+         sodipodi:role="line"
+         id="tspan102"
+         x="1041.024"
+         y="331.79343"
+         style="stroke-width:0.885694">Simulador 3D</tspan><tspan
+         sodipodi:role="line"
+         id="tspan103"
+         x="1041.024"
+         y="342.86459"
+         style="stroke-width:0.885694">OpenGL(Pyglet)</tspan></text>
+    <rect
+       x="958.67206"
+       y="353.87256"
+       width="164.06172"
+       height="21.383093"
+       fill="#1f1f0a"
+       stroke="#cccc00"
+       stroke-width="0.758606"
+       rx="1.9377369"
+       id="rect55" />
+    <text
+       x="1041.024"
+       y="367.22119"
+       font-family="monospace"
+       font-size="8.85694px"
+       fill="#ffff00"
+       text-anchor="middle"
+       id="text56"
+       style="stroke-width:0.885694">Búsqueda interactiva</text>
+    <!-- Separador -->
+    <line
+       x1="970.41901"
+       y1="384.10544"
+       x2="1109.0229"
+       y2="384.10544"
+       stroke="#666666"
+       stroke-width="0.687136"
+       stroke-dasharray="2, 2"
+       id="line56" />
+    <!-- CLI -->
+    <text
+       x="1040.9406"
+       y="396.4491"
+       font-family="monospace"
+       font-size="10.6284px"
+       fill="#ffff00"
+       text-anchor="middle"
+       font-weight="bold"
+       id="text57"
+       style="stroke-width:0.885694">CLI (main-cli.py)</text>
+    <rect
+       x="958.95563"
+       y="402.58667"
+       width="164.84637"
+       height="21.381298"
+       fill="#1f1f0a"
+       stroke="#cccc00"
+       stroke-width="0.760387"
+       rx="1.9470047"
+       id="rect57" />
+    <text
+       x="1041.024"
+       y="415.93439"
+       font-family="monospace"
+       font-size="8.85694px"
+       fill="#ffff00"
+       text-anchor="middle"
+       id="text58"
+       style="stroke-width:0.885694">Terminal texto</text>
+    <rect
+       x="959.12793"
+       y="429.15747"
+       width="164.84079"
+       height="21.381296"
+       fill="#1f1f0a"
+       stroke="#cccc00"
+       stroke-width="0.760376"
+       rx="1.9469388"
+       id="rect58" />
+    <text
+       x="1039.3362"
+       y="442.50522"
+       font-family="monospace"
+       font-size="8.85694px"
+       fill="#ffff00"
+       text-anchor="middle"
+       id="text59"
+       style="stroke-width:0.885694">Entrada comandos</text>
+    <!-- ESP32 -->
+    <!-- Nota sin ESP32 -->
+    <text
+       x="1267.8054"
+       y="459.07272"
+       font-family="monospace"
+       font-size="9.18481px"
+       fill="#888888"
+       text-anchor="middle"
+       font-style="italic"
+       id="text66"
+       style="stroke-width:0.918481">─────────────────</text>
+    <text
+       x="1267.8054"
+       y="468.38428"
+       font-family="monospace"
+       font-size="9.18481px"
+       fill="#888888"
+       text-anchor="middle"
+       font-style="italic"
+       id="text67"
+       style="stroke-width:0.918481">También funciona</text>
+    <text
+       x="1267.8054"
+       y="481.11594"
+       font-family="monospace"
+       font-size="9.18481px"
+       fill="#888888"
+       text-anchor="middle"
+       font-style="italic"
+       id="text68"
+       style="stroke-width:0.918481">SIN ESP32 (como planetario)</text>
+    <!-- Flechas MODO 3 (ajustadas, bidireccionales) -->
+    <line
+       x1="1133.4489"
+       y1="339.73032"
+       x2="1179.3729"
+       y2="339.73032"
+       stroke="#ffff00"
+       stroke-width="2.5"
+       marker-end="url(#arrow-yellow)"
+       id="line68"
+       style="stroke-width:0.918481;stroke-dasharray:none" />
+    <text
+       x="1156.4109"
+       y="333.30096"
+       font-family="monospace"
+       font-size="9.18481px"
+       fill="#ffff00"
+       text-anchor="middle"
+       id="text69"
+       style="stroke-width:0.918481">Serial</text>
+    <text
+       x="1156.4109"
+       y="356.263"
+       font-family="monospace"
+       font-size="8.26633px"
+       fill="#aaaaaa"
+       text-anchor="middle"
+       id="text70"
+       style="stroke-width:0.918481">{yaw,pitch}</text>
+    <line
+       x1="1179.3729"
+       y1="370.04022"
+       x2="1133.4489"
+       y2="370.04022"
+       stroke="#ffff00"
+       stroke-width="2.5"
+       marker-end="url(#arrow-yellow)"
+       id="line70"
+       style="stroke-width:0.918481;stroke-dasharray:0.918481, 0.918481;stroke-dashoffset:0" />
+    <text
+       x="1156.4109"
+       y="386.57288"
+       font-family="monospace"
+       font-size="8.26633px"
+       fill="#aaaaaa"
+       text-anchor="middle"
+       id="text71"
+       style="stroke-width:0.918481">feedback</text>
+    <text
+       x="221.57213"
+       y="262.77756"
+       font-family="monospace"
+       font-size="10px"
+       fill="#888888"
+       text-anchor="middle"
+       font-style="italic"
+       id="text68-4"
+       style="font-size:10.1936px"><tspan
+         sodipodi:role="line"
+         id="tspan111"
+         x="221.57213"
+         y="262.77756"
+         style="font-weight:bold;font-size:10.1936px;text-align:start;text-anchor:start">Simplificación del funcionamiento</tspan><tspan
+         sodipodi:role="line"
+         x="221.57213"
+         y="275.51956"
+         id="tspan112"
+         style="font-weight:bold;font-size:10.1936px;text-align:start;text-anchor:start">general.</tspan><tspan
+         sodipodi:role="line"
+         x="221.57213"
+         y="288.26157"
+         style="font-size:10.1936px;text-align:start;text-anchor:start"
+         id="tspan117" /><tspan
+         sodipodi:role="line"
+         x="221.57213"
+         y="301.00357"
+         id="tspan115"
+         style="font-size:10.1936px;text-align:start;text-anchor:start">Las flechas celestes representan</tspan><tspan
+         sodipodi:role="line"
+         x="221.57213"
+         y="313.74554"
+         style="font-size:10.1936px;text-align:start;text-anchor:start"
+         id="tspan121">una sincronización de la base de datos</tspan><tspan
+         sodipodi:role="line"
+         x="221.57213"
+         y="326.48755"
+         style="font-size:10.1936px;text-align:start;text-anchor:start"
+         id="tspan123">interna que utiliza cada sistema.</tspan><tspan
+         sodipodi:role="line"
+         x="221.57213"
+         y="339.22955"
+         style="font-size:10.1936px;text-align:start;text-anchor:start"
+         id="tspan125" /><tspan
+         sodipodi:role="line"
+         x="221.57213"
+         y="351.97156"
+         style="font-size:10.1936px;text-align:start;text-anchor:start"
+         id="tspan124">El esquema busca explicar cada módulo</tspan><tspan
+         sodipodi:role="line"
+         x="221.57213"
+         y="364.71356"
+         style="font-size:10.1936px;text-align:start;text-anchor:start"
+         id="tspan127">de una manera intuitiva y cómo</tspan><tspan
+         sodipodi:role="line"
+         x="221.57213"
+         y="377.45557"
+         style="font-size:10.1936px;text-align:start;text-anchor:start"
+         id="tspan128">funciona.</tspan><tspan
+         sodipodi:role="line"
+         x="221.57213"
+         y="390.19754"
+         style="font-size:10.1936px;text-align:start;text-anchor:start"
+         id="tspan129" /><tspan
+         sodipodi:role="line"
+         x="221.57213"
+         y="402.93954"
+         style="font-size:10.1936px;text-align:start;text-anchor:start"
+         id="tspan130">El modo directo implica que no es necesario</tspan><tspan
+         sodipodi:role="line"
+         x="221.57213"
+         y="415.68155"
+         style="font-size:10.1936px;text-align:start;text-anchor:start"
+         id="tspan131">de una PC, pero si necesita alimentación</tspan><tspan
+         sodipodi:role="line"
+         x="221.57213"
+         y="428.42355"
+         style="font-size:10.1936px;text-align:start;text-anchor:start"
+         id="tspan132">externa.</tspan><tspan
+         sodipodi:role="line"
+         x="221.57213"
+         y="441.16556"
+         style="font-size:10.1936px;text-align:start;text-anchor:start"
+         id="tspan133" /><tspan
+         sodipodi:role="line"
+         x="221.57213"
+         y="453.90756"
+         style="font-size:10.1936px;text-align:start;text-anchor:start"
+         id="tspan134">Cualquier otra forma de utilizarlo necesita Python,</tspan><tspan
+         sodipodi:role="line"
+         x="221.57213"
+         y="466.64957"
+         style="font-size:10.1936px;text-align:start;text-anchor:start"
+         id="tspan136">el cual se puede utilizar como planetario 3D</tspan><tspan
+         sodipodi:role="line"
+         x="221.57213"
+         y="479.39154"
+         style="font-size:10.1936px;text-align:start;text-anchor:start"
+         id="tspan137">y/o como cerebro para indicar coordenadas al ESP32.</tspan><tspan
+         sodipodi:role="line"
+         x="221.57213"
+         y="492.13354"
+         style="font-size:10.1936px;text-align:start;text-anchor:start"
+         id="tspan138" /></text>
+    <text
+       xml:space="preserve"
+       transform="matrix(0.84393591,0,0,0.85503,515.2817,-523.96808)"
+       id="text115"
+       style="font-size:5.33333px;text-align:start;writing-mode:lr-tb;direction:ltr;white-space:pre;shape-inside:url(#rect115);display:inline;fill:#ffffff;fill-opacity:1;stroke:#00aa00;stroke-width:3.562;stroke-linecap:butt;stroke-miterlimit:4;stroke-dasharray:17.8101, 3.562;stroke-dashoffset:0;stroke-opacity:1" />
+    <text
+       x="1751.9742"
+       y="254.42267"
+       font-family="monospace"
+       font-size="10px"
+       fill="#888888"
+       text-anchor="middle"
+       font-style="italic"
+       id="text68-4-2"
+       style="font-size:7.92834px"><tspan
+         sodipodi:role="line"
+         x="1751.9742"
+         y="254.42267"
+         style="font-size:7.92834px;text-align:end;text-anchor:end"
+         id="tspan158">El Jet Propulsion Laboratory (JPL) es el brazo científico y</tspan><tspan
+         sodipodi:role="line"
+         x="1751.9742"
+         y="264.3331"
+         style="font-size:7.92834px;text-align:end;text-anchor:end"
+         id="tspan203">técnico de la NASA dedicado a la exploración robótica del espacio.</tspan><tspan
+         sodipodi:role="line"
+         x="1751.9742"
+         y="274.24353"
+         style="font-size:7.92834px;text-align:end;text-anchor:end"
+         id="tspan202">El grupo SSD del JPL (Solar System Dynamics Group) crea un modelo</tspan><tspan
+         sodipodi:role="line"
+         x="1751.9742"
+         y="284.15393"
+         style="font-size:7.92834px;text-align:end;text-anchor:end"
+         id="tspan182">dinámico del Sistema Solar: usa observaciones</tspan><tspan
+         sodipodi:role="line"
+         x="1751.9742"
+         y="294.06436"
+         style="font-size:7.92834px;text-align:end;text-anchor:end"
+         id="tspan184">(radar, láser lunar, telescopios, etc.),</tspan><tspan
+         sodipodi:role="line"
+         x="1751.9742"
+         y="303.97479"
+         style="font-size:7.92834px;text-align:end;text-anchor:end"
+         id="tspan162">integra las ecuaciones del movimiento gravitacional, ajusta los</tspan><tspan
+         sodipodi:role="line"
+         x="1751.9742"
+         y="313.88522"
+         style="font-size:7.92834px;text-align:end;text-anchor:end"
+         id="tspan186">parámetros hasta que el modelo encaje con las observaciones</tspan><tspan
+         sodipodi:role="line"
+         x="1751.9742"
+         y="323.79565"
+         style="font-size:7.92834px;text-align:end;text-anchor:end"
+         id="tspan194">lo cual resulta en una efeméride de desarrollo (como DE421,</tspan><tspan
+         sodipodi:role="line"
+         x="1751.9742"
+         y="333.70605"
+         style="font-size:7.92834px;text-align:end;text-anchor:end"
+         id="tspan187">básicamente un conjunto de coeficientes polinomiales que</tspan><tspan
+         sodipodi:role="line"
+         x="1751.9742"
+         y="343.61649"
+         style="font-size:7.92834px;text-align:end;text-anchor:end"
+         id="tspan196">permiten calcular posiciones precisas).</tspan><tspan
+         sodipodi:role="line"
+         x="1751.9742"
+         y="353.52692"
+         style="font-size:7.92834px;text-align:end;text-anchor:end"
+         id="tspan166" /><tspan
+         sodipodi:role="line"
+         x="1751.9742"
+         y="363.43735"
+         style="font-size:7.92834px;text-align:end;text-anchor:end"
+         id="tspan167">El grupo NAIF (también del JPL) toma esos datos y los empaqueta</tspan><tspan
+         sodipodi:role="line"
+         x="1751.9742"
+         y="373.34778"
+         style="font-weight:bold;font-size:7.92834px;text-align:end;text-anchor:end"
+         id="tspan170"><tspan
+   style="font-weight:normal"
+   id="tspan210">en formato SPICE, produciendo el archivo:</tspan> de421.bsp</tspan><tspan
+         sodipodi:role="line"
+         x="1751.9742"
+         y="383.25818"
+         style="font-size:7.92834px;text-align:end;text-anchor:end"
+         id="tspan171" /><tspan
+         sodipodi:role="line"
+         x="1751.9742"
+         y="393.16861"
+         style="font-size:7.92834px;text-align:end;text-anchor:end"
+         id="tspan172">Ese archivo binario contiene las posiciones planetarias del modelo DE421.</tspan><tspan
+         sodipodi:role="line"
+         x="1751.9742"
+         y="403.07904"
+         style="font-size:7.92834px;text-align:end;text-anchor:end"
+         id="tspan174">El servicio Horizons (en la página ssd.jpl.nasa.gov)</tspan><tspan
+         sodipodi:role="line"
+         x="1751.9742"
+         y="412.98947"
+         style="font-size:7.92834px;text-align:end;text-anchor:end"
+         id="tspan175">utiliza internamente esas mismas efemérides.</tspan><tspan
+         sodipodi:role="line"
+         x="1751.9742"
+         y="422.8999"
+         style="font-size:7.92834px;text-align:end;text-anchor:end"
+         id="tspan180" /><tspan
+         sodipodi:role="line"
+         x="1751.9742"
+         y="432.8103"
+         style="font-size:7.92834px;text-align:end;text-anchor:end"
+         id="tspan191">Entonces, cuando se consulta Horizons (vía web o API),</tspan><tspan
+         sodipodi:role="line"
+         x="1751.9742"
+         y="442.72073"
+         style="font-size:7.92834px;text-align:end;text-anchor:end"
+         id="tspan192">en el fondo estás accediendo a cálculos basados en el mismo modelo</tspan><tspan
+         sodipodi:role="line"
+         x="1751.9742"
+         y="452.63116"
+         style="font-size:7.92834px;text-align:end;text-anchor:end"
+         id="tspan193">DE421 o una versión más nueva.</tspan><tspan
+         sodipodi:role="line"
+         x="1751.9742"
+         y="462.5416"
+         style="font-size:7.92834px;text-align:end;text-anchor:end"
+         id="tspan197" /><tspan
+         sodipodi:role="line"
+         x="1751.9742"
+         y="472.45203"
+         style="font-size:7.92834px;text-align:end;text-anchor:end"
+         id="tspan198">En otras palabras, el archivo .bsp es generado</tspan><tspan
+         sodipodi:role="line"
+         x="1751.9742"
+         y="482.36246"
+         style="font-size:7.92834px;text-align:end;text-anchor:end"
+         id="tspan199">por el grupo SSD del JPL y lo distribuye</tspan><tspan
+         sodipodi:role="line"
+         x="1751.9742"
+         y="492.27286"
+         style="font-size:7.92834px;text-align:end;text-anchor:end"
+         id="tspan201">públicamente el grupo NAIF a través del sistema SPICE.</tspan></text>
+    <text
+       xml:space="preserve"
+       transform="matrix(0.84393591,0,0,0.85503,515.2817,-523.96808)"
+       id="text203"
+       style="font-size:9.33333px;text-align:end;writing-mode:lr-tb;direction:ltr;white-space:pre;shape-inside:url(#rect203);display:inline;fill:#ffffff;fill-opacity:1;stroke:#00aa00;stroke-width:3.562;stroke-linecap:butt;stroke-miterlimit:4;stroke-dasharray:17.8101, 3.562;stroke-dashoffset:0;stroke-opacity:1" />
+  </g>
+  <!-- ================================ -->
+  <!-- FUENTES DE DATOS (Abajo derecha, a la derecha del MODO 2) -->
+  <!-- ================================ -->
+  <g
+     id="g104"
+     transform="matrix(1.0904308,0,0,1.0904308,339.0877,-264.10968)">
+    <rect
+       x="1101.064"
+       y="381.78534"
+       width="340.50668"
+       height="210.19833"
+       fill="#0d2a2a"
+       stroke="#00ffff"
+       stroke-width="1.80166"
+       rx="3.2429206"
+       id="rect81" />
+    <text
+       x="1270.7334"
+       y="403.88452"
+       font-family="monospace"
+       font-size="13px"
+       fill="#00ffff"
+       text-anchor="middle"
+       font-weight="bold"
+       id="text82">Catálogo Local</text>
+    <text
+       x="1270.7334"
+       y="426.88452"
+       font-family="monospace"
+       font-size="11px"
+       fill="#888888"
+       text-anchor="middle"
+       id="text83"><tspan
+         style="font-weight:bold"
+         id="tspan3">Objetos incluidos:</tspan></text>
+    <text
+       x="1270.7334"
+       y="449.88452"
+       font-family="monospace"
+       font-size="10px"
+       fill="#aaaaaa"
+       text-anchor="middle"
+       id="text84">• Planetas</text>
+    <text
+       x="1270.7334"
+       y="467.88452"
+       font-family="monospace"
+       font-size="10px"
+       fill="#aaaaaa"
+       text-anchor="middle"
+       id="text85">• Luna + Sol</text>
+    <text
+       x="1270.7334"
+       y="485.88452"
+       font-family="monospace"
+       font-size="10px"
+       fill="#aaaaaa"
+       text-anchor="middle"
+       id="text86">• Estrellas brillantes</text>
+    <text
+       x="1270.7334"
+       y="503.88452"
+       font-family="monospace"
+       font-size="10px"
+       fill="#aaaaaa"
+       text-anchor="middle"
+       id="text87">• Catálogo Messier</text>
+    <text
+       x="1270.7334"
+       y="521.88452"
+       font-family="monospace"
+       font-size="10px"
+       fill="#aaaaaa"
+       text-anchor="middle"
+       id="text88" />
+    <text
+       x="1270.7334"
+       y="521.54285"
+       font-family="monospace"
+       font-size="10px"
+       fill="#aaaaaa"
+       text-anchor="middle"
+       id="text89">• Galaxias cercanas</text>
+    <line
+       x1="1116.1631"
+       y1="554.38013"
+       x2="1427.4802"
+       y2="554.38013"
+       stroke="#666666"
+       stroke-width="0.893448"
+       stroke-dasharray="2, 2"
+       id="line89" />
+    <text
+       x="1270.7334"
+       y="572.88452"
+       font-family="monospace"
+       font-size="9px"
+       fill="#888888"
+       text-anchor="middle"
+       font-style="italic"
+       id="text90">Compartido por todos los modos</text>
+  </g>
+  <g
+     id="g103"
+     transform="matrix(1.0904308,0,0,1.0904308,620.80505,-306.95093)"
+     style="stroke-width:2.52693;stroke-dasharray:none">
+    <rect
+       x="916.98895"
+       y="700.97076"
+       width="262.14182"
+       height="329.46567"
+       fill="none"
+       stroke="#00ffff"
+       stroke-width="1.99051"
+       rx="2.9537144"
+       id="rect71"
+       style="fill:#123535;fill-opacity:1;stroke-width:4.18373;stroke-dasharray:none;stroke-dashoffset:0" />
+    <text
+       x="961.50757"
+       y="731.48938"
+       font-family="monospace"
+       font-size="17px"
+       fill="#00ffff"
+       font-weight="bold"
+       id="text72"
+       style="stroke-width:2.52693;stroke-dasharray:none">Fuentes de Datos</text>
+    <rect
+       x="947.02124"
+       y="901.05096"
+       width="200"
+       height="110"
+       fill="#0d2a2a"
+       stroke="#00ffff"
+       stroke-width="2"
+       rx="4"
+       id="rect72"
+       style="stroke-width:2.52693;stroke-dasharray:none" />
+    <text
+       x="1047.0212"
+       y="923.05096"
+       font-family="monospace"
+       font-size="13px"
+       fill="#00ffff"
+       text-anchor="middle"
+       font-weight="bold"
+       id="text73"
+       style="stroke-width:2.52693;stroke-dasharray:none">de421.bsp</text>
+    <text
+       x="1047.0212"
+       y="941.05096"
+       font-family="monospace"
+       font-size="10px"
+       fill="#888888"
+       text-anchor="middle"
+       id="text74"
+       style="stroke-width:2.52693;stroke-dasharray:none"><tspan
+         style="font-weight:bold"
+         id="tspan2">Efemérides JPL</tspan></text>
+    <text
+       x="1047.0212"
+       y="961.05096"
+       font-family="monospace"
+       font-size="9px"
+       fill="#aaaaaa"
+       text-anchor="middle"
+       id="text75"
+       style="stroke-width:2.52693;stroke-dasharray:none">• Pos. planetarias</text>
+    <text
+       x="1047.0212"
+       y="977.05096"
+       font-family="monospace"
+       font-size="9px"
+       fill="#aaaaaa"
+       text-anchor="middle"
+       id="text76"
+       style="stroke-width:2.52693;stroke-dasharray:none">• 1900-2050</text>
+    <text
+       x="1047.0212"
+       y="993.05096"
+       font-family="monospace"
+       font-size="9px"
+       fill="#aaaaaa"
+       text-anchor="middle"
+       id="text77"
+       style="stroke-width:2.52693;stroke-dasharray:none">• Usado por Python</text>
+    <rect
+       x="945.85791"
+       y="754.95441"
+       width="200"
+       height="80"
+       fill="#0d2a2a"
+       stroke="#00ffff"
+       stroke-width="2"
+       rx="4"
+       id="rect77"
+       style="stroke-width:2.52693;stroke-dasharray:none" />
+    <text
+       x="1049.2273"
+       y="772.95441"
+       font-family="monospace"
+       font-size="13px"
+       fill="#00ffff"
+       text-anchor="middle"
+       font-weight="bold"
+       id="text78"
+       style="stroke-width:2.52693;stroke-dasharray:none">API NASA</text>
+    <text
+       x="1049.2273"
+       y="790.95441"
+       font-family="monospace"
+       font-size="10px"
+       fill="#888888"
+       text-anchor="middle"
+       id="text79"
+       style="stroke-width:2.52693;stroke-dasharray:none"><tspan
+         style="font-weight:bold"
+         id="tspan1">ssd.jpl.nasa.gov</tspan></text>
+    <text
+       x="1049.2273"
+       y="808.95441"
+       font-family="monospace"
+       font-size="9px"
+       fill="#aaaaaa"
+       text-anchor="middle"
+       id="text80"
+       style="stroke-width:2.52693;stroke-dasharray:none">• Datos tiempo real</text>
+    <text
+       x="1049.2273"
+       y="822.95441"
+       font-family="monospace"
+       font-size="9px"
+       fill="#aaaaaa"
+       text-anchor="middle"
+       id="text81"
+       style="stroke-width:2.52693;stroke-dasharray:none">• Usado por Android</text>
+    <line
+       x1="1050.9058"
+       y1="901.34766"
+       x2="1050.9058"
+       y2="835.14417"
+       stroke="#00ffff"
+       stroke-width="3.85951"
+       stroke-dasharray="3, 3"
+       id="line90"
+       style="stroke-width:2.52693;stroke-dasharray:none;stroke-dashoffset:0;marker-end:url(#arrow-cyan-0)" />
+    <text
+       x="1117.6733"
+       y="833.39526"
+       font-family="monospace"
+       font-size="10.3737px"
+       fill="#00ffff"
+       id="text91"
+       transform="scale(0.94854845,1.0542424)"
+       style="stroke-width:2.52693;stroke-dasharray:none">fuente</text>
+  </g>
+  <path
+     style="fill:#00ffff;fill-opacity:1;fill-rule:evenodd;stroke:#00ffff;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:15, 3;stroke-dashoffset:0;stroke-opacity:1;marker-start:url(#arrow-cyan)"
+     d="M 1008.9151,722.91901 H 915.25611"
+     id="path105"
+     inkscape:connector-type="polyline"
+     inkscape:connector-curvature="0" />
+  <path
+     style="fill:none;fill-rule:evenodd;stroke:#00ffff;stroke-width:3.27163;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:16.3582, 3.27163;stroke-dashoffset:0;stroke-opacity:1"
+     d="m 1538.6346,814.39082 -623.12227,-0.0122"
+     id="path106"
+     inkscape:connector-type="polyline"
+     inkscape:connector-curvature="0" />
+  <path
+     style="fill:none;fill-rule:evenodd;stroke:#00ffff;stroke-width:3.27163;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:16.3582, 3.27163;stroke-dashoffset:0;stroke-opacity:1"
+     d="M 1538.3946,459.535 649.15788,459.5244"
+     id="path106-2"
+     inkscape:connector-type="polyline"
+     inkscape:connector-curvature="0" />
+  <path
+     style="fill:none;fill-rule:evenodd;stroke:#00ffff;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:15, 3;stroke-dashoffset:0;stroke-opacity:1"
+     d="m 916.84271,721.55558 -0.0293,207.3694"
+     id="path107"
+     inkscape:connector-type="polyline"
+     inkscape:connector-curvature="0" />
+  <path
+     style="fill:none;fill-rule:evenodd;stroke:#00ffff;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:15, 3;stroke-dashoffset:0;stroke-opacity:1;marker-end:url(#arrow-cyan)"
+     d="m 915.09917,927.60979 h 94.49703"
+     id="path108"
+     inkscape:connector-type="polyline"
+     inkscape:connector-curvature="0" />
+  <rect
+     x="1236.7411"
+     y="889.49628"
+     width="196.2318"
+     height="233.07338"
+     fill="#0d1a2a"
+     stroke="#0099ff"
+     stroke-width="2.22663"
+     rx="4.3607059"
+     id="rect39-2" />
+  <text
+     x="1334.8571"
+     y="916.13409"
+     font-family="monospace"
+     font-size="15.266px"
+     fill="#0099ff"
+     text-anchor="middle"
+     font-weight="bold"
+     id="text40-8"
+     style="stroke-width:1.09043">ESP32</text>
+  <text
+     x="1334.8571"
+     y="934.67151"
+     font-family="monospace"
+     font-size="10.9043px"
+     fill="#888888"
+     text-anchor="middle"
+     id="text41-9"
+     style="stroke-width:1.09043">(C++)</text>
+  <rect
+     x="1242.8719"
+     y="958.50317"
+     width="182.6998"
+     height="32.666771"
+     fill="#0a1520"
+     stroke="#0077cc"
+     stroke-width="1.13658"
+     rx="3.5590868"
+     id="rect41-7" />
+  <text
+     x="1334.8571"
+     y="978.45172"
+     font-family="monospace"
+     font-size="11.9947px"
+     fill="#0099ff"
+     text-anchor="middle"
+     id="text42-3"
+     style="stroke-width:1.09043">Recibe coordenadas</text>
+  <rect
+     x="1244.5631"
+     y="1001.7153"
+     width="181.01131"
+     height="32.671947"
+     fill="#0a1520"
+     stroke="#0077cc"
+     stroke-width="1.13141"
+     rx="3.5261941"
+     id="rect42-6" />
+  <text
+     x="1334.8571"
+     y="1021.6665"
+     font-family="monospace"
+     font-size="11.9947px"
+     fill="#0099ff"
+     text-anchor="middle"
+     id="text43-1"
+     style="stroke-width:1.09043">Controla Servos</text>
+  <circle
+     cx="1335.5928"
+     cy="1067.3434"
+     r="12.438867"
+     fill="none"
+     stroke="#ff8800"
+     stroke-width="2.76419"
+     id="circle43-2" />
+  <text
+     x="1334.8571"
+     y="1071.6454"
+     font-family="monospace"
+     font-size="10.9043px"
+     fill="#ff8800"
+     text-anchor="middle"
+     id="text44-9"
+     style="stroke-width:1.09043">IMU</text>
+  <text
+     x="1334.8571"
+     y="1094.2006"
+     font-family="monospace"
+     font-size="9.81388px"
+     fill="#888888"
+     text-anchor="middle"
+     id="text45-3"
+     style="stroke-width:1.09043">Sensores</text>
+  <path
+     style="fill:#00ffff;fill-opacity:1;fill-rule:evenodd;stroke:#00ffff;stroke-width:3.00983;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:15.0491, 3.00983;stroke-dashoffset:0;stroke-opacity:1;marker-start:url(#arrow-cyan-7)"
+     d="M 748.99404,372.85681 H 647.84648"
+     id="path105-5"
+     inkscape:connector-type="polyline"
+     inkscape:connector-curvature="0" />
+  <path
+     style="fill:#00ffff;fill-opacity:1;fill-rule:evenodd;stroke:#00ffff;stroke-width:3.02141;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:15.1071, 3.02141;stroke-dashoffset:0;stroke-opacity:1;marker-start:url(#arrow-cyan-7-0)"
+     d="M 749.98697,725.48328 H 648.63469"
+     id="path105-5-1"
+     inkscape:connector-type="polyline"
+     inkscape:connector-curvature="0" />
+  <path
+     style="fill:none;fill-rule:evenodd;stroke:#00ffff;stroke-width:3.27129;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:16.3564, 3.27129;stroke-dashoffset:0;stroke-opacity:1"
+     d="m 649.34919,373.42672 -1.03886,353.83092"
+     id="path107-6"
+     inkscape:connector-type="polyline"
+     inkscape:connector-curvature="0" />
+  <path
+     style="fill:none;fill-rule:evenodd;stroke:#00ffff;stroke-width:3.27163;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:16.3581, 3.27163;stroke-dashoffset:0;stroke-opacity:1"
+     d="m 1536.8945,457.92077 -1.0636,106.90568"
+     id="path107-6-4"
+     inkscape:connector-type="polyline"
+     inkscape:connector-curvature="0" />
+  <path
+     style="fill:none;fill-rule:evenodd;stroke:#00ffff;stroke-width:3.27163;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:16.3581, 3.27163;stroke-dashoffset:0;stroke-opacity:1"
+     d="m 1537.9465,736.58773 -1.0752,79.3948"
+     id="path107-6-4-6"
+     inkscape:connector-type="polyline"
+     inkscape:connector-curvature="0" />
+  <path
+     style="fill:none;fill-rule:evenodd;stroke:#00ffff;stroke-width:3.27163;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:16.3582, 3.27163;stroke-dashoffset:0;stroke-opacity:1"
+     d="m 1653.237,738.28197 -116.0825,-0.0122"
+     id="path106-6"
+     inkscape:connector-type="polyline"
+     inkscape:connector-curvature="0" />
+  <path
+     style="fill:none;fill-rule:evenodd;stroke:#00ffff;stroke-width:3.27163;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:16.3582, 3.27163;stroke-dashoffset:0;stroke-opacity:1"
+     d="m 1653.2788,563.62254 -118.9231,-0.0146"
+     id="path106-6-3"
+     inkscape:connector-type="polyline"
+     inkscape:connector-curvature="0" />
+</svg>
