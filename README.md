@@ -1,11 +1,13 @@
-# SkyTracker - Rastreador a Tiempo Real de Cuerpos Celestes (GRUPO 7)
-<img width="1484" height="666" alt="image" src="https://github.com/user-attachments/assets/836cf393-3c05-4a1d-aecc-24039496e26d" />
+<img width="3840" height="1080" alt="portada" src="https://github.com/user-attachments/assets/ea6b2675-51a8-4f3e-9421-b3312a69295e" />
 
 ---
 
-SkyTracker es un proyecto interactivo que permite localización de planetas, estrellas y galaxias a través de una interfaz que se comunica con un ESP32.
+# GRUPO 7 - Sistema de seguimiento estelar a tiempo real
 
-No sólamente es un sandbox 3D hecho en Python y OpenGL (Pyglet), su función principal es permitir la comunicación bilateral entre el localizador físico y tu dispositivo móvil.
+### ¿Qué es "SkyTracker"? ¿Seguimiento estelar?
+SkyTracker es un proyecto interactivo presentado para la cátedra "Tecnologías para la Automatización" en la UTN FRCU por el grupo 7. Permite localización de planetas, estrellas y galaxias a través de una interfaz comunicada con un ESP32. No sólamente es un sandbox 3D hecho en Python y OpenGL (Pyglet): su función principal es permitir la comunicación bilateral entre el localizador físico y tu dispositivo móvil.
+
+<img width="1920" height="1048" alt="image" src="https://github.com/user-attachments/assets/9c6f4c1d-2989-4a77-bd2e-73b4f93275e1" />
 
 <img width="400" height="929" alt="image" src="https://github.com/user-attachments/assets/7e3ac4bd-338f-46d9-99aa-fb89cd044a7f" />
 <img width="400" height="745" alt="image" src="https://github.com/user-attachments/assets/9a25cc7b-eaa0-4959-af3b-731407be0639" />
@@ -17,7 +19,6 @@ mover los servos correspondientes. El vector *verde* corresponde al FEEDBACK (re
 
 <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/14de4f69-648c-408a-b4d3-2b10ab065a77" />
 <img width="1920" height="1053" alt="image" src="https://github.com/user-attachments/assets/ce78b566-bbfc-42bc-a5a4-1ebeb8598768" />
-<img width="1920" height="1048" alt="image" src="https://github.com/user-attachments/assets/9c6f4c1d-2989-4a77-bd2e-73b4f93275e1" />
 
 ---
 
