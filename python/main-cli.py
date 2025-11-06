@@ -2,6 +2,47 @@ import threading
 import time
 from datetime import datetime, timezone
 
+# ============================================================
+# ACTUALIZAR EFEMÉRIDES AL INICIO
+# ============================================================
+print("\n" + "="*60)
+print("Inicializando SkyTracker Console...")
+print("="*60)
+
+try:
+    from shared.calculations.ephemeris_calculator import calculate_ephemeris, update_json_file
+    
+    print("\nActualizando posiciones planetarias...")
+    # Ubicación: Concepción del Uruguay, Entre Ríos, Argentina
+    ephemeris = calculate_ephemeris(location_lat=-32.4833, location_lon=-58.229561)
+    
+    if ephemeris is not None:
+        success = update_json_file(ephemeris, filename='shared/celestial_data.json')
+        if success:
+            print("¡Efemérides actualizadas correctamente!")
+            # Recargar los datos actualizados
+            import importlib
+            import shared.celestial_data
+            importlib.reload(shared.celestial_data)
+        else:
+            print("No se pudo actualizar el archivo, usando valores existentes")
+    else:
+        print("No se pudieron calcular efemérides (sin skyfield o sin internet)")
+        print("Usando valores predeterminados del archivo JSON")
+        
+except ImportError as e:
+    print(f"No se pudo importar ephemeris_calculator: {e}")
+    print("Usando valores predeterminados del archivo JSON")
+except Exception as e:
+    print(f"Error al actualizar efemérides: {e}")
+    print("Usando valores predeterminados del archivo JSON")
+
+print("="*60 + "\n")
+
+# ============================================================
+# CONTINUAR CON LA APLICACIÓN NORMAL
+# ============================================================
+
 from shared.celestial_data import get_object_list_text
 from shared.calculations.astronomy import calculate_lst
 from gui.controls.vector import PointerVector
