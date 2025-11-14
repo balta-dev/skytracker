@@ -21,7 +21,9 @@
 
 El sistema puede calcular efemérides astronómicas, renderizar el cielo en 3D y mover una montura servo-motorizada para apuntar al objeto seleccionado.
 
-<img src="docs/Esquema del sistema.png"/>
+<img src="docs/scheme/Esquema del sistema.png"/>
+
+
 
 ## Cómo Usar
 
@@ -41,6 +43,8 @@ El sistema puede calcular efemérides astronómicas, renderizar el cielo en 3D y
 
 5. Listo!
 
+Más información en ```/esp32/README.md```.
+
 #### Android
 
 1) Descargar ``app-release.apk`` en Releases
@@ -49,6 +53,18 @@ El sistema puede calcular efemérides astronómicas, renderizar el cielo en 3D y
 4) Tocar "CONECTAR"
 5) Escribir en el cuadro de búsqueda el objeto a rastrear
 6) Listo!
+
+Más información en ```/android/README.md```.
+
+ #### Python
+
+1. Clonar el repositorio
+2. Instalar dependencias
+3. Editar el archivo ```config.py```
+4. Abrir ```main.py``` o ```main-cli.py```
+5. Listo!
+
+Más información en ```/python/README.md```.
 
 
 
@@ -65,8 +81,7 @@ El sistema puede calcular efemérides astronómicas, renderizar el cielo en 3D y
 * 9. **[Protocolos de Comunicación](#9.-Protocolos-de-Comunicación)**
 * 10. **[Renderizado y Visualización](#10.-Renderizado-y-Visualización)**
 * 11. **[Elementos de Interfaz de Usuario](#11.-Elementos-de-Interfaz-de-Usuario)**
-* 12. **[Configuración del Hardware](#12.-Configuración-del-Hardware)**
-* 13.  **[A grandes rasgos](#13.-A-grandes-rasgos)**
+* 12. **[A grandes rasgos](#12.-A-grandes-rasgos)**
 
 ---
 
@@ -150,7 +165,7 @@ GUI["main.py<br>SkyTrackerApp<br>Pyglet + OpenGL"]
 CLI["main-cli.py<br>SkyTrackerConsole<br>Modo sin interfaz (Headless)"]
 ANDROID["SkyTracker APK<br>MainActivity<br>SkyTrackerViewModel<br>SkyTrackerRepository"]
 ESP["Programa ESP32<br>Bucle de control de servos<br>Tasa de actualización 20 Hz"]
-SERVOS["Servomotores<br>Yaw Pin 21<br>Pitch Pin 22"]
+SERVOS["Servomotores<br>Yaw Pin 18<br>Pitch Pin 19"]
 FEEDBACK["Sensores de retroalimentación IMU"]
 JSON["celestial_data.json<br>ESTRELLAS_REALES<br>GALAXIAS<br>PLANETAS<br>LUNA_RA_DEC"]
 JPL["API de JPL Horizons<br>ssd.jpl.nasa.gov<br>Consultas HTTPS"]
@@ -389,35 +404,9 @@ The GUI implements several UI classes:
 | `LookAtDisplay`      | Muestra el nombre del objeto cuando la cámara lo apunta      | [python/gui/render/ui.py](https://github.com/balta-dev/skytracker/blob/3b5ef471/python/gui/render/ui.py#L8-L56) |
 | `CachedTextRenderer` | Optimiza el renderizado de texto con cacheado                | Referenciado en main.py                                      |
 
-### Manejo de entrada / Controles
-
-La clase `InputHandler` procesa entrada de teclado para:
-
-* Movimiento de cámara: `W/A/S/D` (horizontal), `Space` (arriba), `Shift` (abajo)
-* Rotación de cámara: Movimiento del mouse
-* Ajuste de FOV: Teclas`Z/X` 
-* Movimiento de Vector: Flechitas
-* Modificador de Velocidad: Tecla`Ctrl` para velocidad de movimiento reducido
 
 
-
-## 12. Configuración del Hardware
-
-El firmware del ESP32 espera la siguiente configuración de pines:
-
-| Componente     | Pin  | Propósito                                             |
-| -------------- | ---- | ----------------------------------------------------- |
-| Servo Yaw      | 21   | PWM output for yaw servo motor                        |
-| Servo Pitch    | 22   | PWM output for pitch servo motor                      |
-| Yaw objetivo   | A0   | Entrada de objetivo simulado (Tinkercad)              |
-| Pitch objetivo | A1   | Entrada de objetivo simulado (Tinkercad)              |
-| Feedback Yaw   | A2   | Posición real del sensor para el eje yaw (horizontal) |
-| Feedback Pitch | A3   | Posición real del sensor para el eje pitch (vertical) |
-| Feedback Roll  | A4   | Sensor Roll para compensación                         |
-
-
-
-## 13. A grandes rasgos
+## 12. A grandes rasgos
 
 ### Android: Cálculo y Conversión de Coordenadas
 
@@ -493,4 +482,4 @@ En las aplicaciones Python (`main.py` o `main-cli.py`), cuando se rastrea un obj
 | **Conversión a yaw/pitch** | `CelestialTracker.calculateTrackingAngles()` | `ra_dec_to_xyz()` + `ObjectTracker`          |
 | **Almacenamiento**         | `SharedPreferences` (caché por objeto)       | `celestial_data.json` (actualización masiva) |
 
-Ambos sistemas terminan con ángulos yaw/pitch en grados que se envían al ESP32 usando el mismo protocolo: `"TARGET yaw pitch\n"`. La diferencia principal está en **dónde** obtienen los datos (API remota vs. cálculo local) y **cómo** los cachean (individual vs. masivo).
+Ambos sistemas terminan con ángulos yaw/pitch en grados que se envían al ESP32 usando el mismo protocolo: `"SENS:yaw,pitch\n"`. La diferencia principal está en **dónde** obtienen los datos (API remota vs. cálculo local) y **cómo** los cachean (individual vs. masivo).
