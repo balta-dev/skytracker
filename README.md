@@ -4,7 +4,7 @@
 
 ### Rastreador multiplataforma de cuerpos celestes en tiempo real  
 
-<img alt="portada" src="https://github.com/user-attachments/assets/ea6b2675-51a8-4f3e-9421-b3312a69295e" />
+<img alt="portada" src="docs/images/banner.png" />
 
 > 🪐 Proyecto desarrollado por el **Grupo 7** para la cátedra *"Tecnologías para la Automatización"* en la carrera de Ingeniería en Sistemas de Información de la Facultad Regional de Concepción del Uruguay. Inspirado en el diseño *StarTrack* de [Görkem Bozkurt](https://gorkem.cc/projects/StarTrack/) (modelo 3D).    
 > Licencia [MIT](LICENSE.md) | Código libre, abierto y extensible.
